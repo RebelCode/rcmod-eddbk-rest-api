@@ -12,7 +12,12 @@ use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 
-class RestApiClientsHandler implements InvocableInterface
+/**
+ * Handles the REST API endpoint for querying clients.
+ *
+ * @since [*next-version*]
+ */
+class ClientsQueryHandler implements InvocableInterface
 {
     /* @since [*next-version*] */
     use CreateRuntimeExceptionCapableTrait;
