@@ -26,6 +26,9 @@ use Traversable;
 abstract class AbstractBaseCqrsController implements ControllerInterface
 {
     /* @since [*next-version*] */
+    use CreateResourceCapableTrait;
+
+    /* @since [*next-version*] */
     use ContainerGetCapableTrait;
 
     /* @since [*next-version*] */
@@ -163,15 +166,4 @@ abstract class AbstractBaseCqrsController implements ControllerInterface
      * @return array|Traversable
      */
     abstract protected function _getParamsInfo();
-
-    /**
-     * Creates a resource instance.
-     *
-     * @since [*next-version*]
-     *
-     * @param array|stdClass|ArrayAccess|ContainerInterface $data The resource data container.
-     *
-     * @return ResourceInterface
-     */
-    abstract protected function _createResource($data);
 }
