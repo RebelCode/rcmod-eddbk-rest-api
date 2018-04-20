@@ -2,6 +2,7 @@
 
 namespace RebelCode\EddBookings\RestApi\Handlers\Bookings;
 
+use Dhii\Data\Container\CreateNotFoundExceptionCapableTrait;
 use Dhii\Exception\CreateRuntimeExceptionCapableTrait;
 use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Invocation\InvocableInterface;
@@ -21,6 +22,9 @@ class SingleBookingHandler implements InvocableInterface
 {
     /* @since [*next-version*] */
     use CreateRuntimeExceptionCapableTrait;
+
+    /* @since [*next-version*] */
+    use CreateNotFoundExceptionCapableTrait;
 
     /* @since [*next-version*] */
     use StringTranslatingTrait;
@@ -58,10 +62,19 @@ class SingleBookingHandler implements InvocableInterface
         $id      = $request['id'];
 
         try {
-            $bookings = $this->controller->get(['id' => $id]);
+            $bookings = $this->controller->get([
+                'id' => ($id = $request['id']),
+            ]);
 
-            if (($count = count($bookings)) !== 1) {
-                throw $this->_createRuntimeException(__('Found %d matching bookings', [$count]));
+            $count = count($bookings);
+
+            if ($count === 0) {
+                throw $this->_createNotFoundException(
+                    $this->__('No booking found for id "%s"', [$id]), null, null, null, $id);
+            }
+
+            if ($count > 1) {
+                throw $this->_createRuntimeException($this->__('Found %d matching bookings', [$count]));
             }
 
             foreach ($bookings as $booking) {

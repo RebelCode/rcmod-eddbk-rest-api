@@ -2,13 +2,13 @@
 
 namespace RebelCode\EddBookings\RestApi\Handlers\Clients;
 
+use Dhii\Data\Container\CreateNotFoundExceptionCapableTrait;
 use Dhii\Exception\CreateRuntimeExceptionCapableTrait;
 use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Invocation\InvocableInterface;
 use Exception;
 use Psr\Container\NotFoundExceptionInterface;
 use RebelCode\EddBookings\RestApi\Controller\ControllerInterface;
-use RebelCode\EddBookings\RestApi\Resource\ResourceInterface;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -17,6 +17,9 @@ class SingleClientHandler implements InvocableInterface
 {
     /* @since [*next-version*] */
     use CreateRuntimeExceptionCapableTrait;
+
+    /* @since [*next-version*] */
+    use CreateNotFoundExceptionCapableTrait;
 
     /* @since [*next-version*] */
     use StringTranslatingTrait;
@@ -53,9 +56,18 @@ class SingleClientHandler implements InvocableInterface
         $request = func_get_arg(0);
 
         try {
-            $clients = $this->controller->get(['id' => $request['id']]);
+            $clients = $this->controller->get([
+                'id' => ($id = $request['id']),
+            ]);
 
-            if (($count = count($clients)) !== 1) {
+            $count = count($clients);
+
+            if ($count === 0) {
+                throw $this->_createNotFoundException(
+                    $this->__('No client found for id "%s"', [$id]), null, null, null, $id);
+            }
+
+            if ($count > 1) {
                 throw $this->_createRuntimeException($this->__('Found %d matching clients', [$count]));
             }
 
