@@ -74,9 +74,11 @@ class ClientsController implements ControllerInterface
         }
 
         return [
-            'id'    => isset($params['id']) ? $params['id'] : null,
-            'name'  => isset($params['name']) ? $params['name'] : null,
-            'email' => isset($params['email']) ? $params['email'] : null,
+            'id'      => isset($params['id']) ? $params['id'] : null,
+            'name'    => isset($params['name']) ? $params['name'] : null,
+            'email'   => isset($params['email']) ? $params['email'] : null,
+            'orderby' => 'id',
+            'order'   => 'ASC',
         ];
     }
 }
