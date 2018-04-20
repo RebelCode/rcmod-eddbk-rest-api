@@ -45,7 +45,14 @@ class ClientsController implements ControllerInterface
      */
     public function get($params = [])
     {
-        $customers = $this->eddCustomersDb->get_customers($params);
+        $args = [];
+
+        if (isset($params['search'])) {
+            $args['name']           = $params['search'];
+            $args['search_columns'] = ['name', 'email'];
+        }
+
+        $customers = $this->eddCustomersDb->get_customers($args);
         $clients   = array_map(function ($customer) {
             return $this->_createResource($customer);
         }, $customers);
