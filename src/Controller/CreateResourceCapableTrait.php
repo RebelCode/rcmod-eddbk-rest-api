@@ -29,12 +29,14 @@ trait CreateResourceCapableTrait
      *
      * @since [*next-version*]
      *
-     * @param array|stdClass|ArrayAccess|ContainerInterface|null $config The config.
+     * @param array|stdClass|ArrayAccess|ContainerInterface|null $data The resource data.
      *
      * @return ResourceInterface
      */
-    protected function _createResource($config = null)
+    protected function _createResource($data)
     {
-        return $this->resourceFactory->make($config);
+        return $this->resourceFactory->make([
+            ResourceFactoryInterface::K_CFG_DATA => $data
+        ]);
     }
 }
