@@ -2,7 +2,7 @@
 
 namespace RebelCode\EddBookings\RestApi\Handlers\Bookings;
 
-use Dhii\Data\Container\CreateNotFoundExceptionCapableTrait;
+use Dhii\Exception\CreateRuntimeExceptionCapableTrait;
 use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Invocation\InvocableInterface;
 use Exception;
@@ -19,7 +19,7 @@ use WP_REST_Request;
 class SingleBookingHandler implements InvocableInterface
 {
     /* @since [*next-version*] */
-    use CreateNotFoundExceptionCapableTrait;
+    use CreateRuntimeExceptionCapableTrait;
 
     /* @since [*next-version*] */
     use StringTranslatingTrait;
@@ -58,17 +58,13 @@ class SingleBookingHandler implements InvocableInterface
 
         try {
             $bookings = $this->controller->get(['id' => $id]);
-            $booking  = null;
 
-            foreach ($bookings as $_booking) {
-                $booking = $_booking;
-                break;
+            if (($count = count($bookings)) !== 1) {
+                throw $this->_createRuntimeException(__('Found %d matching bookings', [$count]));
             }
 
-            if ($booking === null) {
-                throw $this->_createNotFoundException(
-                    __('Booking with ID "%s" was not found', [$id]), null, null, null, $id
-                );
+            foreach ($bookings as $booking) {
+                break;
             }
 
             return $booking->toArray();
