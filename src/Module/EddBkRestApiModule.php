@@ -76,11 +76,11 @@ class EddBkRestApiModule extends AbstractBaseModule
                  * @since [*next-version*]
                  */
                 'eddbk_booking_resource_factory'          => function (ContainerInterface $c) {
-                    return new GenericCallbackResourceFactory(function ($config = null) {
+                    return new GenericCallbackResourceFactory(function ($config = null) use ($c) {
                         return new BookingResource(
                             $this->_containerGet($config, ResourceFactoryInterface::K_CFG_DATA),
-                            $this->_containerGet($config, 'services_controller'),
-                            $this->_containerGet($config, 'clients_controller')
+                            $c->get('eddbk_services_controller'),
+                            $c->get('eddbk_clients_controller')
                         );
                     });
                 },
@@ -124,9 +124,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                     return new BookingsController(
                         $c->get('eddbk_booking_resource_factory'),
                         $c->get('bookings_select_rm'),
-                        $c->get('sql_expression_builder'),
-                        $c->get('eddbk_services_controller'),
-                        $c->get('eddbk_clients_controller')
+                        $c->get('sql_expression_builder')
                     );
                 },
 

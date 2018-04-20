@@ -14,46 +14,22 @@ use RebelCode\EddBookings\RestApi\Resource\ResourceFactoryInterface;
 class BookingsController extends AbstractBaseCqrsController
 {
     /**
-     * The services resource controller.
-     *
-     * @since [*next-version*]
-     *
-     * @var ControllerInterface
-     */
-    protected $servicesController;
-
-    /**
-     * The clients resource controller.
-     *
-     * @since [*next-version*]
-     *
-     * @var ControllerInterface
-     */
-    protected $clientsController;
-
-    /**
      * Constructor.
      *
      * @since [*next-version*]
      *
-     * @param ResourceFactoryInterface $resourceFactory    The resource factory.
-     * @param SelectCapableInterface   $selectRm           The bookings resource model.
-     * @param object                   $exprBuilder        The expression builder.
-     * @param ControllerInterface      $servicesController The services resource controller.
-     * @param ControllerInterface      $clientController   The clients resource controller.
+     * @param ResourceFactoryInterface $resourceFactory The resource factory.
+     * @param SelectCapableInterface   $selectRm        The bookings resource model.
+     * @param object                   $exprBuilder     The expression builder.
      */
     public function __construct(
         ResourceFactoryInterface $resourceFactory,
         SelectCapableInterface $selectRm,
-        $exprBuilder,
-        $servicesController,
-        $clientController
+        $exprBuilder
     ) {
-        $this->resourceFactory    = $resourceFactory;
-        $this->selectRm           = $selectRm;
-        $this->exprBuilder        = $exprBuilder;
-        $this->servicesController = $servicesController;
-        $this->clientsController  = $clientController;
+        $this->resourceFactory = $resourceFactory;
+        $this->selectRm        = $selectRm;
+        $this->exprBuilder     = $exprBuilder;
     }
 
     /**
