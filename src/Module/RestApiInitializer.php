@@ -110,8 +110,8 @@ class RestApiInitializer implements InvocableInterface
         $namespace = $this->_containerGet($config, 'namespace');
         $routes    = $this->_containerGet($config, 'routes');
 
-        foreach ($routes as $_pattern => $_config) {
-            $this->_registerRoute($namespace, $_pattern, $_config);
+        foreach ($routes as $_idx => $_config) {
+            $this->_registerRoute($namespace, $_config);
         }
     }
 
@@ -121,23 +121,27 @@ class RestApiInitializer implements InvocableInterface
      * @since [*next-version*]
      *
      * @param string                                        $namespace The namespace.
-     * @param string                                        $patten    The route pattern.
      * @param array|stdClass|ArrayAccess|ContainerInterface $config    The route config.
      */
-    protected function _registerRoute($namespace, $patten, $config)
+    protected function _registerRoute($namespace, $config)
     {
-        $args = [];
+        $routes = [];
 
         foreach ($config as $_methodConfig) {
+            $_pattern = $this->_containerGet($_methodConfig, 'pattern');
             $_methods = $this->_containerGet($_methodConfig, 'methods');
             $_handler = $this->_containerGet($_methodConfig, 'handler');
 
-            $args[] = [
+            if (!isset($routes[$_pattern])) {
+                $routes[$_pattern] = [];
+            }
+            $routes[$_pattern][] = [
                 'methods'  => $_methods,
                 'callback' => $this->_getContainer()->get($_handler),
             ];
         }
-
-        register_rest_route($namespace, $patten, $args, true);
+        foreach ($routes as $_pattern => $_args) {
+            register_rest_route($namespace, $_pattern, $_args, true);
+        }
     }
 }

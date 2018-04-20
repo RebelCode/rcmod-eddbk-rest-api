@@ -7,11 +7,23 @@
  */
 
 /*
- * The base route for retrieving clients.
+ * The route for querying clients.
  *
  * @since [*next-version*]
  */
-$cfg['eddbk_rest_api']['routes']['/clients/(?P<id>[\d]+)'][] = [
+$cfg['eddbk_rest_api']['routes'][] = [
+    'pattern' => '/clients',
+    'methods' => ['GET'],
+    'handler' => 'eddbk_rest_api_query_clients_handler'
+];
+
+/*
+ * The route for retrieving a client by ID.
+ *
+ * @since [*next-version*]
+ */
+$cfg['eddbk_rest_api']['routes'][] = [
+    'pattern' => '/clients/(?P<id>[\d]+)',
     'methods' => ['GET'],
     'handler' => 'eddbk_rest_api_get_client_info_handler'
 ];

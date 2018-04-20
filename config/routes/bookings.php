@@ -7,21 +7,23 @@
  */
 
 /*
- * The base route for retrieving bookings.
+ * The route for querying bookings.
  *
  * @since [*next-version*]
  */
-$cfg['eddbk_rest_api']['routes']['/bookings'][] = [
+$cfg['eddbk_rest_api']['routes'][] = [
+    'pattern' => '/bookings',
     'methods' => ['GET'],
-    'handler' => 'eddbk_rest_api_get_bookings_handler'
+    'handler' => 'eddbk_rest_api_query_bookings_handler'
 ];
 
 /*
- * The base route for retrieving a booking by ID.
+ * The route for retrieving a booking by ID.
  *
  * @since [*next-version*]
  */
-$cfg['eddbk_rest_api']['routes']['/bookings/(?P<id>[\d]+)'][] = [
+$cfg['eddbk_rest_api']['routes'][] = [
+    'pattern' => '/bookings/(?P<id>[\d]+)',
     'methods' => ['GET'],
     'handler' => 'eddbk_rest_api_get_booking_info_handler'
 ];
