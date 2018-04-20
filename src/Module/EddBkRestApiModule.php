@@ -156,8 +156,11 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_query_bookings_handler'     => function (ContainerInterface $c) {
-                    return new BookingsQueryHandler($c->get('eddbk_bookings_controller'));
+                'eddbk_rest_api_query_bookings_handler'   => function (ContainerInterface $c) {
+                    return new BookingsQueryHandler(
+                        $c->get('eddbk_bookings_controller'),
+                        $c->get('booking_logic/statuses')
+                    );
                 },
 
                 /*
@@ -178,7 +181,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_query_clients_handler'  => function (ContainerInterface $c) {
+                'eddbk_rest_api_query_clients_handler'    => function (ContainerInterface $c) {
                     return new ClientsQueryHandler($c->get('eddbk_clients_controller'));
                 },
 

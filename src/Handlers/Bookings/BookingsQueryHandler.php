@@ -27,15 +27,26 @@ class BookingsQueryHandler implements InvocableInterface
     protected $controller;
 
     /**
+     * The booking statuses.
+     *
+     * @since [*next-version*]
+     *
+     * @var string[]
+     */
+    protected $statuses;
+
+    /**
      * Constructor.
      *
      * @since [*next-version*]
      *
      * @param ControllerInterface $controller The booking resource controller.
+     * @param string[]            $statuses   The booking statuses.
      */
-    public function __construct(ControllerInterface $controller)
+    public function __construct(ControllerInterface $controller, $statuses)
     {
         $this->controller = $controller;
+        $this->statuses   = $statuses;
     }
 
     /**
@@ -76,6 +87,13 @@ class BookingsQueryHandler implements InvocableInterface
                 $statuses[$_bookingStatus] = isset($statuses[$_bookingStatus])
                     ? $statuses[$_bookingStatus] + 1
                     : 1;
+            }
+
+            // Fill in with zeroes for all statuses that were not found in bookings list
+            foreach ($this->statuses as $_status) {
+                if (!isset($statuses[$_status])) {
+                    $statuses[$_status] = 0;
+                }
             }
 
             $response = [
