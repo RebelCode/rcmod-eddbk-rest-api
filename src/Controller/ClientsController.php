@@ -68,8 +68,8 @@ class ClientsController implements ControllerInterface
     {
         if (isset($params['search'])) {
             return [
-                'name'            => $params['search'],
-                'search_coluimns' => ['name', 'email'],
+                'name'           => $params['search'],
+                'search_columns' => ['name', 'email'],
             ];
         }
 
