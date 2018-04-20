@@ -16,6 +16,7 @@ use Dhii\Invocation\InvocableInterface;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
 use Psr\Container\ContainerInterface;
 use stdClass;
+use Traversable;
 
 /**
  * Initializes the REST API.
@@ -108,22 +109,24 @@ class RestApiInitializer implements InvocableInterface
         $config = $this->_getDataStore();
 
         $namespace = $this->_containerGet($config, 'namespace');
-        $routes    = $this->_containerGet($config, 'routes');
+        $routesCfg = $this->_containerGet($config, 'routes');
+        $routes    = $this->_processRouteConfig($routesCfg);
 
-        foreach ($routes as $_idx => $_config) {
-            $this->_registerRoute($namespace, $_config);
+        foreach ($routes as $_pattern => $_config) {
+            $this->_registerRoute($namespace, $_pattern, $_config);
         }
     }
 
     /**
-     * Registers an API route.
+     * Process the route config and prepares it for registration.
      *
      * @since [*next-version*]
      *
-     * @param string                                        $namespace The namespace.
-     * @param array|stdClass|ArrayAccess|ContainerInterface $config    The route config.
+     * @param array|Traversable $config The configuration of the routes.
+     *
+     * @return array The processed config.
      */
-    protected function _registerRoute($namespace, $config)
+    protected function _processRouteConfig($config)
     {
         $routes = [];
 
@@ -135,13 +138,27 @@ class RestApiInitializer implements InvocableInterface
             if (!isset($routes[$_pattern])) {
                 $routes[$_pattern] = [];
             }
+
             $routes[$_pattern][] = [
                 'methods'  => $_methods,
                 'callback' => $this->_getContainer()->get($_handler),
             ];
         }
-        foreach ($routes as $_pattern => $_args) {
-            register_rest_route($namespace, $_pattern, $_args, true);
-        }
+
+        return $routes;
+    }
+
+    /**
+     * Registers an API route.
+     *
+     * @since [*next-version*]
+     *
+     * @param string $namespace The namespace.
+     * @param string $pattern   The route pattern.
+     * @param array  $args      The route args.
+     */
+    protected function _registerRoute($namespace, $pattern, $args)
+    {
+        register_rest_route($namespace, $pattern, $args);
     }
 }
