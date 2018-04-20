@@ -51,27 +51,40 @@ class BookingsQueryHandler implements InvocableInterface
         try {
             $bookings = $this->controller->get($request);
 
-            $status = isset($request['status'])
-                ? $request['status']
-                : null;
-
-            if ($status === null || strpos($status, 'all') !== false) {
-                $status = null;
-            } else {
+            $status = $request->get_param('status');
+            // If statuses given in request
+            if ($status !== null) {
                 $status = array_map('trim', explode(',', $status));
             }
-
-            $results = [];
-
-            foreach ($bookings as $_booking) {
-                $_array = $_booking->toArray();
-
-                if ($status === null || in_array($_array['status'], $status)) {
-                    $results[] = $_array;
-                }
+            // If statuses given and contains 'all', use null
+            if (is_array($status) && in_array('all', $status)) {
+                $status = null;
             }
 
-            return new WP_REST_Response($results, 200);
+            $items    = [];
+            $statuses = [];
+            foreach ($bookings as $_booking) {
+                $_array         = $_booking->toArray();
+                $_bookingStatus = $_array['status'];
+
+                // If no status filter given, OR booking matches queried status
+                if ($status === null || in_array($_bookingStatus, $status)) {
+                    $items[] = $_array;
+                }
+
+                // Increment status count
+                $statuses[$_bookingStatus] = isset($statuses[$_bookingStatus])
+                    ? $statuses[$_bookingStatus] + 1
+                    : 1;
+            }
+
+            $response = [
+                'items'    => $items,
+                'count'    => count($items),
+                'statuses' => $statuses,
+            ];
+
+            return new WP_REST_Response($response, 200);
         } catch (NotFoundExceptionInterface $notFoundException) {
             return new WP_Error('eddbk_booking_invalid_id', 'Invalid booking ID.', ['status' => 404]);
         } catch (Exception $exception) {
