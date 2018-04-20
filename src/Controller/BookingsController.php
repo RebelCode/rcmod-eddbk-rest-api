@@ -61,16 +61,6 @@ class BookingsController extends AbstractBaseCqrsController
      *
      * @since [*next-version*]
      */
-    protected function _createResource($booking)
-    {
-        return new BookingResource($booking, $this->servicesController, $this->clientsController);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @since [*next-version*]
-     */
     protected function _getParamsInfo()
     {
         return [
