@@ -77,16 +77,21 @@ class ServicesController implements ControllerInterface
      */
     public function get($params = [])
     {
-        $queryArgs = [
-            'post_ID'   => $this->_containerHas($params, 'id')
-                ? $this->_containerGet($params, 'id')
-                : null,
-            'post_type' => 'download',
-        ];
+        $posts = [];
 
-        $query = new WP_Query($queryArgs);
+        if ($this->_containerHas($params, 'id')) {
+            $post  = get_post($this->_containerGet($params, 'id'));
+            $posts = [$post];
+        } else {
+            $queryArgs = [
+                'post_type' => 'download',
+            ];
 
-        return array_map([$this, '_createResourceFromWpPost'], $query->posts);
+            $query = new WP_Query($queryArgs);
+            $posts = $query->posts;
+        }
+
+        return array_map([$this, '_createResourceFromWpPost'], $posts);
     }
 
     /**
