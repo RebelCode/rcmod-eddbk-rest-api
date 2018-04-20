@@ -59,9 +59,11 @@ class SingleClientHandler implements InvocableInterface
                 throw $this->_createRuntimeException($this->__('Found %d matching clients', [$count]));
             }
 
-            foreach ($clients as $client);
+            foreach ($clients as $client) {
+                break;
+            }
 
-            return new WP_REST_Response($client, 200);
+            return new WP_REST_Response($client->toArray(), 200);
         } catch (NotFoundExceptionInterface $notFoundException) {
             return new WP_Error('eddbk_client_invalid_id', 'Invalid client ID.', ['status' => 404]);
         } catch (Exception $exception) {
