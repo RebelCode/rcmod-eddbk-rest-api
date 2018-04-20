@@ -5,18 +5,18 @@ namespace RebelCode\EddBookings\RestApi\Module;
 use Dhii\Data\Container\ContainerFactoryInterface;
 use Dhii\Event\EventFactoryInterface;
 use Dhii\Exception\InternalException;
-use Dhii\Factory\GenericCallbackFactory;
 use Dhii\Util\String\StringableInterface as Stringable;
 use Psr\Container\ContainerInterface;
 use Psr\EventManager\EventManagerInterface;
 use RebelCode\EddBookings\RestApi\Controller\BookingsController;
 use RebelCode\EddBookings\RestApi\Controller\ClientsController;
 use RebelCode\EddBookings\RestApi\Controller\ServicesController;
-use RebelCode\EddBookings\RestApi\Handlers\Bookings\SingleBookingHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Bookings\BookingsQueryHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Bookings\SingleBookingHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\RestApiClientsHandler;
 use RebelCode\EddBookings\RestApi\Resource\BookingResource;
 use RebelCode\EddBookings\RestApi\Resource\ClientResource;
+use RebelCode\EddBookings\RestApi\Resource\GenericCallbackResourceFactory;
 use RebelCode\EddBookings\RestApi\Resource\ResourceFactoryInterface;
 use RebelCode\EddBookings\RestApi\Resource\ServiceResource;
 use RebelCode\Modular\Module\AbstractBaseModule;
@@ -76,7 +76,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  * @since [*next-version*]
                  */
                 'eddbk_booking_resource_factory'          => function (ContainerInterface $c) {
-                    return new GenericCallbackFactory(function ($config = null) {
+                    return new GenericCallbackResourceFactory(function ($config = null) {
                         return new BookingResource(
                             $this->_containerGet($config, ResourceFactoryInterface::K_CFG_DATA),
                             $this->_containerGet($config, 'services_controller'),
@@ -91,7 +91,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  * @since [*next-version*]
                  */
                 'eddbk_service_resource_factory'          => function (ContainerInterface $c) {
-                    return new GenericCallbackFactory(function ($config = null) {
+                    return new GenericCallbackResourceFactory(function ($config = null) {
                         return new ServiceResource(
                             $this->_containerGet($config, ResourceFactoryInterface::K_CFG_DATA)
                         );
@@ -104,7 +104,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  * @since [*next-version*]
                  */
                 'eddbk_client_resource_factory'           => function (ContainerInterface $c) {
-                    return new GenericCallbackFactory(function ($config = null) {
+                    return new GenericCallbackResourceFactory(function ($config = null) {
                         return new ClientResource(
                             $this->_containerGet($config, ResourceFactoryInterface::K_CFG_DATA)
                         );
