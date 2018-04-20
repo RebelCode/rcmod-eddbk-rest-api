@@ -10,6 +10,7 @@ use Psr\Container\NotFoundExceptionInterface;
 use RebelCode\EddBookings\RestApi\Controller\ControllerInterface;
 use WP_Error;
 use WP_REST_Request;
+use WP_REST_Response;
 
 /**
  * Handles the REST API endpoint for retrieving the info for a particular booking.
@@ -67,7 +68,7 @@ class SingleBookingHandler implements InvocableInterface
                 break;
             }
 
-            return $booking->toArray();
+            return new WP_REST_Response($booking->toArray(), 200);
         } catch (NotFoundExceptionInterface $notFoundException) {
             return new WP_Error('eddbk_booking_invalid_id', 'Invalid booking ID.', ['status' => 404]);
         } catch (Exception $exception) {
