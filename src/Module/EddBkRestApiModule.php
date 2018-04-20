@@ -84,6 +84,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                         );
                     });
                 },
+
                 /*
                  * The services REST API resource factory.
                  *
@@ -96,6 +97,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                         );
                     });
                 },
+
                 /*
                  * The clients REST API resource factory.
                  *
@@ -127,6 +129,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                         $c->get('eddbk_clients_controller')
                     );
                 },
+
                 /*
                  * The services REST API resource controller.
                  *
@@ -135,6 +138,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                 'eddbk_services_controller'               => function (ContainerInterface $c) {
                     return new ServicesController($c->get('eddbk_service_resource_factory'));
                 },
+
                 /*
                  * The clients REST API resource controller.
                  *
