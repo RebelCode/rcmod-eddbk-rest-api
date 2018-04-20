@@ -20,13 +20,13 @@ use Psr\Container\ContainerInterface;
 use stdClass;
 
 /**
- * Abstract base functionality for a resource.
+ * Abstract base functionality for a resource that uses an internal data store.
  *
  * Provides construction from a container and the ability to read data and default to a value.
  *
  * @since [*next-version*]
  */
-abstract class AbstractBaseResource implements ResourceInterface
+abstract class AbstractBaseDataStoreResource implements ResourceInterface
 {
     /* @since [*next-version*] */
     use DataStoreAwareContainerTrait;
