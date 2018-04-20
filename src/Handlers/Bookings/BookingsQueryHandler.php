@@ -11,7 +11,7 @@ use WP_REST_Request;
 use WP_REST_Response;
 
 /**
- * Handles the REST API endpoint for retrieving the list of bookings.
+ * Handles the REST API endpoint for querying bookings.
  *
  * @since [*next-version*]
  */
