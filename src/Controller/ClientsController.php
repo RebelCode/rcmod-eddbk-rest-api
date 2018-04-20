@@ -2,6 +2,7 @@
 
 namespace RebelCode\EddBookings\RestApi\Controller;
 
+use ArrayAccess;
 use EDD_DB_Customers;
 use RebelCode\EddBookings\RestApi\Resource\ResourceFactoryInterface;
 
@@ -45,18 +46,37 @@ class ClientsController implements ControllerInterface
      */
     public function get($params = [])
     {
-        $args = [];
-
-        if (isset($params['search'])) {
-            $args['name']           = $params['search'];
-            $args['search_columns'] = ['name', 'email'];
-        }
-
-        $customers = $this->eddCustomersDb->get_customers($args);
+        $queryArgs = $this->_generateEddCustomersQueryArgs($params);
+        $customers = $this->eddCustomersDb->get_customers($queryArgs);
         $clients   = array_map(function ($customer) {
             return $this->_createResource($customer);
         }, $customers);
 
         return $clients;
+    }
+
+    /**
+     * Generates the EDD customers query args from the params given.
+     *
+     * @since [*next-version*]
+     *
+     * @param array|ArrayAccess $params The params.
+     *
+     * @return array
+     */
+    protected function _generateEddCustomersQueryArgs($params)
+    {
+        if (isset($params['search'])) {
+            return [
+                'name'            => $params['search'],
+                'search_coluimns' => ['name', 'email'],
+            ];
+        }
+
+        return [
+            'id'    => isset($params['id']) ? $params['id'] : null,
+            'name'  => isset($params['name']) ? $params['name'] : null,
+            'email' => isset($params['email']) ? $params['email'] : null,
+        ];
     }
 }
