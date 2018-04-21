@@ -4,12 +4,14 @@ namespace RebelCode\EddBookings\RestApi\Resource;
 
 use ArrayAccess;
 use Dhii\Data\Container\ContainerGetCapableTrait;
+use Dhii\Data\Container\ContainerHasCapableTrait;
 use Dhii\Data\Container\CreateContainerExceptionCapableTrait;
 use Dhii\Data\Container\CreateNotFoundExceptionCapableTrait;
 use Dhii\Data\Container\NormalizeContainerCapableTrait;
 use Dhii\Data\Container\NormalizeKeyCapableTrait;
 use Dhii\Data\Object\DataStoreAwareContainerTrait;
 use Dhii\Data\Object\GetDataCapableTrait;
+use Dhii\Data\Object\HasDataCapableTrait;
 use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
 use Dhii\Exception\CreateOutOfRangeExceptionCapableTrait;
 use Dhii\I18n\StringTranslatingTrait;
@@ -35,10 +37,16 @@ abstract class AbstractBaseDataStoreResource implements ResourceInterface
     use GetDataCapableTrait;
 
     /* @since [*next-version*] */
+    use HasDataCapableTrait;
+
+    /* @since [*next-version*] */
     use NormalizeContainerCapableTrait;
 
     /* @since [*next-version*] */
     use ContainerGetCapableTrait;
+
+    /* @since [*next-version*] */
+    use ContainerHasCapableTrait;
 
     /* @since [*next-version*] */
     use NormalizeKeyCapableTrait;
@@ -71,6 +79,26 @@ abstract class AbstractBaseDataStoreResource implements ResourceInterface
     public function __construct($resource)
     {
         $this->_setDataStore($resource);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    public function get($key)
+    {
+        return $this->_getData($key);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    public function has($key)
+    {
+        return $this->_hasData($key);
     }
 
     /**
