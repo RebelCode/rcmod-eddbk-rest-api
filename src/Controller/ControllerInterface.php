@@ -2,7 +2,10 @@
 
 namespace RebelCode\EddBookings\RestApi\Controller;
 
+use ArrayAccess;
+use Psr\Container\ContainerInterface;
 use RebelCode\EddBookings\RestApi\Resource\ResourceInterface;
+use stdClass;
 
 /**
  * An API controller - something that can work with API resources.
@@ -16,7 +19,7 @@ interface ControllerInterface
      *
      * @since [*next-version*]
      *
-     * @param array $params The params.
+     * @param array|stdClass|ArrayAccess|ContainerInterface $params The params.
      *
      * @return ResourceInterface[] The resource instances.
      */

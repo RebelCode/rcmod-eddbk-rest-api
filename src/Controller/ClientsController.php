@@ -4,12 +4,21 @@ namespace RebelCode\EddBookings\RestApi\Controller;
 
 use ArrayAccess;
 use ArrayIterator;
+use Dhii\Data\Container\ContainerGetCapableTrait;
+use Dhii\Data\Container\ContainerHasCapableTrait;
+use Dhii\Data\Container\CreateContainerExceptionCapableTrait;
+use Dhii\Data\Container\CreateNotFoundExceptionCapableTrait;
+use Dhii\Data\Object\NormalizeKeyCapableTrait;
 use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
+use Dhii\Exception\CreateOutOfRangeExceptionCapableTrait;
 use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Iterator\NormalizeIteratorCapableTrait;
+use Dhii\Util\Normalization\NormalizeStringCapableTrait;
 use EDD_DB_Customers;
 use IteratorIterator;
+use Psr\Container\ContainerInterface;
 use RebelCode\EddBookings\RestApi\Resource\ResourceFactoryInterface;
+use stdClass;
 use Traversable;
 
 /**
@@ -23,10 +32,31 @@ class ClientsController implements ControllerInterface
     use CreateResourceCapableTrait;
 
     /* @since [*next-version*] */
+    use ContainerGetCapableTrait;
+
+    /* @since [*next-version*] */
+    use ContainerHasCapableTrait;
+
+    /* @since [*next-version*] */
+    use NormalizeKeyCapableTrait;
+
+    /* @since [*next-version*] */
+    use NormalizeStringCapableTrait;
+
+    /* @since [*next-version*] */
     use NormalizeIteratorCapableTrait;
 
     /* @since [*next-version*] */
     use CreateInvalidArgumentExceptionCapableTrait;
+
+    /* @since [*next-version*] */
+    use CreateOutOfRangeExceptionCapableTrait;
+
+    /* @since [*next-version*] */
+    use CreateContainerExceptionCapableTrait;
+
+    /* @since [*next-version*] */
+    use CreateNotFoundExceptionCapableTrait;
 
     /* @since [*next-version*] */
     use StringTranslatingTrait;
@@ -75,23 +105,23 @@ class ClientsController implements ControllerInterface
      *
      * @since [*next-version*]
      *
-     * @param array|ArrayAccess $params The params.
+     * @param array|stdClass|ArrayAccess|ContainerInterface $params The params.
      *
      * @return array
      */
     protected function _generateEddCustomersQueryArgs($params)
     {
-        if (isset($params['search'])) {
+        if ($this->_containerHas($params, 'search')) {
             return [
-                'name'           => $params['search'],
+                'name'           => $this->_containerGet($params, 'search'),
                 'search_columns' => ['name', 'email'],
             ];
         }
 
         return [
-            'id'      => isset($params['id']) ? $params['id'] : null,
-            'name'    => isset($params['name']) ? $params['name'] : null,
-            'email'   => isset($params['email']) ? $params['email'] : null,
+            'id'      => $this->_containerHas($params, 'id') ? $this->_containerGet($params, 'id') : null,
+            'name'    => $this->_containerHas($params, 'name') ? $this->_containerGet($params, 'name') : null,
+            'email'   => $this->_containerHas($params, 'email') ? $this->_containerGet($params, 'email') : null,
             'orderby' => 'id',
             'order'   => 'ASC',
         ];
