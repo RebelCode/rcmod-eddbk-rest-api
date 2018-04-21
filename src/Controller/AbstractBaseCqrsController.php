@@ -127,11 +127,11 @@ abstract class AbstractBaseCqrsController implements ControllerInterface
      *
      * @since [*next-version*]
      *
-     * @param LogicalExpressionInterface|null $condition The root condition.
-     * @param string                          $entity    The entity name to use in the expression.
-     * @param string                          $field     The name of field.
-     * @param mixed                           $value     The query value.
-     * @param string                          $compare   The comparison mode - the  expression builder method.
+     * @param LogicalExpressionInterface|null  $condition The root condition.
+     * @param string|Stringable                $entity    The entity name to use in the expression.
+     * @param string|Stringable                $field     The name of field.
+     * @param mixed                            $value     The query value.
+     * @param string|Stringable|int|float|bool $compare   The comparison mode - the  expression builder method.
      *
      * @return LogicalExpressionInterface|null The amended condition.
      */
