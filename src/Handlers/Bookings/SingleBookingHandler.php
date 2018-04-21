@@ -5,10 +5,8 @@ namespace RebelCode\EddBookings\RestApi\Handlers\Bookings;
 use Dhii\Data\Container\CreateNotFoundExceptionCapableTrait;
 use Dhii\Exception\CreateRuntimeExceptionCapableTrait;
 use Dhii\I18n\StringTranslatingTrait;
-use Dhii\Invocation\InvocableInterface;
-use Exception;
-use Psr\Container\NotFoundExceptionInterface;
 use RebelCode\EddBookings\RestApi\Controller\ControllerInterface;
+use RebelCode\EddBookings\RestApi\Handlers\AbstractWpRestApiHandler;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -18,7 +16,7 @@ use WP_REST_Response;
  *
  * @since [*next-version*]
  */
-class SingleBookingHandler implements InvocableInterface
+class SingleBookingHandler extends AbstractWpRestApiHandler
 {
     /* @since [*next-version*] */
     use CreateRuntimeExceptionCapableTrait;
@@ -55,37 +53,33 @@ class SingleBookingHandler implements InvocableInterface
      *
      * @since [*next-version*]
      */
-    public function __invoke()
+    public function _handle(WP_REST_Request $request)
     {
-        /* @var $request WP_REST_Request */
-        $request = func_get_arg(0);
-        $id      = $request['id'];
+        $id       = $request->get_param('id');
+        $bookings = $this->controller->get(['id' => $id,]);
 
-        try {
-            $bookings = $this->controller->get([
-                'id' => ($id = $request['id']),
-            ]);
+        $count = count($bookings);
 
-            $count = count($bookings);
-
-            if ($count === 0) {
-                throw $this->_createNotFoundException(
-                    $this->__('No booking found for id "%s"', [$id]), null, null, null, $id);
-            }
-
-            if ($count > 1) {
-                throw $this->_createRuntimeException($this->__('Found %d matching bookings', [$count]));
-            }
-
-            foreach ($bookings as $booking) {
-                break;
-            }
-
-            return new WP_REST_Response($booking->toArray(), 200);
-        } catch (NotFoundExceptionInterface $notFoundException) {
-            return new WP_Error('eddbk_booking_invalid_id', 'Invalid booking ID.', ['status' => 404]);
-        } catch (Exception $exception) {
-            return new WP_Error('eddbk_booking_error', $exception->getMessage(), ['status' => 500]);
+        if ($count === 0) {
+            return new WP_Error(
+                'eddbk_booking_not_found',
+                $this->__('No booking found for id "%s"', [$id]),
+                ['status' => 404]
+            );
         }
+
+        if ($count > 1) {
+            return new WP_Error(
+                'eddbk_booking_query_error',
+                $this->__('Found %d matching bookings', [$count]),
+                ['status' => 500]
+            );
+        }
+
+        foreach ($bookings as $booking) {
+            break;
+        }
+
+        return new WP_REST_Response($booking->toArray(), 200);
     }
 }

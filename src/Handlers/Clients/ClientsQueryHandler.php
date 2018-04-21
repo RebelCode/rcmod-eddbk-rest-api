@@ -3,12 +3,9 @@
 namespace RebelCode\EddBookings\RestApi\Handlers\Clients;
 
 use Dhii\Exception\CreateRuntimeExceptionCapableTrait;
-use Dhii\Invocation\InvocableInterface;
-use Exception;
-use Psr\Container\NotFoundExceptionInterface;
 use RebelCode\EddBookings\RestApi\Controller\ControllerInterface;
+use RebelCode\EddBookings\RestApi\Handlers\AbstractWpRestApiHandler;
 use RebelCode\EddBookings\RestApi\Resource\ResourceInterface;
-use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 
@@ -17,7 +14,7 @@ use WP_REST_Response;
  *
  * @since [*next-version*]
  */
-class ClientsQueryHandler implements InvocableInterface
+class ClientsQueryHandler extends AbstractWpRestApiHandler
 {
     /* @since [*next-version*] */
     use CreateRuntimeExceptionCapableTrait;
@@ -48,22 +45,20 @@ class ClientsQueryHandler implements InvocableInterface
      *
      * @since [*next-version*]
      */
-    public function __invoke()
+    public function _handle(WP_REST_Request $request)
     {
-        /* @var $request WP_REST_Request */
-        $request = func_get_arg(0);
+        $clients = $this->controller->get($request);
 
-        try {
-            $clients = $this->controller->get($request);
-            $result  = array_map(function (ResourceInterface $resource) {
-                return $resource->toArray();
-            }, $clients);
-
-            return new WP_REST_Response($result, 200);
-        } catch (NotFoundExceptionInterface $notFoundException) {
-            return new WP_Error('eddbk_client_invalid_id', 'Invalid client ID.', ['status' => 404]);
-        } catch (Exception $exception) {
-            return new WP_Error('eddbk_client_error', $exception->getMessage(), ['status' => 500]);
+        $items = [];
+        foreach ($clients as $_client) {
+            $items[] = $_client->toArray();
         }
+
+        $response = [
+            'items' => $items,
+            'count' => count($items),
+        ];
+
+        return new WP_REST_Response($response, 200);
     }
 }
