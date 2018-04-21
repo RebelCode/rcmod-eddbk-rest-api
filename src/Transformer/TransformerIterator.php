@@ -3,7 +3,6 @@
 namespace RebelCode\EddBookings\RestApi\Transformer;
 
 use Dhii\Exception\CreateOutOfRangeExceptionCapableTrait;
-use Dhii\Exception\CreateRuntimeExceptionCapableTrait;
 use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Iterator\CreateIterationCapableTrait;
 use Dhii\Iterator\CreateIteratorExceptionCapableTrait;
