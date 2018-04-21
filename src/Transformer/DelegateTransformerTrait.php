@@ -31,7 +31,13 @@ trait DelegateTransformerTrait
     protected function _transform($source)
     {
         try {
-            return $this->_getTransformer($source)->transform($source);
+            $transformer = $this->_getTransformer($source);
+
+            if ($transformer !== null) {
+                return $transformer->transform($source);
+            }
+
+            return $this->_onNoDelegateTransformer($source);
         } catch (RootException $exception) {
             throw $this->_createRuntimeException(
                 $this->__('An error occurred while transforming the source data'),
@@ -48,9 +54,24 @@ trait DelegateTransformerTrait
      *
      * @param mixed $source The source data for which to retrieve a transformer for.
      *
-     * @return TransformerInterface The transformer to use for transforming the given source data.
+     * @return TransformerInterface|null The transformer to use for transforming, or null if no suitable transformer
+     *                                   can be returned.
      */
     abstract protected function _getTransformer($source);
+
+    /**
+     * Handles the source data in the event that no delegate transformer could retrieved.
+     *
+     * @since [*next-version*]
+     *
+     * @param mixed $source The source data for which no transformer was retrieved.
+     *
+     * @return mixed The transformed data.
+     *
+     * @throws TransformerExceptionInterface If an error occurred during transformation.
+     * @throws CouldNotTransformExceptionInterface If the given source data could not be transformed.
+     */
+    abstract protected function _onNoDelegateTransformer($source);
 
     /**
      * Creates a new Runtime exception.
