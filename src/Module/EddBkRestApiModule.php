@@ -125,7 +125,8 @@ class EddBkRestApiModule extends AbstractBaseModule
                     return new BookingsController(
                         $c->get('eddbk_booking_resource_factory'),
                         $c->get('bookings_select_rm'),
-                        $c->get('sql_expression_builder')
+                        $c->get('sql_expression_builder'),
+                        $c->get('eddbk_clients_controller')
                     );
                 },
 
