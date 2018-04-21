@@ -3,6 +3,7 @@
 namespace RebelCode\EddBookings\RestApi\Controller;
 
 use ArrayAccess;
+use ArrayIterator;
 use Dhii\Data\Container\ContainerGetCapableTrait;
 use Dhii\Data\Container\ContainerHasCapableTrait;
 use Dhii\Data\Container\CreateContainerExceptionCapableTrait;
@@ -11,10 +12,12 @@ use Dhii\Data\Object\NormalizeKeyCapableTrait;
 use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
 use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\I18n\StringTranslatingTrait;
+use Dhii\Iterator\NormalizeIteratorCapableTrait;
 use Dhii\Storage\Resource\SelectCapableInterface;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
+use Dhii\Util\String\StringableInterface as Stringable;
+use IteratorIterator;
 use Psr\Container\ContainerInterface;
-use RebelCode\EddBookings\RestApi\Resource\ResourceInterface;
 use stdClass;
 use Traversable;
 
@@ -39,6 +42,9 @@ abstract class AbstractBaseCqrsController implements ControllerInterface
 
     /* @since [*next-version*] */
     use NormalizeStringCapableTrait;
+
+    /* @since [*next-version*] */
+    use NormalizeIteratorCapableTrait;
 
     /* @since [*next-version*] */
     use CreateInvalidArgumentExceptionCapableTrait;
@@ -85,7 +91,7 @@ abstract class AbstractBaseCqrsController implements ControllerInterface
             $results[$_idx] = $this->_createResource($_data);
         }
 
-        return $results;
+        return $this->_normalizeIterator($results);
     }
 
     /**
@@ -135,12 +141,7 @@ abstract class AbstractBaseCqrsController implements ControllerInterface
             return $condition;
         }
 
-        $b = $this->exprBuilder;
-
-        $queryCondition = $b->$compare(
-            $b->ef($entity, $field),
-            $b->lit($value)
-        );
+        $queryCondition = $this->_createComparisonExpression($compare, $entity, $field, $value);
 
         // If query condition is null, make it the query condition
         if ($condition === null) {
@@ -151,6 +152,46 @@ abstract class AbstractBaseCqrsController implements ControllerInterface
         }
 
         return $condition;
+    }
+
+    /**
+     * Creates a comparison expression.
+     *
+     * @since [*next-version*]
+     *
+     * @param string|Stringable                $type   The expression type.
+     * @param string|Stringable                $entity The entity name.
+     * @param string|Stringable                $field  The field name.
+     * @param string|Stringable|int|float|bool $value  The comparison value.
+     *
+     * @return LogicalExpressionInterface
+     */
+    protected function _createComparisonExpression($type, $entity, $field, $value)
+    {
+        return call_user_func_array([$this->exprBuilder, $type], [
+            $this->exprBuilder->ef($entity, $field),
+            $this->exprBuilder->lit($value),
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _createArrayIterator(array $array)
+    {
+        return new ArrayIterator($array);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _createTraversableIterator(Traversable $traversable)
+    {
+        return new IteratorIterator($traversable);
     }
 
     /**
