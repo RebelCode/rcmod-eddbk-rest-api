@@ -13,6 +13,8 @@ use Dhii\Iterator\IteratorInterface;
 use Dhii\Iterator\IteratorTrait;
 use Exception as RootException;
 use Iterator;
+use OutOfRangeException;
+use RebelCode\EddBookings\RestApi\Transformer\Exception\TransformerExceptionInterface;
 
 /**
  * An iterator implementation that wraps and iterates over another iterator and applies transformations to the
@@ -166,7 +168,8 @@ class TransformerIterator implements IteratorInterface
      *
      * @return IterationInterface The iteration instance.
      *
-     * @throws IteratorExceptionInterface If the transformed iteration is not a valid iteration.
+     * @throws OutOfRangeException If the transformed iteration is not a valid iteration.
+     * @throws IteratorExceptionInterface If the iteration could not be transformed.
      */
     protected function _getTransformedIteration()
     {
@@ -175,7 +178,16 @@ class TransformerIterator implements IteratorInterface
             $this->iterator->current()
         );
 
-        $transformed = $this->transformer->transform($iteration);
+        try {
+            $transformed = $this->transformer->transform($iteration);
+        } catch (TransformerExceptionInterface $exception) {
+            throw $this->_createIteratorException(
+                $this->__('An error occurred while trying to transform the iteration'),
+                null,
+                $exception,
+                $this
+            );
+        }
 
         if (!$transformed instanceof IterationInterface) {
             throw $this->_createOutOfRangeException(
