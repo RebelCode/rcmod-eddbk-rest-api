@@ -2,9 +2,12 @@
 
 namespace RebelCode\EddBookings\RestApi\Transformer;
 
+use Dhii\Exception\CreateOutOfRangeExceptionCapableTrait;
+use Dhii\Exception\CreateRuntimeExceptionCapableTrait;
 use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Iterator\CreateIterationCapableTrait;
 use Dhii\Iterator\CreateIteratorExceptionCapableTrait;
+use Dhii\Iterator\Exception\IteratorExceptionInterface;
 use Dhii\Iterator\IterationAwareTrait;
 use Dhii\Iterator\IterationInterface;
 use Dhii\Iterator\IteratorInterface;
@@ -13,8 +16,11 @@ use Exception as RootException;
 use Iterator;
 
 /**
- * An iterator implementation that wraps and iterates over another iterator and applies transformations to the keys
- * and values in the iteration before yielding them.
+ * An iterator implementation that wraps and iterates over another iterator and applies transformations to the
+ * iterations before yielding them.
+ *
+ * The given transformer is given an {@see IterationInterface} instance to transform, and is expected to return the
+ * transformed {@see IterationInterface} instance to yield.
  *
  * @since [*next-version*]
  */
@@ -33,6 +39,9 @@ class TransformerIterator implements IteratorInterface
     use CreateIteratorExceptionCapableTrait;
 
     /* @since [*next-version*] */
+    use CreateOutOfRangeExceptionCapableTrait;
+
+    /* @since [*next-version*] */
     use StringTranslatingTrait;
 
     /**
@@ -45,40 +54,26 @@ class TransformerIterator implements IteratorInterface
     protected $iterator;
 
     /**
-     * The transformer to use for values.
+     * The transformer to use for transforming iterations.
      *
      * @since [*next-version*]
      *
-     * @var TransformerInterface|null
+     * @var TransformerInterface
      */
-    protected $valTransformer;
-
-    /**
-     * The transformer to use for keys.
-     *
-     * @since [*next-version*]
-     *
-     * @var TransformerInterface|null
-     */
-    protected $keyTransformer;
+    protected $transformer;
 
     /**
      * Constructor.
      *
      * @since [*next-version*]
      *
-     * @param Iterator                  $iterator       The iterator to wrap.
-     * @param TransformerInterface|null $valTransformer The transformer to use for transforming values, if any.
-     * @param TransformerInterface|null $keyTransformer The transformer to use for transforming keys, if any.
+     * @param Iterator             $iterator    The iterator to wrap.
+     * @param TransformerInterface $transformer The transformer to use for transforming iterations.
      */
-    public function __construct(
-        $iterator,
-        TransformerInterface $valTransformer,
-        TransformerInterface $keyTransformer = null
-    ) {
-        $this->iterator       = $iterator;
-        $this->valTransformer = $valTransformer;
-        $this->keyTransformer = $keyTransformer;
+    public function __construct($iterator, TransformerInterface $transformer)
+    {
+        $this->iterator    = $iterator;
+        $this->transformer = $transformer;
     }
 
     /**
@@ -171,20 +166,28 @@ class TransformerIterator implements IteratorInterface
      * @since [*next-version*]
      *
      * @return IterationInterface The iteration instance.
+     *
+     * @throws IteratorExceptionInterface If the transformed iteration is not a valid iteration.
      */
     protected function _getTransformedIteration()
     {
-        $key = $this->iterator->key();
-        $key = ($this->keyTransformer !== null)
-            ? $this->keyTransformer->transform($key)
-            : $key;
+        $iteration = $this->_createIteration(
+            $this->iterator->key(),
+            $this->iterator->current()
+        );
 
-        $val = $this->iterator->current();
-        $val = ($this->valTransformer !== null)
-            ? $this->valTransformer->transform($val)
-            : $val;
+        $transformed = $this->transformer->transform($iteration);
 
-        return $this->_createIteration($key, $val);
+        if (!$transformed instanceof IterationInterface) {
+            throw $this->_createOutOfRangeException(
+                $this->__('The transformed iteration is not a valid iteration instance'),
+                null,
+                null,
+                $iteration
+            );
+        }
+
+        return $transformed;
     }
 
     /**
