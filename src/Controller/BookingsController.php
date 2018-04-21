@@ -2,8 +2,9 @@
 
 namespace RebelCode\EddBookings\RestApi\Controller;
 
+use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\Storage\Resource\SelectCapableInterface;
-use RebelCode\EddBookings\RestApi\Resource\BookingResource;
+use Dhii\Util\String\StringableInterface;
 use RebelCode\EddBookings\RestApi\Resource\ResourceFactoryInterface;
 
 /**
@@ -43,6 +44,11 @@ class BookingsController extends AbstractBaseCqrsController
         $this->clientsController = $clientsController;
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
     protected function _buildCondition($params)
     {
         $condition = parent::_buildCondition($params);
@@ -51,17 +57,35 @@ class BookingsController extends AbstractBaseCqrsController
             return $condition;
         }
 
-        // Gather client IDs that match the search
+        // Add condition to search by client
         $search    = $this->_containerGet($params, 'search');
+        $condition = $this->_addClientsSearchCondition($condition, $search);
+
+        return $condition;
+    }
+
+    /**
+     * Adds a client search condition to an existing query condition.
+     *
+     * @since [*next-version*]
+     *
+     * @param LogicalExpressionInterface|null $condition The condition to add to.
+     * @param string|StringableInterface      $search    The client search string.
+     *
+     * @return LogicalExpressionInterface The new condition.
+     */
+    protected function _addClientsSearchCondition($condition, $search)
+    {
         $clients   = $this->clientsController->get(['search' => $search]);
         $clientIds = [];
+
         foreach ($clients as $_client) {
             $clientIds[] = $this->_containerGet($_client, 'id');
         }
 
-        $condition = $this->_addQueryCondition($condition, 'booking', 'client_id', $clientIds, 'like');
+        $clientIdList = implode(',', $clientIds);
 
-        return $condition;
+        return $this->_addQueryCondition($condition, 'booking', 'client_id', $clientIdList, 'like');
     }
 
     /**
