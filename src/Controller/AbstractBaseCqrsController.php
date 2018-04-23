@@ -12,7 +12,6 @@ use Dhii\Data\Object\NormalizeKeyCapableTrait;
 use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
 use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\I18n\StringTranslatingTrait;
-use Dhii\Iterator\NormalizeIteratorCapableTrait;
 use Dhii\Storage\Resource\SelectCapableInterface;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
 use Dhii\Util\String\StringableInterface as Stringable;
@@ -26,11 +25,8 @@ use Traversable;
  *
  * @since [*next-version*]
  */
-abstract class AbstractBaseCqrsController implements ControllerInterface
+abstract class AbstractBaseCqrsController extends AbstractBaseController implements ControllerInterface
 {
-    /* @since [*next-version*] */
-    use CreateResourceCapableTrait;
-
     /* @since [*next-version*] */
     use ContainerGetCapableTrait;
 
@@ -42,9 +38,6 @@ abstract class AbstractBaseCqrsController implements ControllerInterface
 
     /* @since [*next-version*] */
     use NormalizeStringCapableTrait;
-
-    /* @since [*next-version*] */
-    use NormalizeIteratorCapableTrait;
 
     /* @since [*next-version*] */
     use CreateInvalidArgumentExceptionCapableTrait;
@@ -81,17 +74,9 @@ abstract class AbstractBaseCqrsController implements ControllerInterface
      *
      * @since [*next-version*]
      */
-    public function get($params = [])
+    protected function _get($params = [])
     {
-        $condition = $this->_buildCondition($params);
-        $selected  = $this->selectRm->select($condition);
-
-        $results = [];
-        foreach ($selected as $_idx => $_data) {
-            $results[$_idx] = $this->_createResource($_data);
-        }
-
-        return $this->_normalizeIterator($results);
+        return $this->selectRm->select($this->_buildCondition($params));
     }
 
     /**
