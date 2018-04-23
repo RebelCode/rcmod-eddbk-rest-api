@@ -68,8 +68,8 @@ class IterationTransformer implements TransformerInterface
             );
         }
 
-        $key = ($this->keyT9r !== null) ? $this->keyT9r->transform($source->getKey()) : null;
-        $val = ($this->valT9r !== null) ? $this->valT9r->transform($source->getValue()) : null;
+        $key = ($this->keyT9r !== null) ? $this->keyT9r->transform($source->getKey()) : $source->getKey();
+        $val = ($this->valT9r !== null) ? $this->valT9r->transform($source->getValue()) : $source->getValue();
 
         return $this->_createIteration($key, $val);
     }
