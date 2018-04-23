@@ -25,26 +25,8 @@ use RebelCode\EddBookings\RestApi\Transformer\Exception\TransformerExceptionInte
  *
  * @since [*next-version*]
  */
-class TransformerIterator implements IteratorInterface
+class TransformerIterator implements TransformerInterface, Iterator
 {
-    /* @since [*next-version*] */
-    use IteratorTrait;
-
-    /* @since [*next-version*] */
-    use IterationAwareTrait;
-
-    /* @since [*next-version*] */
-    use CreateIterationCapableTrait;
-
-    /* @since [*next-version*] */
-    use CreateIteratorExceptionCapableTrait;
-
-    /* @since [*next-version*] */
-    use CreateOutOfRangeExceptionCapableTrait;
-
-    /* @since [*next-version*] */
-    use StringTranslatingTrait;
-
     /**
      * The wrapped iterator.
      *
@@ -84,7 +66,7 @@ class TransformerIterator implements IteratorInterface
      */
     public function rewind()
     {
-        $this->_rewind();
+        $this->iterator->rewind();
     }
 
     /**
@@ -94,7 +76,7 @@ class TransformerIterator implements IteratorInterface
      */
     public function key()
     {
-        return $this->_key();
+        return $this->iterator->key();
     }
 
     /**
@@ -104,7 +86,7 @@ class TransformerIterator implements IteratorInterface
      */
     public function current()
     {
-        return $this->_value();
+        return $this->transform($this->iterator->current());
     }
 
     /**
@@ -114,7 +96,7 @@ class TransformerIterator implements IteratorInterface
      */
     public function next()
     {
-        $this->_next();
+        $this->iterator->next();
     }
 
     /**
@@ -124,7 +106,7 @@ class TransformerIterator implements IteratorInterface
      */
     public function valid()
     {
-        return $this->_valid();
+        return $this->iterator->valid();
     }
 
     /**
@@ -132,85 +114,8 @@ class TransformerIterator implements IteratorInterface
      *
      * @since [*next-version*]
      */
-    public function getIteration()
+    public function transform($source)
     {
-        return $this->_getIteration();
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @since [*next-version*]
-     */
-    protected function _reset()
-    {
-        $this->iterator->rewind();
-
-        return $this->_getTransformedIteration();
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @since [*next-version*]
-     */
-    protected function _loop()
-    {
-        $this->iterator->next();
-
-        return $this->_getTransformedIteration();
-    }
-
-    /**
-     * Gets the current iteration, with transformations applied to the key and value if applicable.
-     *
-     * @since [*next-version*]
-     *
-     * @return IterationInterface The iteration instance.
-     *
-     * @throws OutOfRangeException If the transformed iteration is not a valid iteration.
-     * @throws IteratorExceptionInterface If the iteration could not be transformed.
-     */
-    protected function _getTransformedIteration()
-    {
-        $iteration = $this->_createIteration(
-            $this->iterator->key(),
-            $this->iterator->current()
-        );
-
-        try {
-            $transformed = $this->transformer->transform($iteration);
-        } catch (TransformerExceptionInterface $exception) {
-            throw $this->_createIteratorException(
-                $this->__('An error occurred while trying to transform the iteration'),
-                null,
-                $exception,
-                $this
-            );
-        }
-
-        if (!$transformed instanceof IterationInterface) {
-            throw $this->_createOutOfRangeException(
-                $this->__('The transformed iteration is not a valid iteration instance'),
-                null,
-                null,
-                $iteration
-            );
-        }
-
-        return $transformed;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @since [*next-version*]
-     */
-    protected function _throwIteratorException(
-        $message = null,
-        $code = null,
-        RootException $previous = null
-    ) {
-        return $this->_createIteratorException($message, $code, $previous, $this);
+        return $this->transformer->transform($source);
     }
 }
