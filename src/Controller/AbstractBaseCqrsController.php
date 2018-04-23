@@ -110,13 +110,13 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
      */
     protected function _setSelectRm($selectRm)
     {
-        if ($selectRm === null || $selectRm instanceof SelectCapableInterface) {
-            $this->selectRm = $selectRm;
+        if ($selectRm !== null && !($selectRm instanceof SelectCapableInterface)) {
+            throw $this->_createInvalidArgumentException(
+                $this->__('Argument is not a SELECT resource model'), null, null, $selectRm
+            );
         }
 
-        throw $this->_createInvalidArgumentException(
-            $this->__('Argument is not a SELECT resource model'), null, null, $selectRm
-        );
+        $this->selectRm = $selectRm;
     }
 
     /**
