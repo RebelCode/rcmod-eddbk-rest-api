@@ -227,7 +227,9 @@ class MapTransformer implements TransformerInterface
             }
 
             // Get the value from the source map
-            $value = $this->_containerGetDefault($source, $sourceKey);
+            $value = $sourceKey !== null
+                ? $this->_containerGetDefault($source, $sourceKey)
+                : null;
             // Get the transformer
             $transformer = $this->_containerGetDefault($config, static::K_TRANSFORMER, null);
 
