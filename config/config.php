@@ -27,6 +27,13 @@ $cfg['eddbk_rest_api']['name'] = 'eddbk';
  */
 $cfg['eddbk_rest_api']['namespace'] = '${eddbk_rest_api/name}/v${eddbk_rest_api/version}';
 
+/**
+ * The date time format to use in REST API responses.
+ *
+ * @since [*next-version*]
+ */
+$cfg['eddbk_rest_api']['datetime_format'] = 'Y-m-d H:i:s';
+
 /*
  * The REST API routes.
  *
