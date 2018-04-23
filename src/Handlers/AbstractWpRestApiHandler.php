@@ -7,8 +7,6 @@ use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Invocation\InvocableInterface;
 use Dhii\Util\Normalization\NormalizeArrayCapableTrait;
 use Exception;
-use stdClass;
-use Traversable;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -42,7 +40,7 @@ abstract class AbstractWpRestApiHandler implements InvocableInterface
         try {
             return $this->_handle($request);
         } catch (Exception $exception) {
-            return new WP_Error($exception->getCode(), $exception->getMessage(), ['status' => 500]);
+            return new WP_Error('eddbk_rest_api_error', $exception->getMessage(), ['status' => 500]);
         }
     }
 
