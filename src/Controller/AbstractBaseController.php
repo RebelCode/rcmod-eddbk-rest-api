@@ -42,7 +42,7 @@ abstract class AbstractBaseController implements ControllerInterface
     }
 
     /**
-     * Retrieves the results
+     * Retrieves the results.
      *
      * @since [*next-version*]
      *

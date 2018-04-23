@@ -29,7 +29,7 @@ class TransformerException extends AbstractBaseException implements TransformerE
      * @param TransformerInterface|null $transformer The transformer that erred, if any.
      */
     public function __construct(
-        $message = "",
+        $message = '',
         $code = 0,
         Throwable $previous = null,
         TransformerInterface $transformer = null

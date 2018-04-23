@@ -39,7 +39,7 @@ class CouldNotTransformException extends AbstractBaseException implements CouldN
      * @param mixed|null                $source      The source data that could not be transformed, if any.
      */
     public function __construct(
-        $message = "",
+        $message = '',
         $code = 0,
         Throwable $previous = null,
         TransformerInterface $transformer = null,

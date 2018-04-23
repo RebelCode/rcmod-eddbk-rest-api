@@ -22,11 +22,11 @@ trait DelegateTransformerTrait
      *
      * @param mixed $source The source data to transform.
      *
-     * @return mixed The output data.
-     *
-     * @throws RuntimeException If a problem occurred while retrieving the delegate transformer.
-     * @throws TransformerExceptionInterface If an error occurred during transformation.
+     * @throws RuntimeException                    If a problem occurred while retrieving the delegate transformer.
+     * @throws TransformerExceptionInterface       If an error occurred during transformation.
      * @throws CouldNotTransformExceptionInterface If the given source data could not be transformed.
+     *
+     * @return mixed The output data.
      */
     protected function _transform($source)
     {
@@ -66,10 +66,10 @@ trait DelegateTransformerTrait
      *
      * @param mixed $source The source data for which no transformer was retrieved.
      *
-     * @return mixed The transformed data.
-     *
-     * @throws TransformerExceptionInterface If an error occurred during transformation.
+     * @throws TransformerExceptionInterface       If an error occurred during transformation.
      * @throws CouldNotTransformExceptionInterface If the given source data could not be transformed.
+     *
+     * @return mixed The transformed data.
      */
     abstract protected function _onNoDelegateTransformer($source);
 

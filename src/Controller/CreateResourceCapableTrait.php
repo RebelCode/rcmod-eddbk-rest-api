@@ -36,7 +36,7 @@ trait CreateResourceCapableTrait
     protected function _createResource($data)
     {
         return $this->resourceFactory->make([
-            ResourceFactoryInterface::K_CFG_DATA => $data
+            ResourceFactoryInterface::K_CFG_DATA => $data,
         ]);
     }
 }

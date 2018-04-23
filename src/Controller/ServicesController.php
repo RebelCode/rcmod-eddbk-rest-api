@@ -13,7 +13,6 @@ use Dhii\Factory\FactoryAwareTrait;
 use Dhii\Factory\FactoryInterface;
 use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
-use EDD_DB;
 use WP_Query;
 
 /**

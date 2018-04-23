@@ -19,10 +19,10 @@ interface TransformerInterface
      *
      * @param mixed $source The source data to transform.
      *
-     * @return mixed The output data.
-     *
-     * @throws TransformerExceptionInterface If an error occurred during transformation.
+     * @throws TransformerExceptionInterface       If an error occurred during transformation.
      * @throws CouldNotTransformExceptionInterface If the given source data could not be transformed.
+     *
+     * @return mixed The output data.
      */
     public function transform($source);
 }

@@ -37,7 +37,7 @@ trait DelegateTransformerContainerTrait
         $transformerKey = $this->_getTransformerKey($source);
 
         if (!$this->_containerHas($container, $transformerKey)) {
-            return null;
+            return;
         }
 
         $transformer = $this->_containerGet($container, $transformerKey);

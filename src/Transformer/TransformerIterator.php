@@ -2,19 +2,8 @@
 
 namespace RebelCode\EddBookings\RestApi\Transformer;
 
-use Dhii\Exception\CreateOutOfRangeExceptionCapableTrait;
-use Dhii\I18n\StringTranslatingTrait;
-use Dhii\Iterator\CreateIterationCapableTrait;
-use Dhii\Iterator\CreateIteratorExceptionCapableTrait;
-use Dhii\Iterator\Exception\IteratorExceptionInterface;
-use Dhii\Iterator\IterationAwareTrait;
 use Dhii\Iterator\IterationInterface;
-use Dhii\Iterator\IteratorInterface;
-use Dhii\Iterator\IteratorTrait;
-use Exception as RootException;
 use Iterator;
-use OutOfRangeException;
-use RebelCode\EddBookings\RestApi\Transformer\Exception\TransformerExceptionInterface;
 
 /**
  * An iterator implementation that wraps and iterates over another iterator and applies transformations to the

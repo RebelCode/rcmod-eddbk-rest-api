@@ -86,7 +86,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_bookings_controller'                          => function (ContainerInterface $c) {
+                'eddbk_bookings_controller' => function (ContainerInterface $c) {
                     return new BookingsController(
                         $c->get('eddbk_rest_api_bookings_iterator_factory'),
                         $c->get('bookings_select_rm'),
@@ -100,7 +100,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_services_controller'                          => function (ContainerInterface $c) {
+                'eddbk_services_controller' => function (ContainerInterface $c) {
                     return new ServicesController($c->get('eddbk_rest_api_services_iterator_factory'));
                 },
 
@@ -109,7 +109,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_clients_controller'                           => function (ContainerInterface $c) {
+                'eddbk_clients_controller' => function (ContainerInterface $c) {
                     return new ClientsController($c->get('eddbk_rest_api_clients_iterator_factory'), EDD()->customers);
                 },
 
@@ -122,9 +122,9 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_bookings_iterator_factory'           => function (ContainerInterface $c) {
+                'eddbk_rest_api_bookings_iterator_factory' => function (ContainerInterface $c) {
                     return new GenericCallbackFactory(function ($config) use ($c) {
-                        $items    = $this->_containerGet($config, 'items');
+                        $items = $this->_containerGet($config, 'items');
                         $iterator = $this->_normalizeIterator($items);
 
                         return new TransformerIterator($iterator, $c->get('eddbk_rest_api_bookings_transformer'));
@@ -136,7 +136,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_services_iterator_factory'           => function (ContainerInterface $c) {
+                'eddbk_rest_api_services_iterator_factory' => function (ContainerInterface $c) {
                     return new GenericCallbackFactory(function ($config) use ($c) {
                         $items = $this->_containerGet($config, 'items');
 
@@ -158,9 +158,9 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_clients_iterator_factory'            => function (ContainerInterface $c) {
+                'eddbk_rest_api_clients_iterator_factory' => function (ContainerInterface $c) {
                     return new GenericCallbackFactory(function ($config) use ($c) {
-                        $items    = $this->_containerGet($config, 'items');
+                        $items = $this->_containerGet($config, 'items');
                         $iterator = $this->_normalizeIterator($items);
 
                         return new TransformerIterator($iterator, $c->get('eddbk_rest_api_clients_transformer'));
@@ -176,7 +176,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_query_bookings_handler'              => function (ContainerInterface $c) {
+                'eddbk_rest_api_query_bookings_handler' => function (ContainerInterface $c) {
                     return new BookingsQueryHandler(
                         $c->get('eddbk_bookings_controller'),
                         $c->get('booking_logic/statuses')
@@ -188,7 +188,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_get_booking_info_handler'            => function (ContainerInterface $c) {
+                'eddbk_rest_api_get_booking_info_handler' => function (ContainerInterface $c) {
                     return new SingleBookingHandler($c->get('eddbk_bookings_controller'));
                 },
 
@@ -201,7 +201,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_query_clients_handler'               => function (ContainerInterface $c) {
+                'eddbk_rest_api_query_clients_handler' => function (ContainerInterface $c) {
                     return new ClientsQueryHandler($c->get('eddbk_clients_controller'));
                 },
 
@@ -210,7 +210,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_get_client_info_handler'             => function (ContainerInterface $c) {
+                'eddbk_rest_api_get_client_info_handler' => function (ContainerInterface $c) {
                     return new SingleClientHandler($c->get('eddbk_clients_controller'));
                 },
 
@@ -223,7 +223,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_noop_transformer'                             => function (ContainerInterface $c = null) {
+                'eddbk_noop_transformer' => function (ContainerInterface $c = null) {
                     return new NoOpTransformer();
                 },
 
@@ -232,7 +232,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_post_array_transformer'                       => function (ContainerInterface $c) {
+                'eddbk_post_array_transformer' => function (ContainerInterface $c) {
                     return new CallbackTransformer(function ($post) {
                         if (!$post instanceof WP_Post) {
                             throw $this->_createInvalidArgumentException(
@@ -249,10 +249,10 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_timestamp_datetime_transformer'               => function (ContainerInterface $c) {
+                'eddbk_timestamp_datetime_transformer' => function (ContainerInterface $c) {
                     return new CallbackTransformer(function ($timestamp) use ($c) {
-                        $tzName   = get_option('timezone_string');
-                        $tzName   = empty($tzName) ? 'UTC' : $tzName;
+                        $tzName = get_option('timezone_string');
+                        $tzName = empty($tzName) ? 'UTC' : $tzName;
                         $timezone = new DateTimeZone($tzName);
                         $dateTime = new DateTime('@' . $timestamp, $timezone);
 
@@ -265,7 +265,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_bookings_transformer'                => function (ContainerInterface $c) {
+                'eddbk_rest_api_bookings_transformer' => function (ContainerInterface $c) {
                     return new MapTransformer([
                         [
                             'source' => 'id',
@@ -319,7 +319,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_services_transformer'                => function (ContainerInterface $c) {
+                'eddbk_rest_api_services_transformer' => function (ContainerInterface $c) {
                     return new MapTransformer([
                         [
                             'source' => 'ID',
@@ -343,7 +343,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_clients_transformer'                 => function (ContainerInterface $c) {
+                'eddbk_rest_api_clients_transformer' => function (ContainerInterface $c) {
                     return new MapTransformer([
                         [
                             'source' => 'id',
@@ -363,10 +363,10 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_service_id_transformer'              => function (ContainerInterface $c) {
+                'eddbk_rest_api_service_id_transformer' => function (ContainerInterface $c) {
                     return new CallbackTransformer(function ($serviceId) use ($c) {
                         $controller = $c->get('eddbk_services_controller');
-                        $services   = $controller->get(['id' => $serviceId]);
+                        $services = $controller->get(['id' => $serviceId]);
 
                         foreach ($services as $service) {
                             break;
@@ -381,10 +381,10 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_client_id_transformer'               => function (ContainerInterface $c) {
+                'eddbk_rest_api_client_id_transformer' => function (ContainerInterface $c) {
                     return new CallbackTransformer(function ($clientId) use ($c) {
                         $controller = $c->get('eddbk_clients_controller');
-                        $clients    = $controller->get(['id' => $clientId]);
+                        $clients = $controller->get(['id' => $clientId]);
 
                         foreach ($clients as $client) {
                             break;
@@ -402,7 +402,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                 'eddbk_rest_api_booking_timezone_offset_transformer' => function () {
                     return function ($value, $source) {
                         $timezone = new DateTimeZone($this->_containerGet($source, 'client_tz'));
-                        $time     = new DateTime('@' . $this->_containerGet($source, 'start'));
+                        $time = new DateTime('@' . $this->_containerGet($source, 'start'));
 
                         return $timezone->getOffset($time);
                     };
@@ -417,7 +417,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_initializer'                         => function (ContainerInterface $c) {
+                'eddbk_rest_api_initializer' => function (ContainerInterface $c) {
                     return new RestApiInitializer($c->get('eddbk_rest_api'), $c);
                 },
             ]

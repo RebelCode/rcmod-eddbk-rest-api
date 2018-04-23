@@ -56,7 +56,7 @@ class SingleBookingHandler extends AbstractWpRestApiHandler
     public function _handle(WP_REST_Request $request)
     {
         $id       = $request->get_param('id');
-        $bookings = $this->controller->get(['id' => $id,]);
+        $bookings = $this->controller->get(['id' => $id]);
         $bookings = $this->_normalizeArray($bookings);
         $count    = count($bookings);
 
