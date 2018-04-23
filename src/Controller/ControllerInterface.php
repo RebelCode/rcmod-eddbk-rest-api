@@ -4,8 +4,8 @@ namespace RebelCode\EddBookings\RestApi\Controller;
 
 use ArrayAccess;
 use Psr\Container\ContainerInterface;
-use RebelCode\EddBookings\RestApi\Resource\ResourceInterface;
 use stdClass;
+use Traversable;
 
 /**
  * An API controller - something that can work with API resources.
@@ -15,13 +15,13 @@ use stdClass;
 interface ControllerInterface
 {
     /**
-     * Retrieves resources.
+     * Retrieves resources based on given parameters.
      *
      * @since [*next-version*]
      *
-     * @param array|stdClass|ArrayAccess|ContainerInterface $params The params.
+     * @param array|stdClass|ArrayAccess|ContainerInterface $params The parameters.
      *
-     * @return ResourceInterface[] The resource instances.
+     * @return array|Traversable A list of container elements (array, stdClass, ArrayAccess or ContainerInterface).
      */
     public function get($params = []);
 }
