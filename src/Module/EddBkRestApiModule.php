@@ -91,7 +91,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                         $c->get('eddbk_rest_api_bookings_iterator_factory'),
                         $c->get('bookings_select_rm'),
                         $c->get('sql_expression_builder'),
-                        null // $c->get('eddbk_clients_controller')
+                        $c->get('eddbk_clients_controller')
                     );
                 },
 
