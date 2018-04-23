@@ -2,7 +2,6 @@
 
 namespace RebelCode\EddBookings\RestApi\Controller;
 
-use ArrayAccess;
 use Dhii\Data\Container\ContainerGetCapableTrait;
 use Dhii\Data\Container\ContainerHasCapableTrait;
 use Dhii\Data\Container\CreateContainerExceptionCapableTrait;
@@ -10,15 +9,11 @@ use Dhii\Data\Container\CreateNotFoundExceptionCapableTrait;
 use Dhii\Data\Container\NormalizeKeyCapableTrait;
 use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
 use Dhii\Exception\CreateOutOfRangeExceptionCapableTrait;
+use Dhii\Factory\FactoryAwareTrait;
+use Dhii\Factory\FactoryInterface;
 use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
 use EDD_DB;
-use Psr\Container\ContainerInterface;
-use RebelCode\EddBookings\RestApi\Resource\ResourceFactoryInterface;
-use RebelCode\EddBookings\RestApi\Resource\ResourceInterface;
-use RebelCode\EddBookings\RestApi\Resource\ServiceResource;
-use stdClass;
-use WP_Post;
 use WP_Query;
 
 /**
@@ -26,10 +21,13 @@ use WP_Query;
  *
  * @since [*next-version*]
  */
-class ServicesController implements ControllerInterface
+class ServicesController extends AbstractBaseController
 {
     /* @since [*next-version*] */
-    use CreateResourceCapableTrait;
+    use FactoryAwareTrait {
+        _getFactory as _getIteratorFactory;
+        _setFactory as _setIteratorFactory;
+    }
 
     /* @since [*next-version*] */
     use ContainerGetCapableTrait;
@@ -63,11 +61,11 @@ class ServicesController implements ControllerInterface
      *
      * @since [*next-version*]
      *
-     * @param ResourceFactoryInterface $resourceFactory The resource factory.
+     * @param FactoryInterface $iteratorFactory The iterator factory to use for the results.
      */
-    public function __construct(ResourceFactoryInterface $resourceFactory)
+    public function __construct(FactoryInterface $iteratorFactory)
     {
-        $this->resourceFactory = $resourceFactory;
+        $this->_setIteratorFactory($iteratorFactory);
     }
 
     /**
@@ -75,10 +73,8 @@ class ServicesController implements ControllerInterface
      *
      * @since [*next-version*]
      */
-    public function get($params = [])
+    public function _get($params = [])
     {
-        $posts = [];
-
         if ($this->_containerHas($params, 'id')) {
             $post  = get_post($this->_containerGet($params, 'id'));
             $posts = [$post];
@@ -91,20 +87,6 @@ class ServicesController implements ControllerInterface
             $posts = $query->posts;
         }
 
-        return array_map([$this, '_createResourceFromWpPost'], $posts);
-    }
-
-    /**
-     * Creates a service resource instance from the given post.
-     *
-     * @since [*next-version*]
-     *
-     * @param WP_Post $post The resource data.
-     *
-     * @return ResourceInterface
-     */
-    protected function _createResourceFromWpPost($post)
-    {
-        return $this->_createResource($post->to_array());
+        return $posts;
     }
 }

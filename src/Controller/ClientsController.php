@@ -3,33 +3,33 @@
 namespace RebelCode\EddBookings\RestApi\Controller;
 
 use ArrayAccess;
-use ArrayIterator;
 use Dhii\Data\Container\ContainerGetCapableTrait;
 use Dhii\Data\Container\ContainerHasCapableTrait;
 use Dhii\Data\Container\CreateContainerExceptionCapableTrait;
 use Dhii\Data\Container\CreateNotFoundExceptionCapableTrait;
-use Dhii\Data\Object\NormalizeKeyCapableTrait;
+use Dhii\Data\Container\NormalizeKeyCapableTrait;
 use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
 use Dhii\Exception\CreateOutOfRangeExceptionCapableTrait;
+use Dhii\Factory\FactoryAwareTrait;
+use Dhii\Factory\FactoryInterface;
 use Dhii\I18n\StringTranslatingTrait;
-use Dhii\Iterator\NormalizeIteratorCapableTrait;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
 use EDD_DB_Customers;
-use IteratorIterator;
 use Psr\Container\ContainerInterface;
-use RebelCode\EddBookings\RestApi\Resource\ResourceFactoryInterface;
 use stdClass;
-use Traversable;
 
 /**
  * The API controller for clients.
  *
  * @since [*next-version*]
  */
-class ClientsController implements ControllerInterface
+class ClientsController extends AbstractBaseController implements ControllerInterface
 {
     /* @since [*next-version*] */
-    use CreateResourceCapableTrait;
+    use FactoryAwareTrait {
+        _getFactory as _getIteratorFactory;
+        _setFactory as _setIteratorFactory;
+    }
 
     /* @since [*next-version*] */
     use ContainerGetCapableTrait;
@@ -42,9 +42,6 @@ class ClientsController implements ControllerInterface
 
     /* @since [*next-version*] */
     use NormalizeStringCapableTrait;
-
-    /* @since [*next-version*] */
-    use NormalizeIteratorCapableTrait;
 
     /* @since [*next-version*] */
     use CreateInvalidArgumentExceptionCapableTrait;
@@ -75,13 +72,13 @@ class ClientsController implements ControllerInterface
      *
      * @since [*next-version*]
      *
-     * @param ResourceFactoryInterface $resourceFactory The resource factory.
-     * @param EDD_DB_Customers         $customers       The EDD customers DB adapter.
+     * @param FactoryInterface $iteratorFactory The iterator factory to use for the results.
+     * @param EDD_DB_Customers $customers       The EDD customers DB adapter.
      */
-    public function __construct(ResourceFactoryInterface $resourceFactory, EDD_DB_Customers $customers)
+    public function __construct(FactoryInterface $iteratorFactory, EDD_DB_Customers $customers)
     {
-        $this->resourceFactory = $resourceFactory;
-        $this->eddCustomersDb  = $customers;
+        $this->_setIteratorFactory($iteratorFactory);
+        $this->eddCustomersDb = $customers;
     }
 
     /**
@@ -89,15 +86,14 @@ class ClientsController implements ControllerInterface
      *
      * @since [*next-version*]
      */
-    public function get($params = [])
+    public function _get($params = [])
     {
         $queryArgs = $this->_generateEddCustomersQueryArgs($params);
         $customers = $this->eddCustomersDb->get_customers($queryArgs);
-        $clients   = array_map(function ($customer) {
-            return $this->_createResource($customer);
-        }, $customers);
 
-        return $this->_normalizeIterator($clients);
+        return $this->_getIteratorFactory()->make([
+            'items' => $customers,
+        ]);
     }
 
     /**
@@ -125,25 +121,5 @@ class ClientsController implements ControllerInterface
             'orderby' => 'id',
             'order'   => 'ASC',
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @since [*next-version*]
-     */
-    protected function _createArrayIterator(array $array)
-    {
-        return new ArrayIterator($array);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @since [*next-version*]
-     */
-    protected function _createTraversableIterator(Traversable $traversable)
-    {
-        return new IteratorIterator($traversable);
     }
 }
