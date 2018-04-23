@@ -10,6 +10,7 @@ use Dhii\Data\Container\CreateContainerExceptionCapableTrait;
 use Dhii\Data\Container\CreateNotFoundExceptionCapableTrait;
 use Dhii\Data\Object\NormalizeKeyCapableTrait;
 use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
+use Dhii\Exception\CreateRuntimeExceptionCapableTrait;
 use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Storage\Resource\SelectCapableInterface;
@@ -41,6 +42,9 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
 
     /* @since [*next-version*] */
     use CreateInvalidArgumentExceptionCapableTrait;
+
+    /* @since [*next-version*] */
+    use CreateRuntimeExceptionCapableTrait;
 
     /* @since [*next-version*] */
     use CreateContainerExceptionCapableTrait;
@@ -76,7 +80,67 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
      */
     protected function _get($params = [])
     {
-        return $this->selectRm->select($this->_buildCondition($params));
+        $selectRm = $this->_getSelectRm();
+
+        if ($selectRm === null) {
+            throw $this->_createRuntimeException($this->__('The SELECT resource model is null'));
+        }
+
+        return $this->_getSelectRm()->select($this->_buildCondition($params));
+    }
+
+    /**
+     * Retrieves the SELECT resource model.
+     *
+     * @since [*next-version*]
+     *
+     * @return SelectCapableInterface|null The resource model instance, if any.
+     */
+    protected function _getSelectRm()
+    {
+        return $this->selectRm;
+    }
+
+    /**
+     * Sets the SELECT resource model.
+     *
+     * @since [*next-version*]
+     *
+     * @param SelectCapableInterface|null $selectRm The resource model instance, if any.
+     */
+    protected function _setSelectRm($selectRm)
+    {
+        if ($selectRm === null || $selectRm instanceof SelectCapableInterface) {
+            $this->selectRm = $selectRm;
+        }
+
+        throw $this->_createInvalidArgumentException(
+            $this->__('Argument is not a SELECT resource model'), null, null, $selectRm
+        );
+    }
+
+    /**
+     * Retrieves the expression builder.
+     *
+     * @since [*next-version*]
+     *
+     * @return object|null The expression builder, if any.
+     */
+    protected function _getExprBuilder()
+    {
+        return $this->exprBuilder;
+    }
+
+    /**
+     * Sets the expression builder.
+     *
+     * @since [*next-version*]
+     *
+     * @param object|null $exprBuilder The expression builder, if any.
+     */
+    protected function _setExprBuilder($exprBuilder)
+    {
+        $this->exprBuilder = $exprBuilder;
     }
 
     /**
@@ -93,7 +157,7 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
         // The query condition
         $condition = null;
 
-        foreach ($this->_getParamsInfo() as $_param => $_info) {
+        foreach ($this->_getParamCqrsCompareInfo() as $_param => $_info) {
             $_compare = $this->_containerGet($_info, 'compare');
             $_entity  = $this->_containerGet($_info, 'entity');
             $_field   = $this->_containerGet($_info, 'field');
@@ -128,13 +192,18 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
 
         $queryCondition = $this->_createComparisonExpression($compare, $entity, $field, $value);
 
-        // If query condition is null, make it the query condition
+        // If query condition is null, return it as the query condition
         if ($condition === null) {
-            $condition = $queryCondition;
-        } else {
-            // Otherwise, AND the existing condition with the query condition
-            $condition = $this->exprBuilder->and($condition, $queryCondition);
+            return $queryCondition;
         }
+
+        $exprBuilder = $this->_getExprBuilder();
+        if ($exprBuilder === null) {
+            throw $this->_createRuntimeException($this->__('The expression builder is null'));
+        }
+
+        // Otherwise, AND the existing condition with the query condition
+        $condition = $this->_getExprBuilder()->and($condition, $queryCondition);
 
         return $condition;
     }
@@ -153,9 +222,14 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
      */
     protected function _createComparisonExpression($type, $entity, $field, $value)
     {
-        return call_user_func_array([$this->exprBuilder, $type], [
-            $this->exprBuilder->ef($entity, $field),
-            $this->exprBuilder->lit($value),
+        $b = $this->_getExprBuilder();
+        if ($b === null) {
+            throw $this->_createRuntimeException($this->__('The expression builder is null'));
+        }
+
+        return call_user_func_array([$b, $type], [
+            $b->ef($entity, $field),
+            $b->lit($value),
         ]);
     }
 
@@ -180,7 +254,7 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
     }
 
     /**
-     * Retrieves the information about the input parameters.
+     * Retrieves the information about the input parameters and how they map to CQRS comparison expressions.
      *
      * The information about the params is a mapping of input param names to containers as values.
      * The containers are expected to have two keys: 'compare', 'entity' and 'field'.
@@ -191,5 +265,5 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
      *
      * @return array|Traversable
      */
-    abstract protected function _getParamsInfo();
+    abstract protected function _getParamCqrsCompareInfo();
 }
