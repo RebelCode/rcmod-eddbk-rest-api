@@ -57,8 +57,8 @@ class SingleBookingHandler extends AbstractWpRestApiHandler
     {
         $id       = $request->get_param('id');
         $bookings = $this->controller->get(['id' => $id,]);
-
-        $count = count($bookings);
+        $bookings = $this->_normalizeArray($bookings);
+        $count    = count($bookings);
 
         if ($count === 0) {
             return new WP_Error(
@@ -76,10 +76,6 @@ class SingleBookingHandler extends AbstractWpRestApiHandler
             );
         }
 
-        foreach ($bookings as $booking) {
-            break;
-        }
-
-        return new WP_REST_Response($booking->toArray(), 200);
+        return new WP_REST_Response($bookings[0], 200);
     }
 }

@@ -48,11 +48,7 @@ class ClientsQueryHandler extends AbstractWpRestApiHandler
     public function _handle(WP_REST_Request $request)
     {
         $clients = $this->controller->get($request);
-
-        $items = [];
-        foreach ($clients as $_client) {
-            $items[] = $_client->toArray();
-        }
+        $items = $this->_normalizeArray($clients);
 
         $response = [
             'items' => $items,

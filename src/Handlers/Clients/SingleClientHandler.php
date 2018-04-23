@@ -58,8 +58,8 @@ class SingleClientHandler extends AbstractWpRestApiHandler
         $clients = $this->controller->get([
             'id' => ($id = $request['id']),
         ]);
-
-        $count = count($clients);
+        $clients = $this->_normalizeArray($clients);
+        $count   = count($clients);
 
         if ($count === 0) {
             return new WP_Error(
@@ -81,6 +81,6 @@ class SingleClientHandler extends AbstractWpRestApiHandler
             break;
         }
 
-        return new WP_REST_Response($client->toArray(), 200);
+        return new WP_REST_Response($clients[0], 200);
     }
 }

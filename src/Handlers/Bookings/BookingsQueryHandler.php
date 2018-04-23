@@ -67,12 +67,11 @@ class BookingsQueryHandler extends AbstractWpRestApiHandler
         $items    = [];
         $statuses = [];
         foreach ($bookings as $_booking) {
-            $_array         = $_booking->toArray();
-            $_bookingStatus = $_array['status'];
+            $_bookingStatus = $_booking['status'];
 
             // If no status filter given, OR booking matches queried status
             if ($status === null || in_array($_bookingStatus, $status)) {
-                $items[] = $_array;
+                $items[] = $_booking;
             }
 
             // Increment status count
