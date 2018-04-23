@@ -15,11 +15,11 @@ use stdClass;
 use Throwable;
 
 /**
- * Common functionality for retrieving a delegate transformer from a map.
+ * Common functionality for transformers that delegate transformation using a container of transformers.
  *
  * @since [*next-version*]
  */
-trait MapDelegateTransformerTrait
+trait DelegateTransformerContainerTrait
 {
     /**
      * Retrieves the transformer to use for the given source data.
@@ -33,18 +33,18 @@ trait MapDelegateTransformerTrait
      */
     protected function _getTransformer($source)
     {
-        $map = $this->_getTransformerMap($source);
-        $key = $this->_getTransformerKey($source);
+        $container      = $this->_getTransformerContainer($source);
+        $transformerKey = $this->_getTransformerKey($source);
 
-        if (!$this->_containerHas($map, $key)) {
+        if (!$this->_containerHas($container, $transformerKey)) {
             return null;
         }
 
-        $transformer = $this->_containerGet($map, $key);
+        $transformer = $this->_containerGet($container, $transformerKey);
 
         if (!($transformer instanceof TransformerInterface)) {
             throw $this->_createTransformerException(
-                $this->__('Delegate transformer for key "%s" is not a transformer instance', [$key]),
+                $this->__('Delegate transformer for key "%s" is not a transformer instance', [$transformerKey]),
                 null,
                 null,
                 $this
@@ -55,7 +55,7 @@ trait MapDelegateTransformerTrait
     }
 
     /**
-     * Retrieves the transformer map.
+     * Retrieves the transformer container.
      *
      * @since [*next-version*]
      *
@@ -63,10 +63,10 @@ trait MapDelegateTransformerTrait
      *
      * @return array|stdClass|ArrayAccess|BaseContainerInterface
      */
-    abstract protected function _getTransformerMap($source);
+    abstract protected function _getTransformerContainer($source);
 
     /**
-     * Retrieves the map key of the transformer to use for the given source data.
+     * Retrieves the container key of the transformer to use for the given source data.
      *
      * @since [*next-version*]
      *
