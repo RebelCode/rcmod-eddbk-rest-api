@@ -301,12 +301,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                         ],
                         [
                             'target'      => 'clientTzOffset',
-                            'transformer' => function ($value, $source) {
-                                $timezone = new DateTimeZone($this->_containerGet($source, 'client_tz'));
-                                $time     = new DateTime('@' . $this->_containerGet($source, 'start'));
-
-                                return $timezone->getOffset($time);
-                            },
+                            'transformer' => $c->get('eddbk_rest_api_booking_timezone_offset'),
                         ],
                         [
                             'source' => 'payment_id',
@@ -397,6 +392,20 @@ class EddBkRestApiModule extends AbstractBaseModule
 
                         return $client;
                     });
+                },
+
+                /*
+                 * Generates the timezone offset from a booking's client timezone name.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_booking_timezone_offset_transformer' => function() {
+                    return function ($value, $source) {
+                        $timezone = new DateTimeZone($this->_containerGet($source, 'client_tz'));
+                        $time     = new DateTime('@' . $this->_containerGet($source, 'start'));
+
+                        return $timezone->getOffset($time);
+                    };
                 },
 
                 /*-------------------------------------------------------------*\
