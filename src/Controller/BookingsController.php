@@ -3,9 +3,10 @@
 namespace RebelCode\EddBookings\RestApi\Controller;
 
 use Dhii\Expression\LogicalExpressionInterface;
+use Dhii\Factory\FactoryAwareTrait;
+use Dhii\Factory\FactoryInterface;
 use Dhii\Storage\Resource\SelectCapableInterface;
 use Dhii\Util\String\StringableInterface;
-use RebelCode\EddBookings\RestApi\Resource\ResourceFactoryInterface;
 
 /**
  * The API controller for bookings.
@@ -14,6 +15,12 @@ use RebelCode\EddBookings\RestApi\Resource\ResourceFactoryInterface;
  */
 class BookingsController extends AbstractBaseCqrsController
 {
+    /* @since [*next-version*] */
+    use FactoryAwareTrait {
+        _getFactory as _getIteratorFactory;
+        _setFactory as _setIteratorFactory;
+    }
+
     /**
      * The clients controller.
      *
@@ -28,24 +35,57 @@ class BookingsController extends AbstractBaseCqrsController
      *
      * @since [*next-version*]
      *
-     * @param ResourceFactoryInterface $resourceFactory The resource factory.
-     * @param SelectCapableInterface   $selectRm        The bookings resource model.
-     * @param object                   $exprBuilder     The expression builder.
+     * @param FactoryInterface       $iteratorFactory   The iterator factory to use for the results.
+     * @param SelectCapableInterface $selectRm          The bookings resource model.
+     * @param object                 $exprBuilder       The expression builder.
+     * @param ControllerInterface    $clientsController The clients controller.
      */
     public function __construct(
-        ResourceFactoryInterface $resourceFactory,
+        FactoryInterface $iteratorFactory,
         SelectCapableInterface $selectRm,
         $exprBuilder,
-        ControllerInterface $clientsController
+        ControllerInterface $clientsController = null
     ) {
-        $this->resourceFactory   = $resourceFactory;
-        $this->selectRm          = $selectRm;
-        $this->exprBuilder       = $exprBuilder;
+        $this->_setIteratorFactory($iteratorFactory);
+        $this->_setSelectRm($selectRm);
+        $this->_setExprBuilder($exprBuilder);
+        $this->_setClientsController($clientsController);
+    }
+
+    /**
+     * Retrieves the clients controller.
+     *
+     * @since [*next-version*]
+     *
+     * @return ControllerInterface|null The clients controller instance, if any.
+     */
+    protected function _getClientsController()
+    {
+        return $this->clientsController;
+    }
+
+    /**
+     * Sets the clients controller.
+     *
+     * @since [*next-version*]
+     *
+     * @param ControllerInterface|null $clientsController The controller instance, if any.
+     */
+    protected function _setClientsController($clientsController)
+    {
+        if ($clientsController !== null && !($clientsController instanceof ControllerInterface)) {
+            throw $this->_createInvalidArgumentException(
+                $this->__('Argument is not a controller instance'), null, null, $clientsController
+            );
+        }
+
         $this->clientsController = $clientsController;
     }
 
     /**
      * {@inheritdoc}
+     *
+     * Extends the condition building to add query conditions for searching by clients.
      *
      * @since [*next-version*]
      */
@@ -76,7 +116,7 @@ class BookingsController extends AbstractBaseCqrsController
      */
     protected function _addClientsSearchCondition($condition, $search)
     {
-        $clients   = $this->clientsController->get(['search' => $search]);
+        $clients   = $this->_getClientsController()->get(['search' => $search]);
         $clientIds = [];
 
         foreach ($clients as $_client) {
@@ -93,7 +133,7 @@ class BookingsController extends AbstractBaseCqrsController
      *
      * @since [*next-version*]
      */
-    protected function _getParamsInfo()
+    protected function _getParamCqrsCompareInfo()
     {
         return [
             'id'       => [
