@@ -2,7 +2,6 @@
 
 namespace RebelCode\EddBookings\RestApi\Handlers\Clients;
 
-use Dhii\Exception\CreateRuntimeExceptionCapableTrait;
 use RebelCode\EddBookings\RestApi\Controller\ControllerAwareTrait;
 use RebelCode\EddBookings\RestApi\Controller\ControllerInterface;
 use RebelCode\EddBookings\RestApi\Handlers\AbstractWpRestApiHandler;
@@ -18,9 +17,6 @@ class QueryClientsHandler extends AbstractWpRestApiHandler
 {
     /* @since [*next-version*] */
     use ControllerAwareTrait;
-
-    /* @since [*next-version*] */
-    use CreateRuntimeExceptionCapableTrait;
 
     /**
      * Constructor.
