@@ -227,7 +227,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                 },
 
                 /*
-                 * Handles the clients route that receives generic client queries.
+                 * Handles the clients route for creating new clients.
                  *
                  * @since [*next-version*]
                  */
