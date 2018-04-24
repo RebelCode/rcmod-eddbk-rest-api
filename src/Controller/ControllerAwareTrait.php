@@ -2,6 +2,8 @@
 
 namespace RebelCode\EddBookings\RestApi\Controller;
 
+use Dhii\Util\String\StringableInterface as Stringable;
+use Exception as RootException;
 use InvalidArgumentException;
 
 /**
