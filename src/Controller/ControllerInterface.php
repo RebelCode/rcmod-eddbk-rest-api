@@ -21,7 +21,8 @@ interface ControllerInterface
      *
      * @param array|stdClass|ArrayAccess|ContainerInterface $params The parameters.
      *
-     * @return array|Traversable A list of container elements (array, stdClass, ArrayAccess or ContainerInterface).
+     * @return array|stdClass|Traversable The response, as a traversable list consisting of container elements: array,
+     *                                    {@see stdClass}, {@see ArrayAccess} or {@see ContainerInterface}.
      */
     public function get($params = []);
 }
