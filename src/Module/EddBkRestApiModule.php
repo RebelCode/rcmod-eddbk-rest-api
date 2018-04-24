@@ -91,6 +91,8 @@ class EddBkRestApiModule extends AbstractBaseModule
                 'eddbk_bookings_controller' => function (ContainerInterface $c) {
                     return new BookingsController(
                         $c->get('eddbk_rest_api_bookings_iterator_factory'),
+                        $c->get('booking_factory'),
+                        $c->get('booking_transitioner'),
                         $c->get('bookings_select_rm'),
                         $c->get('bookings_insert_rm'),
                         $c->get('sql_expression_builder'),
