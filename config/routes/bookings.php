@@ -11,7 +11,7 @@
  *
  * @since [*next-version*]
  */
-$cfg['eddbk_rest_api']['routes'][] = [
+$cfg['eddbk_rest_api']['routes']['get_bookings'] = [
     'pattern' => '/bookings',
     'methods' => ['GET'],
     'handler' => 'eddbk_rest_api_query_bookings_handler'
@@ -22,7 +22,7 @@ $cfg['eddbk_rest_api']['routes'][] = [
  *
  * @since [*next-version*]
  */
-$cfg['eddbk_rest_api']['routes'][] = [
+$cfg['eddbk_rest_api']['routes']['get_booking_info'] = [
     'pattern' => '/bookings/(?P<id>[\d]+)',
     'methods' => ['GET'],
     'handler' => 'eddbk_rest_api_get_booking_info_handler'
