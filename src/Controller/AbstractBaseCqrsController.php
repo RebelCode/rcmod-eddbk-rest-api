@@ -13,6 +13,7 @@ use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
 use Dhii\Exception\CreateRuntimeExceptionCapableTrait;
 use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\I18n\StringTranslatingTrait;
+use Dhii\Storage\Resource\InsertCapableInterface;
 use Dhii\Storage\Resource\SelectCapableInterface;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
 use Dhii\Util\String\StringableInterface as Stringable;
@@ -56,13 +57,22 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
     use StringTranslatingTrait;
 
     /**
-     * The bookings resource model.
+     * The bookings SELECT resource model.
      *
      * @since [*next-version*]
      *
      * @var SelectCapableInterface
      */
     protected $selectRm;
+
+    /**
+     * The bookings INSERT resource model.
+     *
+     * @since [*next-version*]
+     *
+     * @var InsertCapableInterface
+     */
+    protected $insertRm;
 
     /**
      * The expression builder.
@@ -86,7 +96,23 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
             throw $this->_createRuntimeException($this->__('The SELECT resource model is null'));
         }
 
-        return $this->_getSelectRm()->select($this->_buildCondition($params));
+        return $selectRm->select($this->_buildCondition($params));
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _post($params = [])
+    {
+        $insertRm = $this->_getInsertRm();
+
+        if ($insertRm === null) {
+            throw $this->_createRuntimeException($this->__('The INSERT resource model is null'));
+        }
+
+        return $insertRm->insert($params);
     }
 
     /**
@@ -117,6 +143,36 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
         }
 
         $this->selectRm = $selectRm;
+    }
+
+    /**
+     * Retrieves the INSERT resource model.
+     *
+     * @since [*next-version*]
+     *
+     * @return InsertCapableInterface|null The resource model instance, if any.
+     */
+    protected function _getInsertRm()
+    {
+        return $this->insertRm;
+    }
+
+    /**
+     * Sets the INSERT resource model.
+     *
+     * @since [*next-version*]
+     *
+     * @param InsertCapableInterface|null $insertRm The resource model instance, if any.
+     */
+    protected function _setInsertRm($insertRm)
+    {
+        if ($insertRm !== null && !($insertRm instanceof InsertCapableInterface)) {
+            throw $this->_createInvalidArgumentException(
+                $this->__('Argument is not an INSERT resource model'), null, null, $insertRm
+            );
+        }
+
+        $this->insertRm = $insertRm;
     }
 
     /**

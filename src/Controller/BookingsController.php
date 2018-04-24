@@ -5,6 +5,7 @@ namespace RebelCode\EddBookings\RestApi\Controller;
 use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\Factory\FactoryAwareTrait;
 use Dhii\Factory\FactoryInterface;
+use Dhii\Storage\Resource\InsertCapableInterface;
 use Dhii\Storage\Resource\SelectCapableInterface;
 use Dhii\Util\String\StringableInterface;
 
@@ -36,18 +37,21 @@ class BookingsController extends AbstractBaseCqrsController
      * @since [*next-version*]
      *
      * @param FactoryInterface       $iteratorFactory   The iterator factory to use for the results.
-     * @param SelectCapableInterface $selectRm          The bookings resource model.
+     * @param SelectCapableInterface $selectRm          The SELECT bookings resource model.
+     * @param InsertCapableInterface $insertRm          The INSERT bookings resource model.
      * @param object                 $exprBuilder       The expression builder.
      * @param ControllerInterface    $clientsController The clients controller.
      */
     public function __construct(
         FactoryInterface $iteratorFactory,
         SelectCapableInterface $selectRm,
+        InsertCapableInterface $insertRm,
         $exprBuilder,
         ControllerInterface $clientsController = null
     ) {
         $this->_setIteratorFactory($iteratorFactory);
         $this->_setSelectRm($selectRm);
+        $this->_setInsertRm($insertRm);
         $this->_setExprBuilder($exprBuilder);
         $this->_setClientsController($clientsController);
     }
