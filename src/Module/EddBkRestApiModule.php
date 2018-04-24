@@ -17,6 +17,7 @@ use Psr\EventManager\EventManagerInterface;
 use RebelCode\EddBookings\RestApi\Controller\BookingsController;
 use RebelCode\EddBookings\RestApi\Controller\ClientsController;
 use RebelCode\EddBookings\RestApi\Controller\ServicesController;
+use RebelCode\EddBookings\RestApi\Handlers\Bookings\CreateBookingHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Bookings\QueryBookingsHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Bookings\BookingInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\CreateClientHandler;
@@ -192,6 +193,15 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_get_booking_info_handler' => function (ContainerInterface $c) {
                     return new BookingInfoHandler($c->get('eddbk_bookings_controller'));
+                },
+
+                /*
+                 * Handles the bookings route for creating new bookings.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_create_booking_handler' => function (ContainerInterface $c) {
+                    return new CreateBookingHandler($c->get('eddbk_bookings_controller'), $c->get('eddbk_rest_api'));
                 },
 
                 /*-------------------------------------------------------------*\

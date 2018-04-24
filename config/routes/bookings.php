@@ -27,3 +27,14 @@ $cfg['eddbk_rest_api']['routes']['get_booking_info'] = [
     'methods' => ['GET'],
     'handler' => 'eddbk_rest_api_get_booking_info_handler'
 ];
+
+/*
+ * The route for creating a booking.
+ *
+ * @since [*next-version*]
+ */
+$cfg['eddbk_rest_api']['routes']['create_booking'] = [
+    'pattern' => '/bookings',
+    'methods' => ['POST'],
+    'handler' => 'eddbk_rest_api_create_booking_handler'
+];
