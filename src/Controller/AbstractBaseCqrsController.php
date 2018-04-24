@@ -96,7 +96,7 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
             throw $this->_createRuntimeException($this->__('The SELECT resource model is null'));
         }
 
-        return $selectRm->select($this->_buildCondition($params));
+        return $selectRm->select($this->_buildSelectCondition($params));
     }
 
     /**
@@ -214,7 +214,7 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
      *
      * @return LogicalExpressionInterface|null The built condition.
      */
-    protected function _buildCondition($params)
+    protected function _buildSelectCondition($params)
     {
         // The query condition
         $condition = null;
