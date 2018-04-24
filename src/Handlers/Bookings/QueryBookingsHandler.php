@@ -11,7 +11,7 @@ use WP_REST_Request;
  *
  * @since [*next-version*]
  */
-class BookingsQueryHandler extends AbstractWpRestApiHandler
+class QueryBookingsHandler extends AbstractWpRestApiHandler
 {
     /**
      * The resource controller.

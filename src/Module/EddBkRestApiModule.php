@@ -17,10 +17,10 @@ use Psr\EventManager\EventManagerInterface;
 use RebelCode\EddBookings\RestApi\Controller\BookingsController;
 use RebelCode\EddBookings\RestApi\Controller\ClientsController;
 use RebelCode\EddBookings\RestApi\Controller\ServicesController;
-use RebelCode\EddBookings\RestApi\Handlers\Bookings\BookingsQueryHandler;
-use RebelCode\EddBookings\RestApi\Handlers\Bookings\SingleBookingHandler;
-use RebelCode\EddBookings\RestApi\Handlers\Clients\ClientsQueryHandler;
-use RebelCode\EddBookings\RestApi\Handlers\Clients\SingleClientHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Bookings\QueryBookingsHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Bookings\BookingInfoHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Clients\QueryClientsHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Clients\ClientInfoHandler;
 use RebelCode\EddBookings\RestApi\Transformer\CallbackTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\MapTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\NoOpTransformer;
@@ -177,7 +177,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  * @since [*next-version*]
                  */
                 'eddbk_rest_api_query_bookings_handler' => function (ContainerInterface $c) {
-                    return new BookingsQueryHandler(
+                    return new QueryBookingsHandler(
                         $c->get('eddbk_bookings_controller'),
                         $c->get('booking_logic/statuses')
                     );
@@ -189,7 +189,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  * @since [*next-version*]
                  */
                 'eddbk_rest_api_get_booking_info_handler' => function (ContainerInterface $c) {
-                    return new SingleBookingHandler($c->get('eddbk_bookings_controller'));
+                    return new BookingInfoHandler($c->get('eddbk_bookings_controller'));
                 },
 
                 /*-------------------------------------------------------------*\
@@ -202,7 +202,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  * @since [*next-version*]
                  */
                 'eddbk_rest_api_query_clients_handler' => function (ContainerInterface $c) {
-                    return new ClientsQueryHandler($c->get('eddbk_clients_controller'));
+                    return new QueryClientsHandler($c->get('eddbk_clients_controller'));
                 },
 
                 /*
@@ -211,7 +211,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  * @since [*next-version*]
                  */
                 'eddbk_rest_api_get_client_info_handler' => function (ContainerInterface $c) {
-                    return new SingleClientHandler($c->get('eddbk_clients_controller'));
+                    return new ClientInfoHandler($c->get('eddbk_clients_controller'));
                 },
 
                 /*-------------------------------------------------------------*\

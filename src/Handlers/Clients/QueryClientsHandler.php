@@ -13,7 +13,7 @@ use WP_REST_Response;
  *
  * @since [*next-version*]
  */
-class ClientsQueryHandler extends AbstractWpRestApiHandler
+class QueryClientsHandler extends AbstractWpRestApiHandler
 {
     /* @since [*next-version*] */
     use CreateRuntimeExceptionCapableTrait;

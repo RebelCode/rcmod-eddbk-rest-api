@@ -1,6 +1,6 @@
 <?php
 
-namespace RebelCode\EddBookings\RestApi\Handlers\Bookings;
+namespace RebelCode\EddBookings\RestApi\Handlers\Clients;
 
 use Dhii\Data\Container\CreateNotFoundExceptionCapableTrait;
 use Dhii\Exception\CreateRuntimeExceptionCapableTrait;
@@ -12,11 +12,11 @@ use WP_REST_Request;
 use WP_REST_Response;
 
 /**
- * Handles the REST API endpoint for retrieving the info for a particular booking.
+ * Handles the REST API endpoint for retrieving the info for a particular client.
  *
  * @since [*next-version*]
  */
-class SingleBookingHandler extends AbstractWpRestApiHandler
+class ClientInfoHandler extends AbstractWpRestApiHandler
 {
     /* @since [*next-version*] */
     use CreateRuntimeExceptionCapableTrait;
@@ -41,7 +41,7 @@ class SingleBookingHandler extends AbstractWpRestApiHandler
      *
      * @since [*next-version*]
      *
-     * @param ControllerInterface $controller The booking resource controller.
+     * @param ControllerInterface $controller The clients controller.
      */
     public function __construct(ControllerInterface $controller)
     {
@@ -55,27 +55,32 @@ class SingleBookingHandler extends AbstractWpRestApiHandler
      */
     public function _handle(WP_REST_Request $request)
     {
-        $id       = $request->get_param('id');
-        $bookings = $this->controller->get(['id' => $id]);
-        $bookings = $this->_normalizeArray($bookings);
-        $count    = count($bookings);
+        $clients = $this->controller->get([
+            'id' => ($id = $request['id']),
+        ]);
+        $clients = $this->_normalizeArray($clients);
+        $count   = count($clients);
 
         if ($count === 0) {
             return new WP_Error(
-                'eddbk_booking_not_found',
-                $this->__('No booking found for id "%s"', [$id]),
+                'eddbk_client_not_found',
+                $this->__('No client found for id "%s"', [$id]),
                 ['status' => 404]
             );
         }
 
         if ($count > 1) {
             return new WP_Error(
-                'eddbk_booking_query_error',
-                $this->__('Found %d matching bookings', [$count]),
+                'eddbk_client_query_error',
+                $this->__('Found %d matching clients', [$count]),
                 ['status' => 500]
             );
         }
 
-        return new WP_REST_Response($bookings[0], 200);
+        foreach ($clients as $client) {
+            break;
+        }
+
+        return new WP_REST_Response($clients[0], 200);
     }
 }
