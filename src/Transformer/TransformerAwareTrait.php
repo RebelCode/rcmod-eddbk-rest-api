@@ -40,6 +40,8 @@ trait TransformerAwareTrait
      * @since [*next-version*]
      *
      * @param TransformerInterface|null $transformer The transformer instance, if any.
+     *
+     * @throws InvalidArgumentException If the argument is not a transformer instance.
      */
     protected function _setTransformer($transformer)
     {
