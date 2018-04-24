@@ -2,6 +2,7 @@
 
 namespace RebelCode\EddBookings\RestApi\Handlers\Bookings;
 
+use RebelCode\EddBookings\RestApi\Controller\ControllerAwareTrait;
 use RebelCode\EddBookings\RestApi\Controller\ControllerInterface;
 use RebelCode\EddBookings\RestApi\Handlers\AbstractWpRestApiHandler;
 use WP_REST_Request;
@@ -13,14 +14,8 @@ use WP_REST_Request;
  */
 class QueryBookingsHandler extends AbstractWpRestApiHandler
 {
-    /**
-     * The resource controller.
-     *
-     * @since [*next-version*]
-     *
-     * @var ControllerInterface
-     */
-    protected $controller;
+    /* @since [*next-version*] */
+    use ControllerAwareTrait;
 
     /**
      * The booking statuses.
@@ -41,8 +36,8 @@ class QueryBookingsHandler extends AbstractWpRestApiHandler
      */
     public function __construct(ControllerInterface $controller, $statuses)
     {
-        $this->controller = $controller;
-        $this->statuses   = $statuses;
+        $this->_setController($controller);
+        $this->statuses = $statuses;
     }
 
     /**
@@ -52,7 +47,7 @@ class QueryBookingsHandler extends AbstractWpRestApiHandler
      */
     public function _handle(WP_REST_Request $request)
     {
-        $bookings = $this->controller->get($request);
+        $bookings = $this->_getController()->get($request);
 
         $status = $request->get_param('status');
         // If statuses given in request

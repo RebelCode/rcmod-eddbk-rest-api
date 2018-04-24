@@ -3,6 +3,7 @@
 namespace RebelCode\EddBookings\RestApi\Handlers\Clients;
 
 use Dhii\Exception\CreateRuntimeExceptionCapableTrait;
+use RebelCode\EddBookings\RestApi\Controller\ControllerAwareTrait;
 use RebelCode\EddBookings\RestApi\Controller\ControllerInterface;
 use RebelCode\EddBookings\RestApi\Handlers\AbstractWpRestApiHandler;
 use WP_REST_Request;
@@ -16,16 +17,10 @@ use WP_REST_Response;
 class QueryClientsHandler extends AbstractWpRestApiHandler
 {
     /* @since [*next-version*] */
-    use CreateRuntimeExceptionCapableTrait;
+    use ControllerAwareTrait;
 
-    /**
-     * The resource controller.
-     *
-     * @since [*next-version*]
-     *
-     * @var ControllerInterface
-     */
-    protected $controller;
+    /* @since [*next-version*] */
+    use CreateRuntimeExceptionCapableTrait;
 
     /**
      * Constructor.
@@ -36,7 +31,7 @@ class QueryClientsHandler extends AbstractWpRestApiHandler
      */
     public function __construct(ControllerInterface $controller)
     {
-        $this->controller = $controller;
+        $this->_setController($controller);
     }
 
     /**
@@ -46,7 +41,7 @@ class QueryClientsHandler extends AbstractWpRestApiHandler
      */
     public function _handle(WP_REST_Request $request)
     {
-        $clients = $this->controller->get($request);
+        $clients = $this->_getController()->get($request);
         $items   = $this->_normalizeArray($clients);
 
         $response = [

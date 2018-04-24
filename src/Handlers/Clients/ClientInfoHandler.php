@@ -5,6 +5,7 @@ namespace RebelCode\EddBookings\RestApi\Handlers\Clients;
 use Dhii\Data\Container\CreateNotFoundExceptionCapableTrait;
 use Dhii\Exception\CreateRuntimeExceptionCapableTrait;
 use Dhii\I18n\StringTranslatingTrait;
+use RebelCode\EddBookings\RestApi\Controller\ControllerAwareTrait;
 use RebelCode\EddBookings\RestApi\Controller\ControllerInterface;
 use RebelCode\EddBookings\RestApi\Handlers\AbstractWpRestApiHandler;
 use WP_Error;
@@ -19,6 +20,9 @@ use WP_REST_Response;
 class ClientInfoHandler extends AbstractWpRestApiHandler
 {
     /* @since [*next-version*] */
+    use ControllerAwareTrait;
+
+    /* @since [*next-version*] */
     use CreateRuntimeExceptionCapableTrait;
 
     /* @since [*next-version*] */
@@ -26,15 +30,6 @@ class ClientInfoHandler extends AbstractWpRestApiHandler
 
     /* @since [*next-version*] */
     use StringTranslatingTrait;
-
-    /**
-     * The resource controller.
-     *
-     * @since [*next-version*]
-     *
-     * @var ControllerInterface
-     */
-    protected $controller;
 
     /**
      * Constructor.
@@ -45,7 +40,7 @@ class ClientInfoHandler extends AbstractWpRestApiHandler
      */
     public function __construct(ControllerInterface $controller)
     {
-        $this->controller = $controller;
+        $this->_setController($controller);
     }
 
     /**
@@ -55,7 +50,7 @@ class ClientInfoHandler extends AbstractWpRestApiHandler
      */
     public function _handle(WP_REST_Request $request)
     {
-        $clients = $this->controller->get([
+        $clients = $this->_getController()->get([
             'id' => ($id = $request['id']),
         ]);
         $clients = $this->_normalizeArray($clients);

@@ -5,6 +5,7 @@ namespace RebelCode\EddBookings\RestApi\Handlers\Bookings;
 use Dhii\Data\Container\CreateNotFoundExceptionCapableTrait;
 use Dhii\Exception\CreateRuntimeExceptionCapableTrait;
 use Dhii\I18n\StringTranslatingTrait;
+use RebelCode\EddBookings\RestApi\Controller\ControllerAwareTrait;
 use RebelCode\EddBookings\RestApi\Controller\ControllerInterface;
 use RebelCode\EddBookings\RestApi\Handlers\AbstractWpRestApiHandler;
 use WP_Error;
@@ -19,6 +20,9 @@ use WP_REST_Response;
 class BookingInfoHandler extends AbstractWpRestApiHandler
 {
     /* @since [*next-version*] */
+    use ControllerAwareTrait;
+
+    /* @since [*next-version*] */
     use CreateRuntimeExceptionCapableTrait;
 
     /* @since [*next-version*] */
@@ -26,15 +30,6 @@ class BookingInfoHandler extends AbstractWpRestApiHandler
 
     /* @since [*next-version*] */
     use StringTranslatingTrait;
-
-    /**
-     * The resource controller.
-     *
-     * @since [*next-version*]
-     *
-     * @var ControllerInterface
-     */
-    protected $controller;
 
     /**
      * Constructor.
@@ -45,7 +40,7 @@ class BookingInfoHandler extends AbstractWpRestApiHandler
      */
     public function __construct(ControllerInterface $controller)
     {
-        $this->controller = $controller;
+        $this->_setController($controller);
     }
 
     /**
@@ -56,7 +51,7 @@ class BookingInfoHandler extends AbstractWpRestApiHandler
     public function _handle(WP_REST_Request $request)
     {
         $id       = $request->get_param('id');
-        $bookings = $this->controller->get(['id' => $id]);
+        $bookings = $this->_getController()->get(['id' => $id]);
         $bookings = $this->_normalizeArray($bookings);
         $count    = count($bookings);
 
