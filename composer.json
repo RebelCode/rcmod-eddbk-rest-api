@@ -14,6 +14,7 @@
     "require": {
         "php": "^5.4 | ^7.0",
         "rebelcode/modular": "dev-task/initial-classes",
+        "rebelcode/booking-transitioner": "dev-task/initial-classes",
         "dhii/data-object-abstract": "^0.1-alpha1",
         "dhii/cqrs-resource-model-interface": "^0.1-alpha2",
         "dhii/expression-interface": "^0.1 | ^0.2",
