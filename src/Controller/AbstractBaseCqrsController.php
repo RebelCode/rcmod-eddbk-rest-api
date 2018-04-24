@@ -112,7 +112,13 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
             throw $this->_createRuntimeException($this->__('The INSERT resource model is null'));
         }
 
-        return $insertRm->insert($params);
+        $ids = $insertRm->insert([$params]);
+
+        if (empty($ids)) {
+            return [];
+        }
+
+        return $this->_get(['id' => $ids[0]]);
     }
 
     /**
