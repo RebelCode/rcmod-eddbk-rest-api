@@ -36,19 +36,44 @@ abstract class AbstractBaseController implements ControllerInterface
      *
      * @since [*next-version*]
      */
+    public function post($params = [])
+    {
+        return $this->_createResultsIterator($this->_post($params));
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
     protected function _getResultsIteratorFactory($results)
     {
         return $this->_getFactory();
     }
 
     /**
-     * Retrieves the results.
+     * Retrieves resources based on given parameters.
      *
      * @since [*next-version*]
      *
-     * @param array|ArrayAccess|stdClass|ContainerInterface $params The parameters.
+     * @param array|stdClass|ArrayAccess|ContainerInterface $params The parameters.
      *
-     * @return array|Traversable A list of container elements (array, stdClass, ArrayAccess or ContainerInterface).
+     * @return array|stdClass|Traversable The response, as a traversable list consisting of container elements: array,
+     *                                    {@see stdClass}, {@see ArrayAccess} or {@see ContainerInterface}.
      */
     abstract protected function _get($params = []);
+
+    /**
+     * Creates resources based on given parameters.
+     *
+     * @since [*next-version*]
+     *
+     * @param array|stdClass|ArrayAccess|ContainerInterface $params The parameters.
+     *
+     * @return array|stdClass|Traversable|null  The response, as a traversable list consisting of container elements:
+     *                                          array, {@see stdClass}, {@see ArrayAccess} or {@see ContainerInterface}.
+     *                                          Null may be returned to signify that the resource could not be created
+     *                                          due to a conflict.
+     */
+    abstract protected function _post($params = []);
 }
