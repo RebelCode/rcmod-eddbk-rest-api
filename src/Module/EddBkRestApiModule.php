@@ -19,6 +19,7 @@ use RebelCode\EddBookings\RestApi\Controller\ClientsController;
 use RebelCode\EddBookings\RestApi\Controller\ServicesController;
 use RebelCode\EddBookings\RestApi\Handlers\Bookings\QueryBookingsHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Bookings\BookingInfoHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Clients\CreateClientHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\QueryClientsHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\ClientInfoHandler;
 use RebelCode\EddBookings\RestApi\Transformer\CallbackTransformer;
@@ -212,6 +213,15 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_get_client_info_handler' => function (ContainerInterface $c) {
                     return new ClientInfoHandler($c->get('eddbk_clients_controller'));
+                },
+
+                /*
+                 * Handles the clients route that receives generic client queries.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_create_client_handler' => function (ContainerInterface $c) {
+                    return new CreateClientHandler($c->get('eddbk_clients_controller'), $c->get('eddbk_rest_api'));
                 },
 
                 /*-------------------------------------------------------------*\

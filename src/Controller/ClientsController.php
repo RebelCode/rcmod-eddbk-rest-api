@@ -86,7 +86,7 @@ class ClientsController extends AbstractBaseController implements ControllerInte
      *
      * @since [*next-version*]
      */
-    public function _get($params = [])
+    protected function _get($params = [])
     {
         $queryArgs = $this->_generateEddCustomersQueryArgs($params);
         $customers = $this->eddCustomersDb->get_customers($queryArgs);
@@ -94,6 +94,38 @@ class ClientsController extends AbstractBaseController implements ControllerInte
         return $this->_getIteratorFactory()->make([
             'items' => $customers,
         ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _post($params = [])
+    {
+        $name  = $this->_containerGet($params, 'name');
+        $email = $this->_containerGet($params, 'email');
+
+        $eddCustomer = new \EDD_Customer($email);
+
+        if (!empty($eddCustomer->id)) {
+            return [];
+        }
+
+        $newClientData = [
+            'name'  => $name,
+            'email' => $email,
+        ];
+        // check if a WP user exists with this email
+        $userId = email_exists($email);
+        // Add to customer data to link the WP user with this EDD customer
+        if ($userId !== false) {
+            $newClientData['user_id'] = $userId;
+        }
+        // Attempt to create
+        $newClientId = $eddCustomer->create($newClientData);
+
+        return $this->_get(['id' => $newClientId]);
     }
 
     /**
