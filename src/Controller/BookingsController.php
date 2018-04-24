@@ -2,12 +2,18 @@
 
 namespace RebelCode\EddBookings\RestApi\Controller;
 
+use Dhii\Data\Container\ContainerSetCapableTrait;
+use Dhii\Data\Container\ContainerUnsetCapableTrait;
 use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\Factory\FactoryAwareTrait;
 use Dhii\Factory\FactoryInterface;
 use Dhii\Storage\Resource\InsertCapableInterface;
 use Dhii\Storage\Resource\SelectCapableInterface;
 use Dhii\Util\String\StringableInterface;
+use RebelCode\Bookings\BookingFactoryInterface;
+use RebelCode\Bookings\Factory\BookingFactoryAwareTrait;
+use RebelCode\Bookings\TransitionerAwareTrait;
+use RebelCode\Bookings\TransitionerInterface;
 
 /**
  * The API controller for bookings.
@@ -21,6 +27,15 @@ class BookingsController extends AbstractBaseCqrsController
         _getFactory as _getIteratorFactory;
         _setFactory as _setIteratorFactory;
     }
+
+    /* @since [*next-version*] */
+    use BookingFactoryAwareTrait;
+
+    /* @since [*next-version*] */
+    use TransitionerAwareTrait;
+
+    /* @since [*next-version*] */
+    use ContainerSetCapableTrait;
 
     /**
      * The clients controller.
@@ -36,24 +51,47 @@ class BookingsController extends AbstractBaseCqrsController
      *
      * @since [*next-version*]
      *
-     * @param FactoryInterface       $iteratorFactory   The iterator factory to use for the results.
-     * @param SelectCapableInterface $selectRm          The SELECT bookings resource model.
-     * @param InsertCapableInterface $insertRm          The INSERT bookings resource model.
-     * @param object                 $exprBuilder       The expression builder.
-     * @param ControllerInterface    $clientsController The clients controller.
+     * @param FactoryInterface        $iteratorFactory     The iterator factory to use for the results.
+     * @param BookingFactoryInterface $bookingFactory      The booking factory.
+     * @param TransitionerInterface   $bookingTransitioner The booking transitioner.
+     * @param SelectCapableInterface  $selectRm            The SELECT bookings resource model.
+     * @param InsertCapableInterface  $insertRm            The INSERT bookings resource model.
+     * @param object                  $exprBuilder         The expression builder.
+     * @param ControllerInterface     $clientsController   The clients controller.
      */
     public function __construct(
         FactoryInterface $iteratorFactory,
+        BookingFactoryInterface $bookingFactory,
+        TransitionerInterface $bookingTransitioner,
         SelectCapableInterface $selectRm,
         InsertCapableInterface $insertRm,
         $exprBuilder,
         ControllerInterface $clientsController = null
     ) {
         $this->_setIteratorFactory($iteratorFactory);
+        $this->_setBookingFactory($bookingFactory);
+        $this->_setTransitioner($bookingTransitioner);
         $this->_setSelectRm($selectRm);
         $this->_setInsertRm($insertRm);
         $this->_setExprBuilder($exprBuilder);
         $this->_setClientsController($clientsController);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * Overrides to attempt to transition the booking before insertion.
+     *
+     * @since [*next-version*]
+     */
+    protected function _post($params = [])
+    {
+        $this->_containerSet($params, 'status', null);
+
+        $booking = $this->_getBookingFactory()->make($params);
+        $booking = $this->_getTransitioner()->transition($booking, 'draft');
+
+        return parent::_post($booking);
     }
 
     /**
@@ -93,9 +131,9 @@ class BookingsController extends AbstractBaseCqrsController
      *
      * @since [*next-version*]
      */
-    protected function _buildCondition($params)
+    protected function _buildSelectCondition($params)
     {
-        $condition = parent::_buildCondition($params);
+        $condition = parent::_buildSelectCondition($params);
 
         if (!$this->_containerHas($params, 'search')) {
             return $condition;
@@ -140,22 +178,22 @@ class BookingsController extends AbstractBaseCqrsController
     protected function _getParamCqrsCompareInfo()
     {
         return [
-            'id' => [
+            'id'       => [
                 'compare' => 'eq',
                 'entity'  => 'booking',
                 'field'   => 'id',
             ],
-            'start' => [
+            'start'    => [
                 'compare' => 'gte',
                 'entity'  => 'booking',
                 'field'   => 'start',
             ],
-            'end' => [
+            'end'      => [
                 'compare' => 'lte',
                 'entity'  => 'booking',
                 'field'   => 'end',
             ],
-            'service' => [
+            'service'  => [
                 'compare' => 'eq',
                 'entity'  => 'booking',
                 'field'   => 'service_id',
@@ -165,7 +203,7 @@ class BookingsController extends AbstractBaseCqrsController
                 'entity'  => 'booking',
                 'field'   => 'resource_id',
             ],
-            'client' => [
+            'client'   => [
                 'compare' => 'eq',
                 'entity'  => 'booking',
                 'field'   => 'client_id',
