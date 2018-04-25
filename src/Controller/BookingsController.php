@@ -34,9 +34,6 @@ class BookingsController extends AbstractBaseCqrsController
     /* @since [*next-version*] */
     use TransitionerAwareTrait;
 
-    /* @since [*next-version*] */
-    use ContainerSetCapableTrait;
-
     /**
      * The clients controller.
      *
@@ -86,9 +83,13 @@ class BookingsController extends AbstractBaseCqrsController
      */
     protected function _post($params = [])
     {
-        $this->_containerSet($params, 'status', null);
-
-        $booking = $this->_getBookingFactory()->make($params);
+        $booking = $this->_getBookingFactory()->make([
+            'start'       => $this->_containerGet($params, 'start'),
+            'end'         => $this->_containerGet($params, 'end'),
+            'service_id'  => $this->_containerGet($params, 'start'),
+            'resource_id' => $this->_containerGet($params, 'resource_id'),
+            'status'      => null,
+        ]);
         $booking = $this->_getTransitioner()->transition($booking, 'draft');
 
         return parent::_post($booking);
