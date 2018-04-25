@@ -86,7 +86,7 @@ class BookingsController extends AbstractBaseCqrsController
         $booking = $this->_getBookingFactory()->make([
             'start'       => $this->_containerGet($params, 'start'),
             'end'         => $this->_containerGet($params, 'end'),
-            'service_id'  => $this->_containerGet($params, 'start'),
+            'service_id'  => $this->_containerGet($params, 'service_id'),
             'resource_id' => $this->_containerGet($params, 'resource_id'),
             'status'      => null,
         ]);
