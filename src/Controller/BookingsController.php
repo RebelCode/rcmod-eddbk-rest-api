@@ -2,6 +2,7 @@
 
 namespace RebelCode\EddBookings\RestApi\Controller;
 
+use Dhii\Data\Container\Exception\NotFoundExceptionInterface as DhiiNotFoundExceptionInterface;
 use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\Factory\FactoryAwareTrait;
 use Dhii\Factory\FactoryInterface;
@@ -9,10 +10,13 @@ use Dhii\Storage\Resource\InsertCapableInterface;
 use Dhii\Storage\Resource\SelectCapableInterface;
 use Dhii\Util\String\StringableInterface;
 use Dhii\Util\String\StringableInterface as Stringable;
+use Psr\Container\NotFoundExceptionInterface;
 use RebelCode\Bookings\BookingFactoryInterface;
+use RebelCode\Bookings\Exception\CouldNotTransitionExceptionInterface;
 use RebelCode\Bookings\Factory\BookingFactoryAwareTrait;
 use RebelCode\Bookings\TransitionerAwareTrait;
 use RebelCode\Bookings\TransitionerInterface;
+use RebelCode\EddBookings\RestApi\Controller\Exception\ControllerException;
 use RebelCode\EddBookings\RestApi\Controller\Exception\CreateControllerExceptionCapableTrait;
 
 /**
@@ -126,25 +130,44 @@ class BookingsController extends AbstractBaseCqrsController
      */
     protected function _post($params = [])
     {
-        // Read the status as a "transition"
-        $transition = $this->_containerGet($params, 'status');
-        // Validate it - ensure it is allowed
-        if (!array_key_exists($transition, $this->bookingTransitions['none'])) {
-            $allowed = implode(', ', array_keys($this->bookingTransitions['none']));
+        try {
+            // Read the status as a "transition"
+            $transition = $this->_containerGet($params, 'status');
+            // Validate it - ensure it is allowed
+            if (!array_key_exists($transition, $this->bookingTransitions['none'])) {
+                $allowed = implode(', ', array_keys($this->bookingTransitions['none']));
 
+                throw $this->_createControllerException(
+                    $this->__('The provided booking status is invalid. Only [%s] are allowed', [$allowed]),
+                    400, null, $this
+                );
+            }
+            $booking = $this->_getBookingFactory()->make([
+                'start'       => $this->_containerGet($params, 'start'),
+                'end'         => $this->_containerGet($params, 'end'),
+                'service_id'  => $this->_containerGet($params, 'service_id'),
+                'resource_id' => $this->_containerGet($params, 'resource_id'),
+                'status'      => null,
+            ]);
+        } catch (DhiiNotFoundExceptionInterface $dhiiNotFoundException) {
             throw $this->_createControllerException(
-                $this->__('The provided booking status is invalid. Only [%s] are allowed', [$allowed]),
-                400, null, $this
+                $this->__('Missing "%s" booking data in the request', [$dhiiNotFoundException->getDataKey()]),
+                400, $dhiiNotFoundException, $this
+            );
+        } catch (NotFoundExceptionInterface $notFoundException) {
+            throw $this->_createControllerException(
+                $this->__('Missing booking data in the request. Required: [start, end, service_id, resource_id, status]'),
+                400, $notFoundException, $this
             );
         }
-        $booking = $this->_getBookingFactory()->make([
-            'start'       => $this->_containerGet($params, 'start'),
-            'end'         => $this->_containerGet($params, 'end'),
-            'service_id'  => $this->_containerGet($params, 'service_id'),
-            'resource_id' => $this->_containerGet($params, 'resource_id'),
-            'status'      => null,
-        ]);
-        $booking = $this->_getTransitioner()->transition($booking, $transition);
+
+        try {
+            $booking = $this->_getTransitioner()->transition($booking, $transition);
+        } catch (CouldNotTransitionExceptionInterface $couldNotTransitionException) {
+            throw $this->_createControllerException(
+                $couldNotTransitionException->getMessage(), 500, $couldNotTransitionException, $this
+            );
+        }
 
         return parent::_post($booking);
     }
