@@ -2,25 +2,21 @@
 
 namespace RebelCode\EddBookings\RestApi\Controller;
 
-use ArrayAccess;
+use Dhii\Data\Container\DeleteCapableInterface;
 use Dhii\Data\Container\Exception\NotFoundExceptionInterface as DhiiNotFoundExceptionInterface;
 use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\Factory\FactoryAwareTrait;
 use Dhii\Factory\FactoryInterface;
 use Dhii\Storage\Resource\InsertCapableInterface;
 use Dhii\Storage\Resource\SelectCapableInterface;
+use Dhii\Storage\Resource\UpdateCapableInterface;
 use Dhii\Util\String\StringableInterface;
-use Dhii\Util\String\StringableInterface as Stringable;
-use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use RebelCode\Bookings\BookingFactoryInterface;
 use RebelCode\Bookings\Exception\CouldNotTransitionExceptionInterface;
 use RebelCode\Bookings\Factory\BookingFactoryAwareTrait;
 use RebelCode\Bookings\TransitionerAwareTrait;
 use RebelCode\Bookings\TransitionerInterface;
-use RebelCode\EddBookings\RestApi\Controller\Exception\ControllerException;
-use RebelCode\EddBookings\RestApi\Controller\Exception\CreateControllerExceptionCapableTrait;
-use stdClass;
 
 /**
  * The API controller for bookings.
@@ -60,6 +56,8 @@ class BookingsController extends AbstractBaseCqrsController
      * @param TransitionerInterface   $bookingTransitioner The booking transitioner.
      * @param SelectCapableInterface  $selectRm            The SELECT bookings resource model.
      * @param InsertCapableInterface  $insertRm            The INSERT bookings resource model.
+     * @param UpdateCapableInterface  $updateRm            The UPDATE bookings resource model.
+     * @param DeleteCapableInterface  $deleteRm            The DELETE bookings resource model.
      * @param object                  $exprBuilder         The expression builder.
      * @param ControllerInterface     $clientsController   The clients controller.
      */
@@ -69,6 +67,8 @@ class BookingsController extends AbstractBaseCqrsController
         TransitionerInterface $bookingTransitioner,
         SelectCapableInterface $selectRm,
         InsertCapableInterface $insertRm,
+        UpdateCapableInterface $updateRm,
+        DeleteCapableInterface $deleteRm,
         $exprBuilder,
         ControllerInterface $clientsController = null
     ) {
@@ -77,6 +77,8 @@ class BookingsController extends AbstractBaseCqrsController
         $this->_setTransitioner($bookingTransitioner);
         $this->_setSelectRm($selectRm);
         $this->_setInsertRm($insertRm);
+        $this->_setUpdateRm($updateRm);
+        $this->_setDeleteRm($deleteRm);
         $this->_setExprBuilder($exprBuilder);
         $this->_setClientsController($clientsController);
     }
@@ -158,6 +160,16 @@ class BookingsController extends AbstractBaseCqrsController
     /**
      * {@inheritdoc}
      *
+     * @since [*next-version*]
+     */
+    protected function _put($params = [])
+    {
+        throw $this->_createControllerException($this->__('Cannot PUT a booking - use PATCH'), 405, null, $this);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
      * Extends the condition building to add query conditions for searching by clients.
      *
      * @since [*next-version*]
@@ -206,7 +218,7 @@ class BookingsController extends AbstractBaseCqrsController
      *
      * @since [*next-version*]
      */
-    protected function _getParamCqrsCompareInfo()
+    protected function _getSelectConditionParamMapping()
     {
         return [
             'id'       => [
@@ -239,6 +251,85 @@ class BookingsController extends AbstractBaseCqrsController
                 'entity'  => 'booking',
                 'field'   => 'client_id',
             ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _getDeleteConditionParamMapping()
+    {
+        return [
+            'id' => [
+                'compare' => 'eq',
+                'entity'  => 'booking',
+                'field'   => 'id',
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _getInsertParamFieldMapping()
+    {
+        return [
+            'start'    => [
+                'field'    => 'start',
+                'required' => true,
+            ],
+            'end'      => [
+                'field'    => 'end',
+                'required' => true,
+            ],
+            'service'  => [
+                'field'    => 'service_id',
+                'required' => true,
+            ],
+            'resource' => [
+                'field'    => 'resource_id',
+                'required' => true,
+            ],
+            'client'   => [
+                'field'    => 'client_id',
+                'required' => false,
+            ],
+            'clientTz' => [
+                'field'    => 'client_tz',
+                'required' => false,
+            ],
+            'payment'  => [
+                'field'    => 'payment_id',
+                'required' => false,
+            ],
+            'notes'    => [
+                'field'    => 'admin_notes',
+                'required' => false,
+                "default"  => "",
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _getUpdateParamFieldMapping()
+    {
+        return [
+            'start'    => 'start',
+            'end'      => 'end',
+            'service'  => 'service_id',
+            'resource' => 'resource_id',
+            'client'   => 'client_id',
+            'clientTz' => 'client_tz',
+            'payment'  => 'payment_id',
+            'notes'    => 'admin_notes',
         ];
     }
 }

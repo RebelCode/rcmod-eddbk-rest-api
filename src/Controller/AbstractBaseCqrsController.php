@@ -8,6 +8,7 @@ use Dhii\Data\Container\ContainerGetCapableTrait;
 use Dhii\Data\Container\ContainerHasCapableTrait;
 use Dhii\Data\Container\CreateContainerExceptionCapableTrait;
 use Dhii\Data\Container\CreateNotFoundExceptionCapableTrait;
+use Dhii\Data\Container\DeleteCapableInterface;
 use Dhii\Data\Object\NormalizeKeyCapableTrait;
 use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
 use Dhii\Exception\CreateRuntimeExceptionCapableTrait;
@@ -15,6 +16,7 @@ use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Storage\Resource\InsertCapableInterface;
 use Dhii\Storage\Resource\SelectCapableInterface;
+use Dhii\Storage\Resource\UpdateCapableInterface;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
 use Dhii\Util\String\StringableInterface as Stringable;
 use IteratorIterator;
@@ -57,7 +59,7 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
     use StringTranslatingTrait;
 
     /**
-     * The bookings SELECT resource model.
+     * The SELECT resource model.
      *
      * @since [*next-version*]
      *
@@ -66,13 +68,31 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
     protected $selectRm;
 
     /**
-     * The bookings INSERT resource model.
+     * The INSERT resource model.
      *
      * @since [*next-version*]
      *
      * @var InsertCapableInterface
      */
     protected $insertRm;
+
+    /**
+     * The UPDATE resource model.
+     *
+     * @since [*next-version*]
+     *
+     * @var UpdateCapableInterface
+     */
+    protected $updateRm;
+
+    /**
+     * The DELETE resource model.
+     *
+     * @since [*next-version*]
+     *
+     * @var DeleteCapableInterface
+     */
+    protected $deleteRm;
 
     /**
      * The expression builder.
@@ -112,13 +132,76 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
             throw $this->_createRuntimeException($this->__('The INSERT resource model is null'));
         }
 
-        $ids = $insertRm->insert([$params]);
+        $recordData = [];
+
+        foreach ($this->_getInsertParamFieldMapping() as $_param => $_mapping) {
+            $field    = $this->_containerGet($_mapping, 'field');
+            $required = $this->_containerGet($_mapping, 'required');
+            $default  = $this->_containerHas($_mapping, 'default')
+                ? $this->_containerGet($_mapping, 'required')
+                : null;
+            $hasParam = $this->_containerHas($params, $_param);
+
+            if (!$hasParam && $required) {
+                throw $this->_createControllerException(
+                    $this->__('A "%s" value must be specified', [$_param]), 400, null, $this
+                );
+            }
+
+            $recordData[$field] = $hasParam
+                ? $this->_containerGet($params, $_param)
+                : $default;
+        }
+
+        $ids = $insertRm->insert([$recordData]);
 
         if (empty($ids)) {
             return [];
         }
 
         return $this->_get(['id' => $ids[0]]);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _patch($params = [])
+    {
+        $updateRm = $this->_getUpdateRm();
+
+        if ($updateRm === null) {
+            throw $this->_createRuntimeException($this->__('The UPDATE resource model is null'));
+        }
+
+        $changeSet = [];
+
+        foreach ($this->_getUpdateParamFieldMapping() as $_param => $_field) {
+            if ($this->_containerHas($params, $_param)) {
+                $changeSet[$_field] = $this->_containerGet($params, $_param);
+            }
+        }
+
+        $updateRm->update($changeSet);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _delete($params = [])
+    {
+        $deleteRm = $this->_getDeleteRm();
+
+        if ($deleteRm === null) {
+            throw $this->_createRuntimeException($this->__('The DELETE resource model is null'));
+        }
+
+        $deleteRm->delete($this->_buildDeleteCondition($params));
+
+        return [];
     }
 
     /**
@@ -182,6 +265,66 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
     }
 
     /**
+     * Retrieves the UPDATE resource model.
+     *
+     * @since [*next-version*]
+     *
+     * @return UpdateCapableInterface|null The resource model instance, if any.
+     */
+    protected function _getUpdateRm()
+    {
+        return $this->updateRm;
+    }
+
+    /**
+     * Sets the UPDATE resource model.
+     *
+     * @since [*next-version*]
+     *
+     * @param UpdateCapableInterface|null $updateRm The resource model instance, if any.
+     */
+    protected function _setUpdateRm($updateRm)
+    {
+        if ($updateRm !== null && !($updateRm instanceof UpdateCapableInterface)) {
+            throw $this->_createInvalidArgumentException(
+                $this->__('Argument is not an UPDATE resource model'), null, null, $updateRm
+            );
+        }
+
+        $this->updateRm = $updateRm;
+    }
+
+    /**
+     * Retrieves the DELETE resource model.
+     *
+     * @since [*next-version*]
+     *
+     * @return DeleteCapableInterface|null The DELETE resource model instance, if any.
+     */
+    protected function _getDeleteRm()
+    {
+        return $this->deleteRm;
+    }
+
+    /**
+     * Sets the DELETE resource model.
+     *
+     * @since [*next-version*]
+     *
+     * @param DeleteCapableInterface|null $deleteRm The DELETE source model insance, if any.
+     */
+    protected function _setDeleteRm($deleteRm)
+    {
+        if ($deleteRm !== null && !($deleteRm instanceof DeleteCapableInterface)) {
+            throw $this->_createInvalidArgumentException(
+                $this->__('Argument is not a DELETE resource model'), null, null, $deleteRm
+            );
+        }
+
+        $this->deleteRm = $deleteRm;
+    }
+
+    /**
      * Retrieves the expression builder.
      *
      * @since [*next-version*]
@@ -206,7 +349,7 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
     }
 
     /**
-     * Builds a logical expression from a set of params.
+     * Builds a logical expression for SELECT queries from a set of request params.
      *
      * @since [*next-version*]
      *
@@ -219,7 +362,35 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
         // The query condition
         $condition = null;
 
-        foreach ($this->_getParamCqrsCompareInfo() as $_param => $_info) {
+        foreach ($this->_getSelectConditionParamMapping() as $_param => $_info) {
+            $_compare = $this->_containerGet($_info, 'compare');
+            $_entity  = $this->_containerGet($_info, 'entity');
+            $_field   = $this->_containerGet($_info, 'field');
+            $_value   = $this->_containerHas($params, $_param)
+                ? $this->_containerGet($params, $_param)
+                : null;
+
+            $condition = $this->_addQueryCondition($condition, $_entity, $_field, $_value, $_compare);
+        }
+
+        return $condition;
+    }
+
+    /**
+     * Builds a logical expression for DELETE queries from a set of request params.
+     *
+     * @since [*next-version*]
+     *
+     * @param array|stdClass|ArrayAccess|ContainerInterface $params The input parameters.
+     *
+     * @return LogicalExpressionInterface|null The built condition.
+     */
+    protected function _buildDeleteCondition($params)
+    {
+        // The query condition
+        $condition = null;
+
+        foreach ($this->_getDeleteConditionParamMapping() as $_param => $_info) {
             $_compare = $this->_containerGet($_info, 'compare');
             $_entity  = $this->_containerGet($_info, 'entity');
             $_field   = $this->_containerGet($_info, 'field');
@@ -316,7 +487,7 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
     }
 
     /**
-     * Retrieves the information about the input parameters and how they map to CQRS comparison expressions.
+     * Retrieves the mapping between request parameters and CQRS entity fields for SELECT conditions.
      *
      * The information about the params is a mapping of input param names to containers as values.
      * The containers are expected to have two keys: 'compare', 'entity' and 'field'.
@@ -327,5 +498,46 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
      *
      * @return array|Traversable
      */
-    abstract protected function _getParamCqrsCompareInfo();
+    abstract protected function _getSelectConditionParamMapping();
+
+    /**
+     * Retrieves the INSERT mapping between input parameters and CQRS entity field comparison info.
+     *
+     * The mapping is expected to have request param names as keys, mapping to child maps as values.
+     * Each child map must have at least a "field" mapping, which maps to the field name, and a "required" mapping,
+     * which maps to a boolean that signifies whether the request param is required or not. Optionally, a "default"
+     * mapping may be given that maps to a value, which is used for non-required parameters that are not specified.
+     *
+     * @since [*next-version*]
+     *
+     * @return array|Traversable
+     */
+    abstract protected function _getInsertParamFieldMapping();
+
+    /**
+     * Retrieves the UPDATE mapping between input parameters and CQRS entity field comparison info.
+     *
+     * The mapping is expected to have request param names as keys, mapping to the corresponding resource model field
+     * names as values. Having multiple request params update the same field is possible, but later entries in the
+     * mapping will have precedence.
+     *
+     * @since [*next-version*]
+     *
+     * @return array|Traversable
+     */
+    abstract protected function _getUpdateParamFieldMapping();
+
+    /**
+     * Retrieves the mapping between request parameters and CQRS entity fields for DELETE conditions.
+     *
+     * The information about the params is a mapping of input param names to containers as values.
+     * The containers are expected to have two keys: 'compare', 'entity' and 'field'.
+     * The 'compare' index should have the relational mode to use in the expression. The 'entity' and 'field' indexes
+     * should map to the names of the entity field value to compare to.
+     *
+     * @since [*next-version*]
+     *
+     * @return array|Traversable
+     */
+    abstract protected function _getDeleteConditionParamMapping();
 }

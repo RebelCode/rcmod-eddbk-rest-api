@@ -20,7 +20,9 @@ use RebelCode\EddBookings\RestApi\Controller\ClientsController;
 use RebelCode\EddBookings\RestApi\Controller\ServicesController;
 use RebelCode\EddBookings\RestApi\Handlers\Bookings\BookingInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Bookings\CreateBookingHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Bookings\DeleteBookingHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Bookings\QueryBookingsHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Bookings\UpdateBookingHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\ClientInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\CreateClientHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\QueryClientsHandler;
@@ -96,6 +98,8 @@ class EddBkRestApiModule extends AbstractBaseModule
                         $c->get('booking_transitioner'),
                         $c->get('bookings_select_rm'),
                         $c->get('bookings_insert_rm'),
+                        $c->get('bookings_update_rm'),
+                        $c->get('bookings_delete_rm'),
                         $c->get('sql_expression_builder'),
                         $c->get('eddbk_clients_controller')
                     );
@@ -205,6 +209,24 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_create_booking_handler' => function (ContainerInterface $c) {
                     return new CreateBookingHandler($c->get('eddbk_bookings_controller'), $c->get('eddbk_rest_api'));
+                },
+
+                /*
+                 * Handles the bookings route for updating bookings.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_update_booking_handler' => function(ContainerInterface $c) {
+                    return new UpdateBookingHandler($c->get('eddbk_bookings_controller'));
+                },
+
+                /*
+                 * Handles the bookings route for deleting bookings.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_delete_booking_handler' => function(ContainerInterface $c) {
+                    return new DeleteBookingHandler($c->get('eddbk_bookings_controller'));
                 },
 
                 /*-------------------------------------------------------------*\

@@ -106,9 +106,7 @@ class ServicesController extends AbstractBaseController
      */
     protected function _put($params = [])
     {
-        throw $this->_createControllerException(
-            $this->__('Not implemented'), 500, null, $this
-        );
+        throw $this->_createControllerException($this->__('Not implemented'), 405, null, $this);
     }
 
     /**
@@ -118,9 +116,7 @@ class ServicesController extends AbstractBaseController
      */
     protected function _patch($params = [])
     {
-        throw $this->_createControllerException(
-            $this->__('Not implemented'), 500, null, $this
-        );
+        throw $this->_createControllerException($this->__('Not implemented'), 405, null, $this);
     }
 
     /**
@@ -130,8 +126,6 @@ class ServicesController extends AbstractBaseController
      */
     protected function _delete($params = [])
     {
-        throw $this->_createControllerException(
-            $this->__('Not implemented'), 500, null, $this
-        );
+        throw $this->_createControllerException($this->__('Not implemented'), 405, null, $this);
     }
 }

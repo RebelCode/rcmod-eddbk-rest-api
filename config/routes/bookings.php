@@ -38,3 +38,25 @@ $cfg['eddbk_rest_api']['routes']['create_booking'] = [
     'methods' => ['POST'],
     'handler' => 'eddbk_rest_api_create_booking_handler'
 ];
+
+/*
+ * The route for updating a booking.
+ *
+ * @since [*next-version*]
+ */
+$cfg['eddbk_rest_api']['routes']['update_booking'] = [
+    'pattern' => '/bookings/(?P<id>[\d]+)',
+    'methods' => ['PATCH'],
+    'handler' => 'eddbk_rest_api_update_booking_handler'
+];
+
+/*
+ * The route for updating a booking.
+ *
+ * @since [*next-version*]
+ */
+$cfg['eddbk_rest_api']['routes']['delete_booking'] = [
+    'pattern' => '/bookings/(?P<id>[\d]+)',
+    'methods' => ['DELETE'],
+    'handler' => 'eddbk_rest_api_delete_booking_handler'
+];
