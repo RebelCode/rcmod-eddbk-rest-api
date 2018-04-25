@@ -150,7 +150,8 @@ class BookingsController extends AbstractBaseCqrsController
             $booking = $this->_getTransitioner()->transition($booking, $transition);
         } catch (CouldNotTransitionExceptionInterface $couldNotTransitionException) {
             throw $this->_createControllerException(
-                $couldNotTransitionException->getMessage(), 500, $couldNotTransitionException, $this
+                __('Cannot create a new booking as "%s"', [$couldNotTransitionException->getTransition()]),
+                400, $couldNotTransitionException, $this
             );
         }
 
