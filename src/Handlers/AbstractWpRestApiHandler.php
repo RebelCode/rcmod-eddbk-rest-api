@@ -7,6 +7,7 @@ use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Invocation\InvocableInterface;
 use Dhii\Util\Normalization\NormalizeArrayCapableTrait;
 use Exception;
+use RebelCode\EddBookings\RestApi\Controller\Exception\ControllerExceptionInterface;
 use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -39,6 +40,10 @@ abstract class AbstractWpRestApiHandler implements InvocableInterface
 
         try {
             return $this->_handle($request);
+        } catch (ControllerExceptionInterface $controllerException) {
+            return new WP_Error('eddbk_rest_api_controller_error', $controllerException->getMessage(), [
+                'status' => $controllerException->getCode()
+            ]);
         } catch (Exception $exception) {
             return new WP_Error('eddbk_rest_api_error', $exception->getMessage(), ['status' => 500]);
         }
