@@ -73,27 +73,6 @@ class BookingsController extends AbstractBaseCqrsController
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * Overrides to attempt to transition the booking before insertion.
-     *
-     * @since [*next-version*]
-     */
-    protected function _post($params = [])
-    {
-        $booking = $this->_getBookingFactory()->make([
-            'start'       => $this->_containerGet($params, 'start'),
-            'end'         => $this->_containerGet($params, 'end'),
-            'service_id'  => $this->_containerGet($params, 'service_id'),
-            'resource_id' => $this->_containerGet($params, 'resource_id'),
-            'status'      => null,
-        ]);
-        $booking = $this->_getTransitioner()->transition($booking, 'draft');
-
-        return parent::_post($booking);
-    }
-
-    /**
      * Retrieves the clients controller.
      *
      * @since [*next-version*]
@@ -121,6 +100,27 @@ class BookingsController extends AbstractBaseCqrsController
         }
 
         $this->clientsController = $clientsController;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * Overrides to attempt to transition the booking before insertion.
+     *
+     * @since [*next-version*]
+     */
+    protected function _post($params = [])
+    {
+        $booking = $this->_getBookingFactory()->make([
+            'start'       => $this->_containerGet($params, 'start'),
+            'end'         => $this->_containerGet($params, 'end'),
+            'service_id'  => $this->_containerGet($params, 'service_id'),
+            'resource_id' => $this->_containerGet($params, 'resource_id'),
+            'status'      => null,
+        ]);
+        $booking = $this->_getTransitioner()->transition($booking, 'draft');
+
+        return parent::_post($booking);
     }
 
     /**
@@ -177,22 +177,22 @@ class BookingsController extends AbstractBaseCqrsController
     protected function _getParamCqrsCompareInfo()
     {
         return [
-            'id' => [
+            'id'       => [
                 'compare' => 'eq',
                 'entity'  => 'booking',
                 'field'   => 'id',
             ],
-            'start' => [
+            'start'    => [
                 'compare' => 'gte',
                 'entity'  => 'booking',
                 'field'   => 'start',
             ],
-            'end' => [
+            'end'      => [
                 'compare' => 'lte',
                 'entity'  => 'booking',
                 'field'   => 'end',
             ],
-            'service' => [
+            'service'  => [
                 'compare' => 'eq',
                 'entity'  => 'booking',
                 'field'   => 'service_id',
@@ -202,7 +202,7 @@ class BookingsController extends AbstractBaseCqrsController
                 'entity'  => 'booking',
                 'field'   => 'resource_id',
             ],
-            'client' => [
+            'client'   => [
                 'compare' => 'eq',
                 'entity'  => 'booking',
                 'field'   => 'client_id',
