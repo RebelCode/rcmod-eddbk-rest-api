@@ -2,6 +2,7 @@
 
 namespace RebelCode\EddBookings\RestApi\Controller;
 
+use ArrayAccess;
 use Dhii\Data\Container\ContainerGetCapableTrait;
 use Dhii\Data\Container\ContainerHasCapableTrait;
 use Dhii\Data\Container\CreateContainerExceptionCapableTrait;
@@ -13,6 +14,9 @@ use Dhii\Factory\FactoryAwareTrait;
 use Dhii\Factory\FactoryInterface;
 use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
+use Psr\Container\ContainerInterface;
+use stdClass;
+use Traversable;
 use WP_Query;
 
 /**
@@ -87,5 +91,15 @@ class ServicesController extends AbstractBaseController
         }
 
         return $posts;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _post($params = [])
+    {
+        return null;
     }
 }
