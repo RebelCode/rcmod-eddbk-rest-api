@@ -251,39 +251,6 @@ class EddBkRestApiModule extends AbstractBaseModule
                 },
 
                 /*
-                 * Transformer that transforms WP_Post instances into arrays.
-                 *
-                 * @since [*next-version*]
-                 */
-                'eddbk_post_array_transformer' => function (ContainerInterface $c) {
-                    return new CallbackTransformer(function ($post) {
-                        if (!$post instanceof WP_Post) {
-                            throw $this->_createInvalidArgumentException(
-                                $this->__('Argument is not a WP_Post instance'), null, null, $post
-                            );
-                        }
-
-                        return $post->to_array();
-                    });
-                },
-
-                /*
-                 * Transformer that transforms timestamps into formatted datetime strings.
-                 *
-                 * @since [*next-version*]
-                 */
-                'eddbk_timestamp_datetime_transformer' => function (ContainerInterface $c) {
-                    return new CallbackTransformer(function ($timestamp) use ($c) {
-                        $tzName = get_option('timezone_string');
-                        $tzName = empty($tzName) ? 'UTC' : $tzName;
-                        $timezone = new DateTimeZone($tzName);
-                        $dateTime = new DateTime('@' . $timestamp, $timezone);
-
-                        return $dateTime->format($c->get('eddbk_rest_api/datetime_format'));
-                    });
-                },
-
-                /*
                  * The transformer that transforms bookings into the result that is send in REST API responses.
                  *
                  * @since [*next-version*]
@@ -429,6 +396,39 @@ class EddBkRestApiModule extends AbstractBaseModule
 
                         return $timezone->getOffset($time);
                     };
+                },
+
+                /*
+                 * Transformer that transforms timestamps into formatted datetime strings.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_timestamp_datetime_transformer' => function (ContainerInterface $c) {
+                    return new CallbackTransformer(function ($timestamp) use ($c) {
+                        $tzName = get_option('timezone_string');
+                        $tzName = empty($tzName) ? 'UTC' : $tzName;
+                        $timezone = new DateTimeZone($tzName);
+                        $dateTime = new DateTime('@' . $timestamp, $timezone);
+
+                        return $dateTime->format($c->get('eddbk_rest_api/datetime_format'));
+                    });
+                },
+
+                /*
+                 * Transformer that transforms WP_Post instances into arrays.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_post_array_transformer' => function (ContainerInterface $c) {
+                    return new CallbackTransformer(function ($post) {
+                        if (!$post instanceof WP_Post) {
+                            throw $this->_createInvalidArgumentException(
+                                $this->__('Argument is not a WP_Post instance'), null, null, $post
+                            );
+                        }
+
+                        return $post->to_array();
+                    });
                 },
 
                 /*-------------------------------------------------------------*\
