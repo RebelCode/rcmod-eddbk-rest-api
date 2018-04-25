@@ -72,8 +72,7 @@ abstract class AbstractBaseController implements ControllerInterface
      *
      * @return array|stdClass|Traversable|null The response, as a traversable list consisting of container elements:
      *                                         array, {@see stdClass}, {@see ArrayAccess} or {@see ContainerInterface}.
-     *                                         Null may be returned to signify that the resource could not be created
-     *                                         due to a conflict.
+     *                                         Null may be returned to signify that the resource could not be created.
      */
     abstract protected function _post($params = []);
 }
