@@ -25,7 +25,7 @@ trait CreateControllerExceptionCapableTrait
      *
      * @return ControllerExceptionInterface The new exception.
      */
-    protected function _createOutOfRangeException(
+    protected function _createControllerException(
         $message = null,
         $code = null,
         RootException $previous = null,
