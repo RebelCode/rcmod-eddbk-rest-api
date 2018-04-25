@@ -8,10 +8,12 @@ use Dhii\Factory\FactoryInterface;
 use Dhii\Storage\Resource\InsertCapableInterface;
 use Dhii\Storage\Resource\SelectCapableInterface;
 use Dhii\Util\String\StringableInterface;
+use Dhii\Util\String\StringableInterface as Stringable;
 use RebelCode\Bookings\BookingFactoryInterface;
 use RebelCode\Bookings\Factory\BookingFactoryAwareTrait;
 use RebelCode\Bookings\TransitionerAwareTrait;
 use RebelCode\Bookings\TransitionerInterface;
+use RebelCode\EddBookings\RestApi\Controller\Exception\CreateControllerExceptionCapableTrait;
 
 /**
  * The API controller for bookings.
@@ -32,6 +34,9 @@ class BookingsController extends AbstractBaseCqrsController
     /* @since [*next-version*] */
     use TransitionerAwareTrait;
 
+    /* @since [*next-version*] */
+    use CreateControllerExceptionCapableTrait;
+
     /**
      * The clients controller.
      *
@@ -40,6 +45,15 @@ class BookingsController extends AbstractBaseCqrsController
      * @var ControllerInterface
      */
     protected $clientsController;
+
+    /**
+     * The map of allowed booking transitions.
+     *
+     * @since [*next-version*]
+     *
+     * @var array
+     */
+    protected $bookingTransitions;
 
     /**
      * Constructor.
@@ -61,6 +75,7 @@ class BookingsController extends AbstractBaseCqrsController
         SelectCapableInterface $selectRm,
         InsertCapableInterface $insertRm,
         $exprBuilder,
+        $bookingTransitions,
         ControllerInterface $clientsController = null
     ) {
         $this->_setIteratorFactory($iteratorFactory);
@@ -111,6 +126,17 @@ class BookingsController extends AbstractBaseCqrsController
      */
     protected function _post($params = [])
     {
+        // Read the status as a "transition"
+        $transition = $this->_containerGet($params, 'status');
+        // Validate it - ensure it is allowed
+        if (!array_key_exists($transition, $this->bookingTransitions['none'])) {
+            $allowed = implode(', ', array_keys($this->bookingTransitions['none']));
+
+            throw $this->_createControllerException(
+                $this->__('The provided booking status is invalid. Only [%s] are allowed', [$allowed]),
+                400, null, $this
+            );
+        }
         $booking = $this->_getBookingFactory()->make([
             'start'       => $this->_containerGet($params, 'start'),
             'end'         => $this->_containerGet($params, 'end'),
@@ -118,7 +144,7 @@ class BookingsController extends AbstractBaseCqrsController
             'resource_id' => $this->_containerGet($params, 'resource_id'),
             'status'      => null,
         ]);
-        $booking = $this->_getTransitioner()->transition($booking, 'draft');
+        $booking = $this->_getTransitioner()->transition($booking, $transition);
 
         return parent::_post($booking);
     }
