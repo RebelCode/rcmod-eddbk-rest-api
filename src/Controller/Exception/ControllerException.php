@@ -10,7 +10,7 @@ use Throwable;
  *
  * @since [*next-version*]
  */
-class ControllerException extends AbstractBaseException
+class ControllerException extends AbstractBaseException implements ControllerExceptionInterface
 {
     /**
      * {@inheritdoc}
