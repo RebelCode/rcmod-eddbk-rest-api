@@ -4,6 +4,7 @@ namespace RebelCode\EddBookings\RestApi\Controller;
 
 use ArrayAccess;
 use Psr\Container\ContainerInterface;
+use RebelCode\EddBookings\RestApi\Controller\Exception\ControllerExceptionInterface;
 use stdClass;
 use Traversable;
 
@@ -21,6 +22,8 @@ interface ControllerInterface
      *
      * @param array|stdClass|ArrayAccess|ContainerInterface $params The parameters.
      *
+     * @throws ControllerExceptionInterface If an error occurred.
+     *
      * @return array|stdClass|Traversable The response, as a traversable list consisting of container elements: array,
      *                                    {@see stdClass}, {@see ArrayAccess} or {@see ContainerInterface}.
      */
@@ -32,6 +35,8 @@ interface ControllerInterface
      * @since [*next-version*]
      *
      * @param array|stdClass|ArrayAccess|ContainerInterface $params The parameters.
+     *
+     * @throws ControllerExceptionInterface If an error occurred.
      *
      * @return array|stdClass|Traversable The response, as a traversable list consisting of container elements: array,
      *                                    {@see stdClass}, {@see ArrayAccess} or {@see ContainerInterface}.
