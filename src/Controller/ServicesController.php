@@ -98,4 +98,40 @@ class ServicesController extends AbstractBaseController
     {
         return;
     }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _put($params = [])
+    {
+        throw $this->_createControllerException(
+            $this->__('Not implemented'), 500, null, $this
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _patch($params = [])
+    {
+        throw $this->_createControllerException(
+            $this->__('Not implemented'), 500, null, $this
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _delete($params = [])
+    {
+        throw $this->_createControllerException(
+            $this->__('Not implemented'), 500, null, $this
+        );
+    }
 }

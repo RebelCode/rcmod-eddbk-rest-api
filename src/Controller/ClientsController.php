@@ -16,7 +16,9 @@ use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
 use EDD_DB_Customers;
 use Psr\Container\ContainerInterface;
+use RebelCode\EddBookings\RestApi\Controller\Exception\ControllerExceptionInterface;
 use stdClass;
+use Traversable;
 
 /**
  * The API controller for clients.
@@ -126,6 +128,42 @@ class ClientsController extends AbstractBaseController implements ControllerInte
         $newClientId = $eddCustomer->create($newClientData);
 
         return $this->_get(['id' => $newClientId]);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _put($params = [])
+    {
+        throw $this->_createControllerException(
+            $this->__('Not implemented'), 500, null, $this
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _patch($params = [])
+    {
+        throw $this->_createControllerException(
+            $this->__('Not implemented'), 500, null, $this
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _delete($params = [])
+    {
+        throw $this->_createControllerException(
+            $this->__('Not implemented'), 500, null, $this
+        );
     }
 
     /**
