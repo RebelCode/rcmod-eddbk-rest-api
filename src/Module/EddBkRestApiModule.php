@@ -13,6 +13,7 @@ use Dhii\Iterator\NormalizeIteratorCapableTrait;
 use Dhii\Util\String\StringableInterface as Stringable;
 use IteratorIterator;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\EventManager\EventManagerInterface;
 use RebelCode\EddBookings\RestApi\Controller\BookingsController;
 use RebelCode\EddBookings\RestApi\Controller\ClientsController;
@@ -391,7 +392,16 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_booking_timezone_offset_transformer' => function () {
                     return function ($value, $source) {
-                        $timezone = new DateTimeZone($this->_containerGet($source, 'client_tz'));
+                        try {
+                            $tzName = $this->_containerGet($source, 'client_tz');
+                            if (empty($tzName)) {
+                                return null;
+                            }
+                        } catch (NotFoundExceptionInterface $notFoundException) {
+                            return null;
+                        }
+
+                        $timezone = new DateTimeZone($tzName);
                         $time = new DateTime('@' . $this->_containerGet($source, 'start'));
 
                         return $timezone->getOffset($time);
