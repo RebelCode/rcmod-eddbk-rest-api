@@ -2,6 +2,7 @@
 
 namespace RebelCode\EddBookings\RestApi\Controller;
 
+use ArrayAccess;
 use Dhii\Data\Container\Exception\NotFoundExceptionInterface as DhiiNotFoundExceptionInterface;
 use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\Factory\FactoryAwareTrait;
@@ -10,6 +11,7 @@ use Dhii\Storage\Resource\InsertCapableInterface;
 use Dhii\Storage\Resource\SelectCapableInterface;
 use Dhii\Util\String\StringableInterface;
 use Dhii\Util\String\StringableInterface as Stringable;
+use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use RebelCode\Bookings\BookingFactoryInterface;
 use RebelCode\Bookings\Exception\CouldNotTransitionExceptionInterface;
@@ -18,6 +20,7 @@ use RebelCode\Bookings\TransitionerAwareTrait;
 use RebelCode\Bookings\TransitionerInterface;
 use RebelCode\EddBookings\RestApi\Controller\Exception\ControllerException;
 use RebelCode\EddBookings\RestApi\Controller\Exception\CreateControllerExceptionCapableTrait;
+use stdClass;
 
 /**
  * The API controller for bookings.
@@ -51,15 +54,6 @@ class BookingsController extends AbstractBaseCqrsController
     protected $clientsController;
 
     /**
-     * The map of allowed booking transitions.
-     *
-     * @since [*next-version*]
-     *
-     * @var array
-     */
-    protected $bookingTransitions;
-
-    /**
      * Constructor.
      *
      * @since [*next-version*]
@@ -79,7 +73,6 @@ class BookingsController extends AbstractBaseCqrsController
         SelectCapableInterface $selectRm,
         InsertCapableInterface $insertRm,
         $exprBuilder,
-        $bookingTransitions,
         ControllerInterface $clientsController = null
     ) {
         $this->_setIteratorFactory($iteratorFactory);
@@ -133,15 +126,7 @@ class BookingsController extends AbstractBaseCqrsController
         try {
             // Read the status as a "transition"
             $transition = $this->_containerGet($params, 'status');
-            // Validate it - ensure it is allowed
-            if (!array_key_exists($transition, $this->bookingTransitions['none'])) {
-                $allowed = implode(', ', array_keys($this->bookingTransitions['none']));
 
-                throw $this->_createControllerException(
-                    $this->__('The provided booking status is invalid. Only [%s] are allowed', [$allowed]),
-                    400, null, $this
-                );
-            }
             $booking = $this->_getBookingFactory()->make([
                 'start'       => $this->_containerGet($params, 'start'),
                 'end'         => $this->_containerGet($params, 'end'),
