@@ -18,12 +18,12 @@ use Psr\EventManager\EventManagerInterface;
 use RebelCode\EddBookings\RestApi\Controller\BookingsController;
 use RebelCode\EddBookings\RestApi\Controller\ClientsController;
 use RebelCode\EddBookings\RestApi\Controller\ServicesController;
+use RebelCode\EddBookings\RestApi\Handlers\Bookings\BookingInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Bookings\CreateBookingHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Bookings\QueryBookingsHandler;
-use RebelCode\EddBookings\RestApi\Handlers\Bookings\BookingInfoHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Clients\ClientInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\CreateClientHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\QueryClientsHandler;
-use RebelCode\EddBookings\RestApi\Handlers\Clients\ClientInfoHandler;
 use RebelCode\EddBookings\RestApi\Transformer\CallbackTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\MapTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\NoOpTransformer;
@@ -395,10 +395,10 @@ class EddBkRestApiModule extends AbstractBaseModule
                         try {
                             $tzName = $this->_containerGet($source, 'client_tz');
                             if (empty($tzName)) {
-                                return null;
+                                return;
                             }
                         } catch (NotFoundExceptionInterface $notFoundException) {
-                            return null;
+                            return;
                         }
 
                         $timezone = new DateTimeZone($tzName);

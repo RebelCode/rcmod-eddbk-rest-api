@@ -13,8 +13,6 @@ use Dhii\Exception\CreateOutOfRangeExceptionCapableTrait;
 use Dhii\Util\Normalization\NormalizeIterableCapableTrait;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
 use Psr\Container\ContainerInterface;
-use RebelCode\Bookings\TransitionerAwareTrait;
-use RebelCode\Bookings\TransitionerInterface;
 use RebelCode\EddBookings\RestApi\Controller\ControllerAwareTrait;
 use RebelCode\EddBookings\RestApi\Controller\ControllerInterface;
 use RebelCode\EddBookings\RestApi\Handlers\AbstractWpRestApiHandler;

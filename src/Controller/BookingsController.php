@@ -2,8 +2,6 @@
 
 namespace RebelCode\EddBookings\RestApi\Controller;
 
-use Dhii\Data\Container\ContainerSetCapableTrait;
-use Dhii\Data\Container\ContainerUnsetCapableTrait;
 use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\Factory\FactoryAwareTrait;
 use Dhii\Factory\FactoryInterface;
@@ -179,22 +177,22 @@ class BookingsController extends AbstractBaseCqrsController
     protected function _getParamCqrsCompareInfo()
     {
         return [
-            'id'       => [
+            'id' => [
                 'compare' => 'eq',
                 'entity'  => 'booking',
                 'field'   => 'id',
             ],
-            'start'    => [
+            'start' => [
                 'compare' => 'gte',
                 'entity'  => 'booking',
                 'field'   => 'start',
             ],
-            'end'      => [
+            'end' => [
                 'compare' => 'lte',
                 'entity'  => 'booking',
                 'field'   => 'end',
             ],
-            'service'  => [
+            'service' => [
                 'compare' => 'eq',
                 'entity'  => 'booking',
                 'field'   => 'service_id',
@@ -204,7 +202,7 @@ class BookingsController extends AbstractBaseCqrsController
                 'entity'  => 'booking',
                 'field'   => 'resource_id',
             ],
-            'client'   => [
+            'client' => [
                 'compare' => 'eq',
                 'entity'  => 'booking',
                 'field'   => 'client_id',
