@@ -41,9 +41,6 @@ class BookingsController extends AbstractBaseCqrsController
     /* @since [*next-version*] */
     use TransitionerAwareTrait;
 
-    /* @since [*next-version*] */
-    use CreateControllerExceptionCapableTrait;
-
     /**
      * The clients controller.
      *
