@@ -2,15 +2,17 @@
 
 namespace RebelCode\EddBookings\RestApi\Controller;
 
-use Dhii\Data\Container\DeleteCapableInterface;
 use Dhii\Data\Container\Exception\NotFoundExceptionInterface as DhiiNotFoundExceptionInterface;
 use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\Factory\FactoryAwareTrait;
 use Dhii\Factory\FactoryInterface;
+use Dhii\Storage\Resource\DeleteCapableInterface;
 use Dhii\Storage\Resource\InsertCapableInterface;
 use Dhii\Storage\Resource\SelectCapableInterface;
 use Dhii\Storage\Resource\UpdateCapableInterface;
+use Dhii\Util\Normalization\NormalizeArrayCapableTrait;
 use Dhii\Util\String\StringableInterface;
+use Dhii\Validation\Exception\ValidationFailedExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use RebelCode\Bookings\BookingFactoryInterface;
 use RebelCode\Bookings\Exception\CouldNotTransitionExceptionInterface;
@@ -36,6 +38,9 @@ class BookingsController extends AbstractBaseCqrsController
 
     /* @since [*next-version*] */
     use TransitionerAwareTrait;
+
+    /* @since [*next-version*] */
+    use NormalizeArrayCapableTrait;
 
     /**
      * The clients controller.
@@ -116,45 +121,71 @@ class BookingsController extends AbstractBaseCqrsController
     /**
      * {@inheritdoc}
      *
+     * @since [*next-version*]
+     */
+    protected function _get($params = [])
+    {
+        $selectRm = $this->_getSelectRm();
+
+        if ($selectRm === null) {
+            throw $this->_createRuntimeException($this->__('The SELECT resource model is null'));
+        }
+
+        return $selectRm->select($this->_buildSelectCondition($params));
+    }
+
+    /**
+     * {@inheritdoc}
+     *
      * Overrides to attempt to transition the booking before insertion.
      *
      * @since [*next-version*]
      */
     protected function _post($params = [])
     {
+        $insertRm = $this->_getInsertRm();
+        if ($insertRm === null) {
+            throw $this->_createRuntimeException($this->__('The INSERT resource model is null'));
+        }
+
+        $booking = $this->_getBookingFactory()->make($this->_buildInsertRecord($params));
+        if (empty($booking)) {
+            throw $this->_createControllerException($this->__('Cannot transition empty booking'), 400, null, $this);
+        }
+
         try {
             // Read the status as a "transition"
-            $transition = $this->_containerGet($params, 'status');
-
-            $booking = $this->_getBookingFactory()->make([
-                'start'       => $this->_containerGet($params, 'start'),
-                'end'         => $this->_containerGet($params, 'end'),
-                'service_id'  => $this->_containerGet($params, 'service_id'),
-                'resource_id' => $this->_containerGet($params, 'resource_id'),
-                'status'      => null,
-            ]);
-        } catch (DhiiNotFoundExceptionInterface $dhiiNotFoundException) {
-            throw $this->_createControllerException(
-                $this->__('Missing "%s" booking data in the request', [$dhiiNotFoundException->getDataKey()]),
-                400, $dhiiNotFoundException, $this
-            );
-        } catch (NotFoundExceptionInterface $notFoundException) {
-            throw $this->_createControllerException(
-                $this->__('Missing booking data in the request. Required: [start, end, service_id, resource_id, status]'),
-                400, $notFoundException, $this
-            );
-        }
-
-        try {
+            $transition = $this->_containerGet($params, 'transition');
+            // Attempt transition
             $booking = $this->_getTransitioner()->transition($booking, $transition);
-        } catch (CouldNotTransitionExceptionInterface $couldNotTransitionException) {
+
+            $ids = $insertRm->insert([$booking]);
+            $id = null;
+            foreach ($ids as $id) {
+                break;
+            }
+
+            return $this->_get(['id' => $id]);
+        } catch (CouldNotTransitionExceptionInterface $transitionEx) {
+            $validationEx = $transitionEx;
+            while ($validationEx !== null && !($validationEx instanceof ValidationFailedExceptionInterface)) {
+                $validationEx = $validationEx->getPrevious();
+            }
+
+            $errors = ($validationEx instanceof ValidationFailedExceptionInterface)
+                ? $validationEx->getValidationErrors()
+                : [];
+
             throw $this->_createControllerException(
-                __('Cannot create a new booking as "%s"', [$couldNotTransitionException->getTransition()]),
-                400, $couldNotTransitionException, $this
+                $transitionEx->getMessage(), 403, $transitionEx, $this, [
+                    'errors' => $this->_normalizeArray($errors)
+                ]
+            );
+        } catch (NotFoundExceptionInterface $notFoundEx) {
+            throw $this->_createControllerException(
+                $this->__('Must provide an initial "transition" as either "draft" or "cart"'), 400, $notFoundEx, $this
             );
         }
-
-        return parent::_post($booking);
     }
 
     /**
@@ -165,6 +196,50 @@ class BookingsController extends AbstractBaseCqrsController
     protected function _put($params = [])
     {
         throw $this->_createControllerException($this->__('Cannot PUT a booking - use PATCH'), 405, null, $this);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _patch($params = [])
+    {
+        $updateRm = $this->_getUpdateRm();
+
+        if ($updateRm === null) {
+            throw $this->_createRuntimeException($this->__('The UPDATE resource model is null'));
+        }
+
+        $changeSet = [];
+
+        foreach ($this->_getUpdateParamFieldMapping() as $_param => $_field) {
+            if ($this->_containerHas($params, $_param)) {
+                $changeSet[$_field] = $this->_containerGet($params, $_param);
+            }
+        }
+
+        $updateRm->update($changeSet, $this->_buildUpdateCondition($params));
+
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _delete($params = [])
+    {
+        $deleteRm = $this->_getDeleteRm();
+
+        if ($deleteRm === null) {
+            throw $this->_createRuntimeException($this->__('The DELETE resource model is null'));
+        }
+
+        $deleteRm->delete($this->_buildDeleteCondition($params));
+
+        return [];
     }
 
     /**
@@ -259,12 +334,26 @@ class BookingsController extends AbstractBaseCqrsController
      *
      * @since [*next-version*]
      */
+    protected function _getUpdateConditionParamMapping()
+    {
+        return [
+            'id' => [
+                'compare' => 'eq',
+                'field'   => 'id',
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
     protected function _getDeleteConditionParamMapping()
     {
         return [
             'id' => [
                 'compare' => 'eq',
-                'entity'  => 'booking',
                 'field'   => 'id',
             ],
         ];
