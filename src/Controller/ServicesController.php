@@ -76,7 +76,7 @@ class ServicesController extends AbstractBaseController
     {
         if ($this->_containerHas($params, 'id')) {
             $post  = get_post($this->_containerGet($params, 'id'));
-            $posts = [$post];
+            $posts = empty($post) ? [] : [$post];
         } else {
             $queryArgs = [
                 'post_type' => 'download',
