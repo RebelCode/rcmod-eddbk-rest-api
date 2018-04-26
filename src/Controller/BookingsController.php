@@ -311,6 +311,11 @@ class BookingsController extends AbstractBaseCqrsController
                 'entity'  => 'booking',
                 'field'   => 'end',
             ],
+            'status' => [
+                'compare' => 'in',
+                'entity'  => 'booking',
+                'field'   => 'status'
+            ],
             'service'  => [
                 'compare' => 'eq',
                 'entity'  => 'booking',
