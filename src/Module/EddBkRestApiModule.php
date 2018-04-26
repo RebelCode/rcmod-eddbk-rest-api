@@ -13,7 +13,6 @@ use Dhii\Iterator\NormalizeIteratorCapableTrait;
 use Dhii\Util\String\StringableInterface as Stringable;
 use IteratorIterator;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\EventManager\EventManagerInterface;
 use RebelCode\EddBookings\RestApi\Controller\BookingsController;
 use RebelCode\EddBookings\RestApi\Controller\ClientsController;
