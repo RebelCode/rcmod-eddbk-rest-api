@@ -112,8 +112,8 @@ Creates a new booking and responds with the booking object. The following table 
 | `resource` | positive non-zero integer | The ID of the resource for which the booking will be made | ✅ |
 | `client` | positive non-zero integer | The ID of the client for which the booking will be made | |
 | `clientTz` | string | The name of the client's timezone | |
-| `payment` | integer | The payment number | integer or `null` | |
-| `notes` | string | Admin booking notes | string | |
+| `payment` | integer or `null` | The payment number | |
+| `notes` | string | Admin booking notes | |
 
 #### Updating Bookings
 
