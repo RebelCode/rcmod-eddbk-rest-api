@@ -378,6 +378,10 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_service_id_transformer' => function (ContainerInterface $c) {
                     return new CallbackTransformer(function ($serviceId) use ($c) {
+                        if (empty($serviceId)) {
+                            return null;
+                        }
+
                         $controller = $c->get('eddbk_services_controller');
                         $services = $controller->get(['id' => $serviceId]);
 
@@ -396,6 +400,10 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_client_id_transformer' => function (ContainerInterface $c) {
                     return new CallbackTransformer(function ($clientId) use ($c) {
+                        if (empty($clientId)) {
+                            return null;
+                        }
+
                         $controller = $c->get('eddbk_clients_controller');
                         $clients = $controller->get(['id' => $clientId]);
 
@@ -417,10 +425,10 @@ class EddBkRestApiModule extends AbstractBaseModule
                         try {
                             $tzName = $this->_containerGet($source, 'client_tz');
                             if (empty($tzName)) {
-                                return;
+                                return 0;
                             }
                         } catch (NotFoundExceptionInterface $notFoundException) {
-                            return;
+                            return 0;
                         }
 
                         $timezone = new DateTimeZone($tzName);
@@ -453,7 +461,11 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_post_array_transformer' => function (ContainerInterface $c) {
                     return new CallbackTransformer(function ($post) {
-                        if (!$post instanceof WP_Post) {
+                        if (empty($post)) {
+                            return null;
+                        }
+
+                        if (!($post instanceof WP_Post)) {
                             throw $this->_createInvalidArgumentException(
                                 $this->__('Argument is not a WP_Post instance'), null, null, $post
                             );
