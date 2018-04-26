@@ -6,6 +6,7 @@ use RebelCode\EddBookings\RestApi\Controller\ControllerAwareTrait;
 use RebelCode\EddBookings\RestApi\Controller\ControllerInterface;
 use RebelCode\EddBookings\RestApi\Handlers\AbstractWpRestApiHandler;
 use WP_REST_Request;
+use WP_REST_Response;
 
 /**
  * Handles the REST API endpoint for querying bookings.
@@ -88,6 +89,6 @@ class QueryBookingsHandler extends AbstractWpRestApiHandler
             'statuses' => $statuses,
         ];
 
-        return $response;
+        return new WP_REST_Response($response, 200);
     }
 }
