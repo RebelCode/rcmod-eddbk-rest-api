@@ -326,6 +326,11 @@ class BookingsController extends AbstractBaseCqrsController
                 'entity'  => 'booking',
                 'field'   => 'client_id',
             ],
+            'payment'   => [
+                'compare' => 'eq',
+                'entity'  => 'booking',
+                'field'   => 'payment_id',
+            ],
         ];
     }
 
