@@ -317,7 +317,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                         ],
                         [
                             'source' => 'payment_id',
-                            'target' => 'paymentNumber',
+                            'target' => 'payment',
                         ],
                         [
                             'source' => 'admin_notes',
