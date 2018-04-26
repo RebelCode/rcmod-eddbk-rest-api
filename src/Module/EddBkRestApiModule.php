@@ -432,7 +432,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                         }
 
                         $timezone = new DateTimeZone($tzName);
-                        $time = new DateTime('@' . $this->_containerGet($source, 'start'));
+                        $time = new DateTime('@' . $this->_containerGet($source, 'start'), new DateTimeZone('UTC'));
 
                         return $timezone->getOffset($time);
                     };
