@@ -4,6 +4,8 @@ namespace RebelCode\EddBookings\RestApi\Controller\Exception;
 
 use Dhii\Exception\ThrowableInterface;
 use RebelCode\EddBookings\RestApi\Controller\ControllerInterface;
+use stdClass;
+use Traversable;
 
 /**
  * An exception thrown in relation to a controller.
@@ -20,4 +22,13 @@ interface ControllerExceptionInterface extends ThrowableInterface
      * @return ControllerInterface
      */
     public function getController();
+
+    /**
+     * Retrieves additional response data.
+     *
+     * @since [*next-version*]
+     *
+     * @return array|stdClass|Traversable
+     */
+    public function getResponseData();
 }

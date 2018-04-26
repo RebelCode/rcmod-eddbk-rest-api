@@ -5,6 +5,8 @@ namespace RebelCode\EddBookings\RestApi\Controller\Exception;
 use Dhii\Util\String\StringableInterface as Stringable;
 use Exception as RootException;
 use RebelCode\EddBookings\RestApi\Controller\ControllerInterface;
+use stdClass;
+use Traversable;
 
 /**
  * Functionality for creating controller exceptions.
@@ -22,6 +24,7 @@ trait CreateControllerExceptionCapableTrait
      * @param int|float|string|Stringable|null      $code       The numeric error code, if any.
      * @param RootException|null                    $previous   The inner exception, if any.
      * @param ControllerInterface                   $controller The controller that erred, if any.
+     * @param array|stdClass|Traversable            $data       Additional response data, if any.
      *
      * @return ControllerExceptionInterface The new exception.
      */
@@ -29,8 +32,9 @@ trait CreateControllerExceptionCapableTrait
         $message = null,
         $code = null,
         RootException $previous = null,
-        ControllerInterface $controller = null
+        ControllerInterface $controller = null,
+        $data = []
     ) {
-        return new ControllerException($message, $code, $previous, $controller);
+        return new ControllerException($message, $code, $previous, $controller, $data);
     }
 }
