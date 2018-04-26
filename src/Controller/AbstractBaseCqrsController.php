@@ -278,6 +278,68 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
     }
 
     /**
+     * Builds a record from the request params, for insertion.
+     *
+     * @since [*next-version*]
+     *
+     * @param array|stdClass|ArrayAccess|ContainerInterface $params The request params.
+     *
+     * @return array|stdClass|ArrayAccess|ContainerInterface The built record.
+     */
+    protected function _buildInsertRecord($params)
+    {
+        $recordData = [];
+
+        foreach ($this->_getInsertParamFieldMapping() as $_param => $_mapping) {
+            $field    = $this->_containerGet($_mapping, 'field');
+            $required = $this->_containerGet($_mapping, 'required');
+            $default  = $this->_containerHas($_mapping, 'default')
+                ? $this->_containerGet($_mapping, 'default')
+                : null;
+            $hasParam = $this->_containerHas($params, $_param);
+
+            if (!$hasParam && $required) {
+                throw $this->_createControllerException(
+                    $this->__('A "%s" value must be specified', [$_param]), 400, null, $this
+                );
+            }
+
+            $recordData[$field] = $hasParam
+                ? $this->_containerGet($params, $_param)
+                : $default;
+        }
+
+        return $recordData;
+    }
+
+    /**
+     * Builds a logical expression for UPDATE queries from a set of request params.
+     *
+     * @since [*next-version*]
+     *
+     * @param array|stdClass|ArrayAccess|ContainerInterface $params The input parameters.
+     *
+     * @return LogicalExpressionInterface|null The built condition.
+     */
+    protected function _buildUpdateCondition($params)
+    {
+        // The query condition
+        $condition = null;
+
+        foreach ($this->_getUpdateConditionParamMapping() as $_param => $_info) {
+            $_compare = $this->_containerGet($_info, 'compare');
+            $_field   = $this->_containerGet($_info, 'field');
+            $_value   = $this->_containerHas($params, $_param)
+                ? $this->_containerGet($params, $_param)
+                : null;
+
+            $condition = $this->_addQueryCondition($condition, null, $_field, $_value, $_compare);
+        }
+
+        return $condition;
+    }
+
+    /**
      * Builds a logical expression for DELETE queries from a set of request params.
      *
      * @since [*next-version*]
@@ -391,7 +453,7 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
      * Retrieves the mapping between request parameters and CQRS entity fields for SELECT conditions.
      *
      * The information about the params is a mapping of input param names to containers as values.
-     * The containers are expected to have two keys: 'compare', 'entity' and 'field'.
+     * The containers are expected to have three keys: 'compare', 'entity' and 'field'.
      * The 'compare' index should have the relational mode to use in the expression. The 'entity' and 'field' indexes
      * should map to the names of the entity field value to compare to.
      *
@@ -429,10 +491,24 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
     abstract protected function _getUpdateParamFieldMapping();
 
     /**
+     * Retrieves the mapping between request parameters and CQRS entity fields for UPDATE conditions.
+     *
+     * The information about the params is a mapping of input param names to containers as values.
+     * The containers are expected to have two keys: 'compare' and 'field'.
+     * The 'compare' index should have the relational mode to use in the expression. The 'entity' and 'field' indexes
+     * should map to the names of the entity field value to compare to.
+     *
+     * @since [*next-version*]
+     *
+     * @return array|Traversable
+     */
+    abstract protected function _getUpdateConditionParamMapping();
+
+    /**
      * Retrieves the mapping between request parameters and CQRS entity fields for DELETE conditions.
      *
      * The information about the params is a mapping of input param names to containers as values.
-     * The containers are expected to have two keys: 'compare', 'entity' and 'field'.
+     * The containers are expected to have two keys: 'compare' and 'field'.
      * The 'compare' index should have the relational mode to use in the expression. The 'entity' and 'field' indexes
      * should map to the names of the entity field value to compare to.
      *
