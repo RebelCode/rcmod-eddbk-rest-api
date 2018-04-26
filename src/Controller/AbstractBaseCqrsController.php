@@ -27,6 +27,8 @@ use Traversable;
 /**
  * Abstract base functionality for REST API controllers that use CQRS resource models.
  *
+ * Provides awareness of CQRS resource models, as well as condition building and field mapping logic.
+ *
  * @since [*next-version*]
  */
 abstract class AbstractBaseCqrsController extends AbstractBaseController implements ControllerInterface
@@ -102,107 +104,6 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
      * @var object
      */
     protected $exprBuilder;
-
-    /**
-     * {@inheritdoc}
-     *
-     * @since [*next-version*]
-     */
-    protected function _get($params = [])
-    {
-        $selectRm = $this->_getSelectRm();
-
-        if ($selectRm === null) {
-            throw $this->_createRuntimeException($this->__('The SELECT resource model is null'));
-        }
-
-        return $selectRm->select($this->_buildSelectCondition($params));
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @since [*next-version*]
-     */
-    protected function _post($params = [])
-    {
-        $insertRm = $this->_getInsertRm();
-
-        if ($insertRm === null) {
-            throw $this->_createRuntimeException($this->__('The INSERT resource model is null'));
-        }
-
-        $recordData = [];
-
-        foreach ($this->_getInsertParamFieldMapping() as $_param => $_mapping) {
-            $field    = $this->_containerGet($_mapping, 'field');
-            $required = $this->_containerGet($_mapping, 'required');
-            $default  = $this->_containerHas($_mapping, 'default')
-                ? $this->_containerGet($_mapping, 'required')
-                : null;
-            $hasParam = $this->_containerHas($params, $_param);
-
-            if (!$hasParam && $required) {
-                throw $this->_createControllerException(
-                    $this->__('A "%s" value must be specified', [$_param]), 400, null, $this
-                );
-            }
-
-            $recordData[$field] = $hasParam
-                ? $this->_containerGet($params, $_param)
-                : $default;
-        }
-
-        $ids = $insertRm->insert([$recordData]);
-
-        if (empty($ids)) {
-            return [];
-        }
-
-        return $this->_get(['id' => $ids[0]]);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @since [*next-version*]
-     */
-    protected function _patch($params = [])
-    {
-        $updateRm = $this->_getUpdateRm();
-
-        if ($updateRm === null) {
-            throw $this->_createRuntimeException($this->__('The UPDATE resource model is null'));
-        }
-
-        $changeSet = [];
-
-        foreach ($this->_getUpdateParamFieldMapping() as $_param => $_field) {
-            if ($this->_containerHas($params, $_param)) {
-                $changeSet[$_field] = $this->_containerGet($params, $_param);
-            }
-        }
-
-        $updateRm->update($changeSet);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @since [*next-version*]
-     */
-    protected function _delete($params = [])
-    {
-        $deleteRm = $this->_getDeleteRm();
-
-        if ($deleteRm === null) {
-            throw $this->_createRuntimeException($this->__('The DELETE resource model is null'));
-        }
-
-        $deleteRm->delete($this->_buildDeleteCondition($params));
-
-        return [];
-    }
 
     /**
      * Retrieves the SELECT resource model.
