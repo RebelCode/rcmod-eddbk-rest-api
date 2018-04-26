@@ -133,3 +133,11 @@ Updates a booking. The following table lists the available fields for updating:
 | `clientTz` | string | The name of the client's timezone |
 | `payment` | integer | The payment number | integer or `null` |
 | `notes` | string | Admin booking notes | string |
+
+#### Deleting Bookings
+
+```
+DELETE /bookings/<id>
+```
+
+Deletes the booking with the given ID.
