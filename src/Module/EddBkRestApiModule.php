@@ -384,6 +384,7 @@ class EddBkRestApiModule extends AbstractBaseModule
 
                         $controller = $c->get('eddbk_services_controller');
                         $services = $controller->get(['id' => $serviceId]);
+                        $service = null;
 
                         foreach ($services as $service) {
                             break;
@@ -406,6 +407,7 @@ class EddBkRestApiModule extends AbstractBaseModule
 
                         $controller = $c->get('eddbk_clients_controller');
                         $clients = $controller->get(['id' => $clientId]);
+                        $client = null;
 
                         foreach ($clients as $client) {
                             break;
