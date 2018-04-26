@@ -355,13 +355,12 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
 
         foreach ($this->_getDeleteConditionParamMapping() as $_param => $_info) {
             $_compare = $this->_containerGet($_info, 'compare');
-            $_entity  = $this->_containerGet($_info, 'entity');
             $_field   = $this->_containerGet($_info, 'field');
             $_value   = $this->_containerHas($params, $_param)
                 ? $this->_containerGet($params, $_param)
                 : null;
 
-            $condition = $this->_addQueryCondition($condition, $_entity, $_field, $_value, $_compare);
+            $condition = $this->_addQueryCondition($condition, null, $_field, $_value, $_compare);
         }
 
         return $condition;
@@ -423,10 +422,12 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
             throw $this->_createRuntimeException($this->__('The expression builder is null'));
         }
 
-        return call_user_func_array([$b, $type], [
-            $b->ef($entity, $field),
-            $b->lit($value),
-        ]);
+        $term1 = ($entity !== null)
+            ? $b->ef($entity, $field)
+            : $b->var($field);
+        $term2 = $b->lit($value);
+
+        return call_user_func_array([$b, $type], [$term1, $term2]);
     }
 
     /**
