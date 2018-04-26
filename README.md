@@ -46,7 +46,7 @@ The following table lists the available query fields and how a provided value is
 
 | Field | Description | Value Type |
 |-------|-------------|------------|
-| `id`  | The booking with the given ID | integer/string |
+| `id`  | The booking with the given ID | integer |
 | `start` | The bookings that start at or after the given UTC timestamp | integer |
 | `end` | The bookings that end at or before the given UTC timestamp | integer |
 | `service` | The bookings made for the service with the given ID | positive non-zero integer |
