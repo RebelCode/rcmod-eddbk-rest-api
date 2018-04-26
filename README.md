@@ -26,7 +26,7 @@ The response will contain an object with the following properties:
 | `id` | integer | The ID of the booking | positive non-zero integer |
 | `start` | integer| The start time of the booking in the format `Y-M-D H:i:s` | integer |
 | `end` | integer| The end time of the booking in the format `Y-M-D H:i:s` | integer |
-| `status` | string | The current status of the booking | `""`, `"draft"`, `"in_cart"`, `"pending"`, `"approved"`, `"scheduled"`, `"cancelled"`, `"completed"` |
+| `status` | string | The current status of the booking | `""`, `"draft"`, `"in_cart"`, `"pending"`, `"approved"`, `"rejected"`, `"scheduled"`, `"cancelled"`, `"completed"` |
 | `service` | service | The service for which the booking was made | Service object |
 | `resource` | integer | The ID of the resource for which the booking was made | positive non-zero integer |
 | `client` | client | The client for the booking | Client object or `null` |
@@ -110,6 +110,7 @@ Creates a new booking and responds with the booking object. The following table 
 | `end` | integer| The end time of the booking as a UTC timestamp | ✅ |
 | `service` | positive non-zero integer | The ID of the service for which the booking will be made | ✅ |
 | `resource` | positive non-zero integer | The ID of the resource for which the booking will be made | ✅ |
+| `transition` | `"draft"` or `"cart"` | The initial transition to apply to the booking | ✅ |
 | `client` | positive non-zero integer | The ID of the client for which the booking will be made | |
 | `clientTz` | string | The name of the client's timezone | |
 | `payment` | integer or `null` | The payment number | |
