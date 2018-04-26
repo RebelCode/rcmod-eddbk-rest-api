@@ -41,9 +41,10 @@ abstract class AbstractWpRestApiHandler implements InvocableInterface
         try {
             return $this->_handle($request);
         } catch (ControllerExceptionInterface $controllerException) {
-            return new WP_Error('eddbk_rest_api_controller_error', $controllerException->getMessage(), [
-                'status' => $controllerException->getCode()
-            ]);
+            $data           = $this->_normalizeArray($controllerException->getResponseData());
+            $data['status'] = $controllerException->getCode();
+
+            return new WP_Error('eddbk_rest_api_controller_error', $controllerException->getMessage(), $data);
         } catch (Exception $exception) {
             return new WP_Error('eddbk_rest_api_error', $exception->getMessage(), ['status' => 500]);
         }
