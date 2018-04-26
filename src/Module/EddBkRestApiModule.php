@@ -424,12 +424,11 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_booking_timezone_offset_transformer' => function () {
                     return function ($value, $source) {
-                        try {
-                            $tzName = $this->_containerGet($source, 'client_tz');
-                            if (empty($tzName)) {
-                                return 0;
-                            }
-                        } catch (NotFoundExceptionInterface $notFoundException) {
+                        $tzName = $this->_containerHas($source, 'client_tz')
+                            ? $this->_containerGet($source, 'client_tz')
+                            : null;
+
+                        if (empty($tzName)) {
                             return 0;
                         }
 
