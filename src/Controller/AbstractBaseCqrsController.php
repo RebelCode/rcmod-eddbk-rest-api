@@ -61,6 +61,62 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
     use StringTranslatingTrait;
 
     /**
+     * The key for param type in configuration.
+     *
+     * @since [*next-version*]
+     */
+    const K_PARAM_TYPE = 'type';
+
+    /**
+     * The key for param entity in configuration.
+     *
+     * @since [*next-version*]
+     */
+    const K_PARAM_ENTITY = 'entity';
+
+    /**
+     * The key for param field in configuration.
+     *
+     * @since [*next-version*]
+     */
+    const K_PARAM_FIELD = 'field';
+
+    /**
+     * The key for param comparison mode in configuration.
+     *
+     * @since [*next-version*]
+     */
+    const K_PARAM_COMPARE = 'compare';
+
+    /**
+     * The key for param required flag in configuration.
+     *
+     * @since [*next-version*]
+     */
+    const K_PARAM_REQUIRED = 'required';
+
+    /**
+     * The key for param default value in configuration.
+     *
+     * @since [*next-version*]
+     */
+    const K_PARAM_DEFAULT = 'default';
+
+    /**
+     * The type indicator for array params.
+     *
+     * @since [*next-version*]
+     */
+    const T_PARAM_ARRAY = 'array';
+
+    /**
+     * The type indicator for array params.
+     *
+     * @since [*next-version*]
+     */
+    const T_PARAM_SCALAR = 'scalar';
+
+    /**
      * The SELECT resource model.
      *
      * @since [*next-version*]
@@ -264,12 +320,18 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
         $condition = null;
 
         foreach ($this->_getSelectConditionParamMapping() as $_param => $_info) {
-            $_compare = $this->_containerGet($_info, 'compare');
-            $_entity  = $this->_containerGet($_info, 'entity');
-            $_field   = $this->_containerGet($_info, 'field');
+            $_compare = $this->_containerGet($_info, static::K_PARAM_COMPARE);
+            $_entity  = $this->_containerGet($_info, static::K_PARAM_ENTITY);
+            $_field   = $this->_containerGet($_info, static::K_PARAM_FIELD);
+            $_type    = $this->_containerHas($_info, static::K_PARAM_TYPE)
+                ? $this->_containerGet($_info, static::K_PARAM_TYPE)
+                : static::T_PARAM_SCALAR;
             $_value   = $this->_containerHas($params, $_param)
                 ? $this->_containerGet($params, $_param)
                 : null;
+            $_value   = ($_type === static::T_PARAM_ARRAY)
+                ? explode(',', $_value)
+                : $_value;
 
             $condition = $this->_addQueryCondition($condition, $_entity, $_field, $_value, $_compare);
         }
@@ -291,10 +353,10 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
         $recordData = [];
 
         foreach ($this->_getInsertParamFieldMapping() as $_param => $_mapping) {
-            $field    = $this->_containerGet($_mapping, 'field');
-            $required = $this->_containerGet($_mapping, 'required');
-            $default  = $this->_containerHas($_mapping, 'default')
-                ? $this->_containerGet($_mapping, 'default')
+            $field    = $this->_containerGet($_mapping, static::K_PARAM_FIELD);
+            $required = $this->_containerGet($_mapping, static::K_PARAM_REQUIRED);
+            $default  = $this->_containerHas($_mapping, static::K_PARAM_DEFAULT)
+                ? $this->_containerGet($_mapping, static::K_PARAM_DEFAULT)
                 : null;
             $hasParam = $this->_containerHas($params, $_param);
 
@@ -327,8 +389,8 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
         $condition = null;
 
         foreach ($this->_getUpdateConditionParamMapping() as $_param => $_info) {
-            $_compare = $this->_containerGet($_info, 'compare');
-            $_field   = $this->_containerGet($_info, 'field');
+            $_compare = $this->_containerGet($_info, static::K_PARAM_COMPARE);
+            $_field   = $this->_containerGet($_info, static::K_PARAM_FIELD);
             $_value   = $this->_containerHas($params, $_param)
                 ? $this->_containerGet($params, $_param)
                 : null;
@@ -354,8 +416,8 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
         $condition = null;
 
         foreach ($this->_getDeleteConditionParamMapping() as $_param => $_info) {
-            $_compare = $this->_containerGet($_info, 'compare');
-            $_field   = $this->_containerGet($_info, 'field');
+            $_compare = $this->_containerGet($_info, static::K_PARAM_COMPARE);
+            $_field   = $this->_containerGet($_info, static::K_PARAM_FIELD);
             $_value   = $this->_containerHas($params, $_param)
                 ? $this->_containerGet($params, $_param)
                 : null;
@@ -425,7 +487,9 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
         $term1 = ($entity !== null)
             ? $b->ef($entity, $field)
             : $b->var($field);
-        $term2 = $b->lit($value);
+        $term2 = is_array($value)
+            ? $b->set($value)
+            : $b->lit($value);
 
         return call_user_func_array([$b, $type], [$term1, $term2]);
     }
