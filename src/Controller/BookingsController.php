@@ -10,6 +10,7 @@ use Dhii\Storage\Resource\InsertCapableInterface;
 use Dhii\Storage\Resource\SelectCapableInterface;
 use Dhii\Storage\Resource\UpdateCapableInterface;
 use Dhii\Util\Normalization\NormalizeArrayCapableTrait;
+use Dhii\Util\Normalization\NormalizeIntCapableTrait;
 use Dhii\Util\String\StringableInterface;
 use Dhii\Validation\Exception\ValidationFailedExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -39,7 +40,24 @@ class BookingsController extends AbstractBaseCqrsController
     use TransitionerAwareTrait;
 
     /* @since [*next-version*] */
+    use NormalizeIntCapableTrait;
+
+    /* @since [*next-version*] */
     use NormalizeArrayCapableTrait;
+
+    /**
+     * The default number of items to return per page.
+     *
+     * @since [*next-version*]
+     */
+    const DEFAULT_NUM_ITEMS_PER_PAGE = 20;
+
+    /**
+     * The default page number.
+     *
+     * @since [*next-version*]
+     */
+    const DEFAULT_PAGE_NUMBER = 1;
 
     /**
      * The clients controller.
@@ -64,6 +82,7 @@ class BookingsController extends AbstractBaseCqrsController
      * @param DeleteCapableInterface  $deleteRm            The DELETE bookings resource model.
      * @param object                  $exprBuilder         The expression builder.
      * @param ControllerInterface     $clientsController   The clients controller.
+     * @param Order
      */
     public function __construct(
         FactoryInterface $iteratorFactory,
@@ -130,7 +149,22 @@ class BookingsController extends AbstractBaseCqrsController
             throw $this->_createRuntimeException($this->__('The SELECT resource model is null'));
         }
 
-        return $selectRm->select($this->_buildSelectCondition($params));
+        // Get number of items per page
+        $numPerPage = $this->_containerHas($params, 'numItems')
+            ? $this->_containerGet($params, 'numItems')
+            : static::DEFAULT_NUM_ITEMS_PER_PAGE;
+        $numPerPage = $this->_normalizeInt($numPerPage);
+
+        // Get page number
+        $pageNum  = $this->_containerHas($params, 'page')
+            ? $this->_containerGet($params, 'page')
+            : static::DEFAULT_PAGE_NUMBER;
+        $pageNum = $this->_normalizeInt($pageNum);
+
+        // Calculate query offset
+        $offset = ($pageNum - 1) * $numPerPage;
+
+        return $selectRm->select($this->_buildSelectCondition($params), [], $numPerPage, $offset);
     }
 
     /**
@@ -159,7 +193,7 @@ class BookingsController extends AbstractBaseCqrsController
             $booking = $this->_getTransitioner()->transition($booking, $transition);
 
             $ids = $insertRm->insert([$booking]);
-            $id = null;
+            $id  = null;
             foreach ($ids as $id) {
                 break;
             }
@@ -177,7 +211,7 @@ class BookingsController extends AbstractBaseCqrsController
 
             throw $this->_createControllerException(
                 $transitionEx->getMessage(), 403, $transitionEx, $this, [
-                    'errors' => $this->_normalizeArray($errors)
+                    'errors' => $this->_normalizeArray($errors),
                 ]
             );
         } catch (NotFoundExceptionInterface $notFoundEx) {
@@ -310,11 +344,11 @@ class BookingsController extends AbstractBaseCqrsController
                 'entity'  => 'booking',
                 'field'   => 'end',
             ],
-            'status' => [
+            'status'   => [
                 'compare' => 'in',
                 'entity'  => 'booking',
                 'field'   => 'status',
-                'type'    => 'array'
+                'type'    => 'array',
             ],
             'service'  => [
                 'compare' => 'eq',
@@ -331,7 +365,7 @@ class BookingsController extends AbstractBaseCqrsController
                 'entity'  => 'booking',
                 'field'   => 'client_id',
             ],
-            'payment'   => [
+            'payment'  => [
                 'compare' => 'eq',
                 'entity'  => 'booking',
                 'field'   => 'payment_id',
