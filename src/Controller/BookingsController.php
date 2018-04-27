@@ -161,6 +161,14 @@ class BookingsController extends AbstractBaseCqrsController
             : static::DEFAULT_PAGE_NUMBER;
         $pageNum = $this->_normalizeInt($pageNum);
 
+        if ($numPerPage < 1) {
+            throw $this->_createControllerException($this->__('Invalid number of items per page'), 400, null, $this);
+        }
+
+        if ($pageNum < 1) {
+            throw $this->_createControllerException($this->__('Invalid page number'), 400, null, $this);
+        }
+
         // Calculate query offset
         $offset = ($pageNum - 1) * $numPerPage;
 
