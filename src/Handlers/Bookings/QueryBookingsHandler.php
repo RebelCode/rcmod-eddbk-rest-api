@@ -6,6 +6,8 @@ use Dhii\Storage\Resource\SelectCapableInterface;
 use RebelCode\EddBookings\RestApi\Controller\ControllerAwareTrait;
 use RebelCode\EddBookings\RestApi\Controller\ControllerInterface;
 use RebelCode\EddBookings\RestApi\Handlers\AbstractWpRestApiHandler;
+use stdClass;
+use Traversable;
 use WP_REST_Request;
 use WP_REST_Response;
 
@@ -33,7 +35,7 @@ class QueryBookingsHandler extends AbstractWpRestApiHandler
      *
      * @since [*next-version*]
      *
-     * @var string[]
+     * @var array|stdClass|Traversable
      */
     protected $statuses;
 
@@ -44,13 +46,13 @@ class QueryBookingsHandler extends AbstractWpRestApiHandler
      *
      * @param ControllerInterface         $controller     The booking resource controller.
      * @param SelectCapableInterface|null $statusCountsRm A SELECT resource model for booking status counts.
-     * @param string[]                    $statuses       The booking statuses.
+     * @param array|stdClass|Traversable  $statuses       The list of all booking statuses.
      */
     public function __construct(ControllerInterface $controller, $statusCountsRm, $statuses)
     {
         $this->_setController($controller);
         $this->_setStatusCountsRm($statusCountsRm);
-        $this->statuses = $statuses;
+        $this->_setStatuses($statuses);
     }
 
     /**
@@ -84,6 +86,30 @@ class QueryBookingsHandler extends AbstractWpRestApiHandler
     }
 
     /**
+     * Retrieves the list of booking statuses.
+     *
+     * @since [*next-version*]
+     *
+     * @return array|stdClass|Traversable The list of booking statuses.
+     */
+    protected function _getStatuses()
+    {
+        return $this->statuses;
+    }
+
+    /**
+     * Sets the list of booking statuses.
+     *
+     * @since [*next-version*]
+     *
+     * @param array|stdClass|Traversable $statuses The list of booking statuses.
+     */
+    protected function _setStatuses($statuses)
+    {
+        $this->statuses = $this->_normalizeArray($statuses);
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @since [*next-version*]
@@ -92,25 +118,20 @@ class QueryBookingsHandler extends AbstractWpRestApiHandler
     {
         $bookings = $this->_getController()->get($request);
         $bookings = iterator_to_array($bookings);
-        $count = count($bookings);
+        $count    = count($bookings);
 
         $response = [
             'items' => $bookings,
-            'count' => $count
+            'count' => $count,
         ];
 
         $statusCountsRm = $this->_getStatusCountsRm();
         if ($statusCountsRm !== null) {
             $statuses = $statusCountsRm->select();
+            $statuses = $this->_normalizeArray($statuses);
+            $defaults = array_combine($this->statuses, array_fill(0, count($this->statuses), 0));
 
-            // Fill in with zeroes for all statuses that were not found in bookings list
-            foreach ($this->statuses as $_status) {
-                if (!isset($statuses[$_status])) {
-                    $statuses[$_status] = 0;
-                }
-            }
-
-            $response['statuses'] = $statuses;
+            $response['statuses'] = $statuses + $defaults;
         }
 
         return new WP_REST_Response($response, 200);
