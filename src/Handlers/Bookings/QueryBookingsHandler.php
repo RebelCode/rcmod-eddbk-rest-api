@@ -49,6 +49,7 @@ class QueryBookingsHandler extends AbstractWpRestApiHandler
     public function __construct(ControllerInterface $controller, $statusCountsRm, $statuses)
     {
         $this->_setController($controller);
+        $this->_setStatusCountsRm($statusCountsRm);
         $this->statuses = $statuses;
     }
 
