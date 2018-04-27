@@ -2,7 +2,6 @@
 
 namespace RebelCode\EddBookings\RestApi\Controller;
 
-use Dhii\Data\Container\Exception\NotFoundExceptionInterface as DhiiNotFoundExceptionInterface;
 use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\Factory\FactoryAwareTrait;
 use Dhii\Factory\FactoryInterface;
@@ -314,7 +313,8 @@ class BookingsController extends AbstractBaseCqrsController
             'status' => [
                 'compare' => 'in',
                 'entity'  => 'booking',
-                'field'   => 'status'
+                'field'   => 'status',
+                'type'    => 'array'
             ],
             'service'  => [
                 'compare' => 'eq',
