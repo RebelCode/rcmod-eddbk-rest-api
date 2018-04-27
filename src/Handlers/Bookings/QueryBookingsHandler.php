@@ -2,6 +2,7 @@
 
 namespace RebelCode\EddBookings\RestApi\Handlers\Bookings;
 
+use Dhii\Storage\Resource\SelectCapableInterface;
 use RebelCode\EddBookings\RestApi\Controller\ControllerAwareTrait;
 use RebelCode\EddBookings\RestApi\Controller\ControllerInterface;
 use RebelCode\EddBookings\RestApi\Handlers\AbstractWpRestApiHandler;
@@ -19,6 +20,15 @@ class QueryBookingsHandler extends AbstractWpRestApiHandler
     use ControllerAwareTrait;
 
     /**
+     * The SELECT resource model for booking status counts.
+     *
+     * @since [*next-version*]
+     *
+     * @var SelectCapableInterface|null
+     */
+    protected $statusCountsRm;
+
+    /**
      * The booking statuses.
      *
      * @since [*next-version*]
@@ -32,13 +42,44 @@ class QueryBookingsHandler extends AbstractWpRestApiHandler
      *
      * @since [*next-version*]
      *
-     * @param ControllerInterface $controller The booking resource controller.
-     * @param string[]            $statuses   The booking statuses.
+     * @param ControllerInterface         $controller     The booking resource controller.
+     * @param SelectCapableInterface|null $statusCountsRm A SELECT resource model for booking status counts.
+     * @param string[]                    $statuses       The booking statuses.
      */
-    public function __construct(ControllerInterface $controller, $statuses)
+    public function __construct(ControllerInterface $controller, $statusCountsRm, $statuses)
     {
         $this->_setController($controller);
         $this->statuses = $statuses;
+    }
+
+    /**
+     * Sets the SELECT resource model for booking status counts.
+     *
+     * @since [*next-version*]
+     *
+     * @return SelectCapableInterface|null The SELECT booking status counts resource model instance.
+     */
+    protected function _getStatusCountsRm()
+    {
+        return $this->statusCountsRm;
+    }
+
+    /**
+     * Retrieves the SELECT resource model for booking status counts.
+     *
+     * @since [*next-version*]
+     *
+     * @param SelectCapableInterface|null $statusCountsRm The SELECT booking status counts resource model instance.
+     */
+    protected function _setStatusCountsRm($statusCountsRm)
+    {
+        if ($statusCountsRm !== null && !($statusCountsRm instanceof SelectCapableInterface)) {
+            throw $this->_createInvalidArgumentException(
+                $this->__('Argument is not a SELECT resource model'), null, null, $statusCountsRm
+            );
+        }
+
+        $this->statusCountsRm = $statusCountsRm;
     }
 
     /**
@@ -49,45 +90,27 @@ class QueryBookingsHandler extends AbstractWpRestApiHandler
     public function _handle(WP_REST_Request $request)
     {
         $bookings = $this->_getController()->get($request);
-
-        $status = $request->get_param('status');
-        // If statuses given in request
-        if ($status !== null) {
-            $status = array_map('trim', explode(',', $status));
-        }
-        // If statuses given and contains 'all', use null
-        if (is_array($status) && in_array('all', $status)) {
-            $status = null;
-        }
-
-        $items    = [];
-        $statuses = [];
-        foreach ($bookings as $_booking) {
-            $_bookingStatus = $_booking['status'];
-
-            // If no status filter given, OR booking matches queried status
-            if ($status === null || in_array($_bookingStatus, $status)) {
-                $items[] = $_booking;
-            }
-
-            // Increment status count
-            $statuses[$_bookingStatus] = isset($statuses[$_bookingStatus])
-                ? $statuses[$_bookingStatus] + 1
-                : 1;
-        }
-
-        // Fill in with zeroes for all statuses that were not found in bookings list
-        foreach ($this->statuses as $_status) {
-            if (!isset($statuses[$_status])) {
-                $statuses[$_status] = 0;
-            }
-        }
+        $bookings = iterator_to_array($bookings);
+        $count = count($bookings);
 
         $response = [
-            'items'    => $items,
-            'count'    => count($items),
-            'statuses' => $statuses,
+            'items' => $bookings,
+            'count' => $count
         ];
+
+        $statusCountsRm = $this->_getStatusCountsRm();
+        if ($statusCountsRm !== null) {
+            $statuses = $statusCountsRm->select();
+
+            // Fill in with zeroes for all statuses that were not found in bookings list
+            foreach ($this->statuses as $_status) {
+                if (!isset($statuses[$_status])) {
+                    $statuses[$_status] = 0;
+                }
+            }
+
+            $response['statuses'] = $statuses;
+        }
 
         return new WP_REST_Response($response, 200);
     }

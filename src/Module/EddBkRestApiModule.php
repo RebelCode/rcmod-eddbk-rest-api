@@ -188,6 +188,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                 'eddbk_rest_api_query_bookings_handler' => function (ContainerInterface $c) {
                     return new QueryBookingsHandler(
                         $c->get('eddbk_bookings_controller'),
+                        $c->get('booking_status_select_rm'),
                         $c->get('booking_logic/statuses')
                     );
                 },
