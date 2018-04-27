@@ -2,7 +2,12 @@
 
 namespace RebelCode\EddBookings\RestApi\Handlers\Bookings;
 
+use Dhii\Data\Container\ContainerGetCapableTrait;
+use Dhii\Data\Container\CreateContainerExceptionCapableTrait;
+use Dhii\Data\Container\CreateNotFoundExceptionCapableTrait;
+use Dhii\Data\Object\NormalizeKeyCapableTrait;
 use Dhii\Storage\Resource\SelectCapableInterface;
+use Dhii\Util\Normalization\NormalizeStringCapableTrait;
 use RebelCode\EddBookings\RestApi\Controller\ControllerAwareTrait;
 use RebelCode\EddBookings\RestApi\Controller\ControllerInterface;
 use RebelCode\EddBookings\RestApi\Handlers\AbstractWpRestApiHandler;
@@ -20,6 +25,21 @@ class QueryBookingsHandler extends AbstractWpRestApiHandler
 {
     /* @since [*next-version*] */
     use ControllerAwareTrait;
+
+    /* @since [*next-version*] */
+    use ContainerGetCapableTrait;
+
+    /* @since [*next-version*] */
+    use NormalizeKeyCapableTrait;
+
+    /* @since [*next-version*] */
+    use NormalizeStringCapableTrait;
+
+    /* @since [*next-version*] */
+    use CreateContainerExceptionCapableTrait;
+
+    /* @since [*next-version*] */
+    use CreateNotFoundExceptionCapableTrait;
 
     /**
      * The SELECT resource model for booking status counts.
@@ -126,12 +146,24 @@ class QueryBookingsHandler extends AbstractWpRestApiHandler
         ];
 
         $statusCountsRm = $this->_getStatusCountsRm();
-        if ($statusCountsRm !== null) {
-            $statuses = $statusCountsRm->select();
-            $statuses = $this->_normalizeArray($statuses);
-            $defaults = array_combine($this->statuses, array_fill(0, count($this->statuses), 0));
 
-            $response['statuses'] = $statuses + $defaults;
+        if ($statusCountsRm !== null) {
+            $statusCounts = [];
+            foreach ($statusCountsRm->select() as $_status) {
+                $_name  = $this->_containerGet($_status, 'status');
+                $_count = $this->_containerGet($_status, 'status_count');
+
+                $statusCounts[$_name] = $_count;
+            }
+
+            $statuses = [];
+            foreach ($this->_getStatuses() as $_status) {
+                $statuses[$_status] = isset($statusCounts[$_status])
+                    ? $statusCounts[$_status]
+                    : 0;
+            }
+
+            $response['statuses'] = $statuses;
         }
 
         return new WP_REST_Response($response, 200);
