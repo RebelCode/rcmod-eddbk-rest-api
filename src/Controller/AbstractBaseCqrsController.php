@@ -329,7 +329,7 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
             $_value   = $this->_containerHas($params, $_param)
                 ? $this->_containerGet($params, $_param)
                 : null;
-            $_value   = ($_type === static::T_PARAM_ARRAY)
+            $_value   = ($_type === static::T_PARAM_ARRAY && $_value !== null)
                 ? explode(',', $_value)
                 : $_value;
 
