@@ -53,6 +53,14 @@ The following table lists the available query fields and how a provided value is
 | `resource` | The bookings made for the resource with the given ID | positive non-zero integer |
 | `client` | The bookings made for the client with the given ID | positive non-zero integer |
 | `payment` | The bookings associated with the payment with the given ID | positive non-zero integer |
+| `status` | The booking statuses to filter by | comma separated list (without spaces!) of status names |
+
+The following additional filters are also available:
+
+| Filter | Description | Value Type | Default |
+|--------|-------------|------------|---------|
+| `numItems` | The maximum number of `items` to receive per page | positive non-zero integer | 20 |
+| `page` | The page number | positive non-zero integer | 1 |
 
 The response is an object with 3 keys: `items`, `count` and `statuses`. Example:
 
@@ -83,9 +91,9 @@ The response is an object with 3 keys: `items`, `count` and `statuses`. Example:
     ],
     "count": 1,
     "statuses": {
+        "none": 0,
         "draft": 1,
         "in_cart": 0,
-        "none": 0,
         "pending": 0,
         "approved": 0,
         "rejected": 0,
@@ -95,6 +103,8 @@ The response is an object with 3 keys: `items`, `count` and `statuses`. Example:
     }
 }
 ```
+
+The `statuses` counts are calculated independently from any query filters.
 
 #### Creating Bookings
 
