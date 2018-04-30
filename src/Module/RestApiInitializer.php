@@ -13,6 +13,7 @@ use Dhii\Data\Object\NormalizeKeyCapableTrait;
 use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
 use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Invocation\InvocableInterface;
+use Dhii\Util\Normalization\NormalizeArrayCapableTrait;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
 use Psr\Container\ContainerInterface;
 use stdClass;
@@ -44,6 +45,11 @@ class RestApiInitializer implements InvocableInterface
      * @since [*next-version*]
      */
     use NormalizeKeyCapableTrait;
+
+    /*
+     * @since [*next-version*]
+     */
+    use NormalizeArrayCapableTrait;
 
     /*
      * @since [*next-version*]
@@ -140,7 +146,7 @@ class RestApiInitializer implements InvocableInterface
             }
 
             $routes[$_pattern][] = [
-                'methods'  => $_methods,
+                'methods'  => $this->_normalizeArray($_methods),
                 'callback' => $this->_getContainer()->get($_handler),
             ];
         }
