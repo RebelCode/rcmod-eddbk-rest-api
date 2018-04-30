@@ -82,7 +82,6 @@ class BookingsController extends AbstractBaseCqrsController
      * @param DeleteCapableInterface  $deleteRm            The DELETE bookings resource model.
      * @param object                  $exprBuilder         The expression builder.
      * @param ControllerInterface     $clientsController   The clients controller.
-     * @param Order
      */
     public function __construct(
         FactoryInterface $iteratorFactory,
