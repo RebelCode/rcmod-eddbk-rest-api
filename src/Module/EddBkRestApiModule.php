@@ -281,48 +281,48 @@ class EddBkRestApiModule extends AbstractBaseModule
                 'eddbk_rest_api_bookings_transformer' => function (ContainerInterface $c) {
                     return new MapTransformer([
                         [
-                            'source' => 'id',
+                            MapTransformer::K_SOURCE => 'id',
                         ],
                         [
-                            'source'      => 'start',
-                            'transformer' => $c->get('eddbk_timestamp_datetime_transformer'),
+                            MapTransformer::K_SOURCE      => 'start',
+                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_timestamp_datetime_transformer'),
                         ],
                         [
-                            'source'      => 'end',
-                            'transformer' => $c->get('eddbk_timestamp_datetime_transformer'),
+                            MapTransformer::K_SOURCE      => 'end',
+                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_timestamp_datetime_transformer'),
                         ],
                         [
-                            'source' => 'status',
+                            MapTransformer::K_SOURCE => 'status',
                         ],
                         [
-                            'source'      => 'service_id',
-                            'target'      => 'service',
-                            'transformer' => $c->get('eddbk_rest_api_service_id_transformer'),
+                            MapTransformer::K_SOURCE      => 'service_id',
+                            MapTransformer::K_TARGET      => 'service',
+                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_service_id_transformer'),
                         ],
                         [
-                            'source' => 'resource_id',
-                            'target' => 'resource',
+                            MapTransformer::K_SOURCE => 'resource_id',
+                            MapTransformer::K_TARGET => 'resource',
                         ],
                         [
-                            'source'      => 'client_id',
-                            'target'      => 'client',
-                            'transformer' => $c->get('eddbk_rest_api_client_id_transformer'),
+                            MapTransformer::K_SOURCE      => 'client_id',
+                            MapTransformer::K_TARGET      => 'client',
+                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_client_id_transformer'),
                         ],
                         [
-                            'source' => 'client_tz',
-                            'target' => 'clientTzName',
+                            MapTransformer::K_SOURCE => 'client_tz',
+                            MapTransformer::K_TARGET => 'clientTzName',
                         ],
                         [
-                            'target'      => 'clientTzOffset',
-                            'transformer' => $c->get('eddbk_rest_api_booking_timezone_offset_transformer'),
+                            MapTransformer::K_TARGET      => 'clientTzOffset',
+                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_booking_timezone_offset_transformer'),
                         ],
                         [
-                            'source' => 'payment_id',
-                            'target' => 'payment',
+                            MapTransformer::K_SOURCE => 'payment_id',
+                            MapTransformer::K_TARGET => 'payment',
                         ],
                         [
-                            'source' => 'admin_notes',
-                            'target' => 'notes',
+                            MapTransformer::K_SOURCE => 'admin_notes',
+                            MapTransformer::K_TARGET => 'notes',
                         ],
                     ]);
                 },
@@ -335,16 +335,16 @@ class EddBkRestApiModule extends AbstractBaseModule
                 'eddbk_rest_api_services_transformer' => function (ContainerInterface $c) {
                     return new MapTransformer([
                         [
-                            'source' => 'ID',
-                            'target' => 'id',
+                            MapTransformer::K_SOURCE => 'ID',
+                            MapTransformer::K_TARGET => 'id',
                         ],
                         [
-                            'source' => 'post_title',
-                            'target' => 'name',
+                            MapTransformer::K_SOURCE => 'post_title',
+                            MapTransformer::K_TARGET => 'name',
                         ],
                         [
-                            'target'      => 'color',
-                            'transformer' => function () {
+                            MapTransformer::K_TARGET      => 'color',
+                            MapTransformer::K_TRANSFORMER => function () {
                                 return '#00ccff';
                             },
                         ],
@@ -359,13 +359,13 @@ class EddBkRestApiModule extends AbstractBaseModule
                 'eddbk_rest_api_clients_transformer' => function (ContainerInterface $c) {
                     return new MapTransformer([
                         [
-                            'source' => 'id',
+                            MapTransformer::K_SOURCE => 'id',
                         ],
                         [
-                            'source' => 'name',
+                            MapTransformer::K_SOURCE => 'name',
                         ],
                         [
-                            'source' => 'email',
+                            MapTransformer::K_SOURCE => 'email',
                         ],
 
                     ]);
