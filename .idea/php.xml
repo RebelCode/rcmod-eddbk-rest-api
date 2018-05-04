@@ -87,6 +87,8 @@
       <path value="$PROJECT_DIR$/vendor/rebelcode/booking-abstract" />
       <path value="$PROJECT_DIR$/vendor/rebelcode/booking-interface" />
       <path value="$PROJECT_DIR$/vendor/dhii/machine-state-machine-interface" />
+      <path value="$PROJECT_DIR$/vendor/rebelcode/transformers" />
+      <path value="$PROJECT_DIR$/vendor/dhii/config-interface" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="5.4.0" />
