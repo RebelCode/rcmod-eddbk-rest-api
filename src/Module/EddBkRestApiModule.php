@@ -17,6 +17,7 @@ use Psr\EventManager\EventManagerInterface;
 use RebelCode\EddBookings\RestApi\Controller\BookingsController;
 use RebelCode\EddBookings\RestApi\Controller\ClientsController;
 use RebelCode\EddBookings\RestApi\Controller\ServicesController;
+use RebelCode\EddBookings\RestApi\Controller\SessionsController;
 use RebelCode\EddBookings\RestApi\Handlers\Bookings\BookingInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Bookings\CreateBookingHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Bookings\DeleteBookingHandler;
@@ -25,6 +26,7 @@ use RebelCode\EddBookings\RestApi\Handlers\Bookings\UpdateBookingHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\ClientInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\CreateClientHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\QueryClientsHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Sessions\QuerySessionsHandler;
 use RebelCode\Modular\Module\AbstractBaseModule;
 use RebelCode\Transformers\CallbackTransformer;
 use RebelCode\Transformers\MapTransformer;
@@ -122,6 +124,19 @@ class EddBkRestApiModule extends AbstractBaseModule
                     return new ClientsController($c->get('eddbk_rest_api_clients_iterator_factory'), EDD()->customers);
                 },
 
+                /*
+                 * The sessions REST API resource controller.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_sessions_controller' => function (ContainerInterface $c) {
+                    return new SessionsController(
+                        $c->get('eddbk_rest_api_sessions_iterator_factory'),
+                        $c->get('sessions_select_rm'),
+                        $c->get('sql_expression_builder')
+                    );
+                },
+
                 /*-------------------------------------------------------------*\
                  * Controller Result Iterator Factories                        *
                 \*-------------------------------------------------------------*/
@@ -173,6 +188,20 @@ class EddBkRestApiModule extends AbstractBaseModule
                         $iterator = $this->_normalizeIterator($items);
 
                         return new TransformerIterator($iterator, $c->get('eddbk_rest_api_clients_transformer'));
+                    });
+                },
+
+                /*
+                 * The iterator factory for the session controller.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_sessions_iterator_factory' => function (ContainerInterface $c) {
+                    return new GenericCallbackFactory(function ($config) use ($c) {
+                        $items = $this->_containerGet($config, 'items');
+                        $iterator = $this->_normalizeIterator($items);
+
+                        return new TransformerIterator($iterator, $c->get('eddbk_rest_api_sessions_transformer'));
                     });
                 },
 
@@ -258,6 +287,14 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_create_client_handler' => function (ContainerInterface $c) {
                     return new CreateClientHandler($c->get('eddbk_clients_controller'), $c->get('eddbk_rest_api'));
+                },
+
+                /*-------------------------------------------------------------*\
+                 * REST API route handlers - Sessions                          *
+                \*-------------------------------------------------------------*/
+
+                'eddbk_rest_api_query_sessions_handler' => function (ContainerInterface $c) {
+                    return new QuerySessionsHandler($c->get('eddbk_sessions_controller'));
                 },
 
                 /*-------------------------------------------------------------*\
@@ -368,6 +405,36 @@ class EddBkRestApiModule extends AbstractBaseModule
                             MapTransformer::K_SOURCE => 'email',
                         ],
 
+                    ]);
+                },
+
+                /*
+                 * The transformer that transformers sessions into the result that is sent in the REST API response.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_sessions_transformer' => function (ContainerInterface $c) {
+                    return new MapTransformer([
+                        [
+                            MapTransformer::K_SOURCE => 'id',
+                        ],
+                        [
+                            MapTransformer::K_SOURCE      => 'start',
+                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_timestamp_datetime_transformer'),
+                        ],
+                        [
+                            MapTransformer::K_SOURCE      => 'end',
+                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_timestamp_datetime_transformer'),
+                        ],
+                        [
+                            MapTransformer::K_SOURCE      => 'service_id',
+                            MapTransformer::K_TARGET      => 'service',
+                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_service_id_transformer'),
+                        ],
+                        [
+                            MapTransformer::K_SOURCE => 'resource_id',
+                            MapTransformer::K_TARGET => 'resource',
+                        ],
                     ]);
                 },
 
