@@ -79,7 +79,8 @@ class ServicesController extends AbstractBaseController
             $posts = empty($post) ? [] : [$post];
         } else {
             $queryArgs = [
-                'post_type' => 'download',
+                'post_type'   => 'download',
+                'post_status' => ['publish']
             ];
 
             $query = new WP_Query($queryArgs);
