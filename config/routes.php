@@ -21,4 +21,11 @@ require __DIR__ . '/routes/bookings.php';
  */
 require __DIR__ . '/routes/clients.php';
 
+/*
+ * The REST API routes related to sessions.
+ *
+ * @since [*next-version*]
+ */
+require __DIR__ . '/routes/sessions.php';
+
 return $cfg;
