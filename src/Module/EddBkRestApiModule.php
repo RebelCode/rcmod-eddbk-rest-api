@@ -26,6 +26,8 @@ use RebelCode\EddBookings\RestApi\Handlers\Bookings\UpdateBookingHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\ClientInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\CreateClientHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\QueryClientsHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Services\QueryServicesHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Services\ServiceInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Sessions\QuerySessionsHandler;
 use RebelCode\Modular\Module\AbstractBaseModule;
 use RebelCode\Transformers\CallbackTransformer;
@@ -300,6 +302,28 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_query_sessions_handler' => function (ContainerInterface $c) {
                     return new QuerySessionsHandler($c->get('eddbk_sessions_controller'));
+                },
+
+                /*-------------------------------------------------------------*\
+                 * REST API route handlers - Services                          *
+                \*-------------------------------------------------------------*/
+
+                /*
+                 * Handles the services route that receives generic service queries.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_query_services_handler' => function (ContainerInterface $c) {
+                    return new QueryServicesHandler($c->get('eddbk_services_controller'));
+                },
+
+                /*
+                 * Handles the services route that provides information about a single service.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_get_service_info_handler' => function (ContainerInterface $c) {
+                    return new ServiceInfoHandler($c->get('eddbk_services_controller'));
                 },
 
                 /*-------------------------------------------------------------*\

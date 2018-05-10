@@ -28,4 +28,11 @@ require __DIR__ . '/routes/clients.php';
  */
 require __DIR__ . '/routes/sessions.php';
 
+/*
+ * The REST API routes related to services.
+ *
+ * @since [*next-version*]
+ */
+require __DIR__ . '/routes/services.php';
+
 return $cfg;
