@@ -16,9 +16,7 @@ use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
 use EDD_DB_Customers;
 use Psr\Container\ContainerInterface;
-use RebelCode\EddBookings\RestApi\Controller\Exception\ControllerExceptionInterface;
 use stdClass;
-use Traversable;
 
 /**
  * The API controller for clients.

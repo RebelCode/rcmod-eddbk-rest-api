@@ -155,7 +155,7 @@ class BookingsController extends AbstractBaseCqrsController
         $numPerPage = $this->_normalizeInt($numPerPage);
 
         // Get page number
-        $pageNum  = $this->_containerHas($params, 'page')
+        $pageNum = $this->_containerHas($params, 'page')
             ? $this->_containerGet($params, 'page')
             : static::DEFAULT_PAGE_NUMBER;
         $pageNum = $this->_normalizeInt($pageNum);
@@ -336,28 +336,28 @@ class BookingsController extends AbstractBaseCqrsController
     protected function _getSelectConditionParamMapping()
     {
         return [
-            'id'       => [
+            'id' => [
                 'compare' => 'eq',
                 'entity'  => 'booking',
                 'field'   => 'id',
             ],
-            'start'    => [
+            'start' => [
                 'compare' => 'gte',
                 'entity'  => 'booking',
                 'field'   => 'start',
             ],
-            'end'      => [
+            'end' => [
                 'compare' => 'lte',
                 'entity'  => 'booking',
                 'field'   => 'end',
             ],
-            'status'   => [
+            'status' => [
                 'compare' => 'in',
                 'entity'  => 'booking',
                 'field'   => 'status',
                 'type'    => 'array',
             ],
-            'service'  => [
+            'service' => [
                 'compare' => 'eq',
                 'entity'  => 'booking',
                 'field'   => 'service_id',
@@ -367,12 +367,12 @@ class BookingsController extends AbstractBaseCqrsController
                 'entity'  => 'booking',
                 'field'   => 'resource_id',
             ],
-            'client'   => [
+            'client' => [
                 'compare' => 'eq',
                 'entity'  => 'booking',
                 'field'   => 'client_id',
             ],
-            'payment'  => [
+            'payment' => [
                 'compare' => 'eq',
                 'entity'  => 'booking',
                 'field'   => 'payment_id',
@@ -418,15 +418,15 @@ class BookingsController extends AbstractBaseCqrsController
     protected function _getInsertParamFieldMapping()
     {
         return [
-            'start'    => [
+            'start' => [
                 'field'    => 'start',
                 'required' => true,
             ],
-            'end'      => [
+            'end' => [
                 'field'    => 'end',
                 'required' => true,
             ],
-            'service'  => [
+            'service' => [
                 'field'    => 'service_id',
                 'required' => true,
             ],
@@ -434,7 +434,7 @@ class BookingsController extends AbstractBaseCqrsController
                 'field'    => 'resource_id',
                 'required' => true,
             ],
-            'client'   => [
+            'client' => [
                 'field'    => 'client_id',
                 'required' => false,
             ],
@@ -442,14 +442,14 @@ class BookingsController extends AbstractBaseCqrsController
                 'field'    => 'client_tz',
                 'required' => false,
             ],
-            'payment'  => [
+            'payment' => [
                 'field'    => 'payment_id',
                 'required' => false,
             ],
-            'notes'    => [
+            'notes' => [
                 'field'    => 'admin_notes',
                 'required' => false,
-                "default"  => "",
+                'default'  => '',
             ],
         ];
     }

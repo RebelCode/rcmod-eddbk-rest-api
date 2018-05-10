@@ -149,22 +149,22 @@ class SessionsController extends AbstractBaseCqrsController
     protected function _getSelectConditionParamMapping()
     {
         return [
-            'id'       => [
+            'id' => [
                 'compare' => 'eq',
                 'entity'  => 'session',
                 'field'   => 'id',
             ],
-            'start'    => [
+            'start' => [
                 'compare' => 'gte',
                 'entity'  => 'session',
                 'field'   => 'start',
             ],
-            'end'      => [
+            'end' => [
                 'compare' => 'lte',
                 'entity'  => 'session',
                 'field'   => 'end',
             ],
-            'service'  => [
+            'service' => [
                 'compare' => 'eq',
                 'entity'  => 'session',
                 'field'   => 'service_id',

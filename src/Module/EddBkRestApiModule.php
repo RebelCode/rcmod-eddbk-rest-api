@@ -25,11 +25,11 @@ use RebelCode\EddBookings\RestApi\Handlers\Bookings\UpdateBookingHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\ClientInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\CreateClientHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\QueryClientsHandler;
+use RebelCode\Modular\Module\AbstractBaseModule;
 use RebelCode\Transformers\CallbackTransformer;
 use RebelCode\Transformers\MapTransformer;
 use RebelCode\Transformers\NoOpTransformer;
 use RebelCode\Transformers\TransformerIterator;
-use RebelCode\Modular\Module\AbstractBaseModule;
 use Traversable;
 use WP_Post;
 
@@ -216,7 +216,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_update_booking_handler' => function(ContainerInterface $c) {
+                'eddbk_rest_api_update_booking_handler' => function (ContainerInterface $c) {
                     return new UpdateBookingHandler($c->get('eddbk_bookings_controller'));
                 },
 
@@ -225,7 +225,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_delete_booking_handler' => function(ContainerInterface $c) {
+                'eddbk_rest_api_delete_booking_handler' => function (ContainerInterface $c) {
                     return new DeleteBookingHandler($c->get('eddbk_bookings_controller'));
                 },
 
@@ -274,7 +274,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                 },
 
                 /*
-                 * The transformer that transforms bookings into the result that is send in REST API responses.
+                 * The transformer that transforms bookings into the result that is sent in REST API responses.
                  *
                  * @since [*next-version*]
                  */
@@ -328,7 +328,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                 },
 
                 /*
-                 * The transformer that transforms services into the result that is send in REST API responses.
+                 * The transformer that transforms services into the result that is sent in REST API responses.
                  *
                  * @since [*next-version*]
                  */
@@ -352,7 +352,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                 },
 
                 /*
-                 * The transformer that transforms clients into the result that is send in REST API responses.
+                 * The transformer that transforms clients into the result that is sent in REST API responses.
                  *
                  * @since [*next-version*]
                  */
@@ -379,7 +379,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                 'eddbk_rest_api_service_id_transformer' => function (ContainerInterface $c) {
                     return new CallbackTransformer(function ($serviceId) use ($c) {
                         if (empty($serviceId)) {
-                            return null;
+                            return;
                         }
 
                         $controller = $c->get('eddbk_services_controller');
@@ -402,7 +402,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                 'eddbk_rest_api_client_id_transformer' => function (ContainerInterface $c) {
                     return new CallbackTransformer(function ($clientId) use ($c) {
                         if (empty($clientId)) {
-                            return null;
+                            return;
                         }
 
                         $controller = $c->get('eddbk_clients_controller');
@@ -463,7 +463,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                 'eddbk_post_array_transformer' => function (ContainerInterface $c) {
                     return new CallbackTransformer(function ($post) {
                         if (empty($post)) {
-                            return null;
+                            return;
                         }
 
                         if (!($post instanceof WP_Post)) {

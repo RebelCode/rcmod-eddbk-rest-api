@@ -106,7 +106,7 @@ abstract class AbstractBaseController implements ControllerInterface
      * @param array|stdClass|ArrayAccess|ContainerInterface $params The parameters.
      *
      * @return array|stdClass|Traversable The response, as a traversable list consisting of container elements:
-     *                                     array, {@see stdClass}, {@see ArrayAccess} or {@see ContainerInterface}.
+     *                                    array, {@see stdClass}, {@see ArrayAccess} or {@see ContainerInterface}.
      */
     abstract protected function _post($params = []);
 
