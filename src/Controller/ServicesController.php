@@ -80,7 +80,7 @@ class ServicesController extends AbstractBaseController
         } else {
             $queryArgs = [
                 'post_type'   => 'download',
-                'post_status' => ['publish']
+                'post_status' => ['publish'],
             ];
 
             $query = new WP_Query($queryArgs);

@@ -272,7 +272,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                 },
 
                 /*
-                 * Handles the clients route that receives generic client queries.
+                 * Handles the clients route that provides information about a single client.
                  *
                  * @since [*next-version*]
                  */
@@ -293,6 +293,11 @@ class EddBkRestApiModule extends AbstractBaseModule
                  * REST API route handlers - Sessions                          *
                 \*-------------------------------------------------------------*/
 
+                /*
+                 * Handles the sessions route that receives generic session queries.
+                 *
+                 * @since [*next-version*]
+                 */
                 'eddbk_rest_api_query_sessions_handler' => function (ContainerInterface $c) {
                     return new QuerySessionsHandler($c->get('eddbk_sessions_controller'));
                 },
