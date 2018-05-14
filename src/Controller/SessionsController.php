@@ -25,6 +25,9 @@ class SessionsController extends AbstractBaseCqrsController
     /* @since [*next-version*] */
     use StringTranslatingTrait;
 
+    /* @since [*next-version*] */
+    use ParseIso8601CapableTrait;
+
     /**
      * The default number of items to return per page.
      *
@@ -155,14 +158,16 @@ class SessionsController extends AbstractBaseCqrsController
                 'field'   => 'id',
             ],
             'start' => [
-                'compare' => 'gte',
-                'entity'  => 'session',
-                'field'   => 'start',
+                'compare'   => 'gte',
+                'entity'    => 'session',
+                'field'     => 'start',
+                'transform' => [$this, '_parseIso8601'],
             ],
             'end' => [
-                'compare' => 'lte',
-                'entity'  => 'session',
-                'field'   => 'end',
+                'compare'   => 'lte',
+                'entity'    => 'session',
+                'field'     => 'end',
+                'transform' => [$this, '_parseIso8601'],
             ],
             'service' => [
                 'compare' => 'eq',
