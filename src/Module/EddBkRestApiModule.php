@@ -379,10 +379,6 @@ class EddBkRestApiModule extends AbstractBaseModule
                             MapTransformer::K_TARGET => 'clientTzName',
                         ],
                         [
-                            MapTransformer::K_TARGET      => 'clientTzOffset',
-                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_booking_timezone_offset_transformer'),
-                        ],
-                        [
                             MapTransformer::K_SOURCE => 'payment_id',
                             MapTransformer::K_TARGET => 'payment',
                         ],
@@ -511,33 +507,6 @@ class EddBkRestApiModule extends AbstractBaseModule
 
                         return $client;
                     });
-                },
-
-                /*
-                 * Generates the timezone offset from a booking's client timezone name.
-                 *
-                 * @since [*next-version*]
-                 */
-                'eddbk_rest_api_booking_timezone_offset_transformer' => function () {
-                    return function ($value, $source) {
-                        // Get client timezone name
-                        $tzName = $this->_containerHas($source, 'client_tz')
-                            ? $this->_containerGet($source, 'client_tz')
-                            : null;
-
-                        // If no timezone name, assume UTC and return offset of 0
-                        if (empty($tzName)) {
-                            return 0;
-                        }
-
-                        // Create the timezone and the date time at the start of the booking
-                        $start = $this->_containerGet($source, 'start');
-                        $timezone = new DateTimeZone($tzName);
-                        $time = new DateTime('@' . $start, new DateTimeZone('UTC'));
-
-                        // Return the timezone offset at that the start time of the booking
-                        return $timezone->getOffset($time);
-                    };
                 },
 
                 /*
