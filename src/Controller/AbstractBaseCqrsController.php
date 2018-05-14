@@ -103,18 +103,11 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
     const K_PARAM_DEFAULT = 'default';
 
     /**
-     * The type indicator for array params.
+     * The key for param transformation function in configuration.
      *
      * @since [*next-version*]
      */
-    const T_PARAM_ARRAY = 'array';
-
-    /**
-     * The type indicator for array params.
-     *
-     * @since [*next-version*]
-     */
-    const T_PARAM_SCALAR = 'scalar';
+    const K_PARAM_TRANSFORM = 'transform';
 
     /**
      * The SELECT resource model.
@@ -323,15 +316,18 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
             $_compare = $this->_containerGet($_info, static::K_PARAM_COMPARE);
             $_entity  = $this->_containerGet($_info, static::K_PARAM_ENTITY);
             $_field   = $this->_containerGet($_info, static::K_PARAM_FIELD);
-            $_type    = $this->_containerHas($_info, static::K_PARAM_TYPE)
-                ? $this->_containerGet($_info, static::K_PARAM_TYPE)
-                : static::T_PARAM_SCALAR;
+
+            $_transform = $this->_containerHas($_info, static::K_PARAM_TRANSFORM)
+                ? $this->_containerGet($_info, static::K_PARAM_TRANSFORM)
+                : null;
+
+            // Get the param value
             $_value = $this->_containerHas($params, $_param)
                 ? $this->_containerGet($params, $_param)
                 : null;
-            $_value = ($_type === static::T_PARAM_ARRAY && $_value !== null)
-                ? explode(',', $_value)
-                : $_value;
+
+            // If a transform callback is given in the info for the param, invoke it
+            $_value = ($_transform !== null) ? call_user_func_array($_transform, [$_value]) : $_value;
 
             $condition = $this->_addQueryCondition($condition, $_entity, $_field, $_value, $_compare);
         }
