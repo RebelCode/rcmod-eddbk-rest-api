@@ -354,6 +354,9 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
             $default  = $this->_containerHas($_mapping, static::K_PARAM_DEFAULT)
                 ? $this->_containerGet($_mapping, static::K_PARAM_DEFAULT)
                 : null;
+            $transform  = $this->_containerHas($_mapping, static::K_PARAM_TRANSFORM)
+                ? $this->_containerGet($_mapping, static::K_PARAM_TRANSFORM)
+                : null;
             $hasParam = $this->_containerHas($params, $_param);
 
             if (!$hasParam && $required) {
@@ -362,12 +365,54 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
                 );
             }
 
-            $recordData[$field] = $hasParam
-                ? $this->_containerGet($params, $_param)
-                : $default;
+            if ($hasParam) {
+                // Get the value
+                $value = $this->_containerGet($params, $_param);
+                // Transform it if a transformation callback is present in the mapping config
+                $value = ($transform !== null) ? call_user_func_array($transform, [$value]) : $value;
+
+                $recordData[$field] = $value;
+            } else {
+                $recordData[$field] = $default;
+            }
         }
 
         return $recordData;
+    }
+
+    /**
+     * Builds a change set from the request params, for updating.
+     *
+     * @since [*next-version*]
+     *
+     * @param array|stdClass|ArrayAccess|ContainerInterface $params The request params.
+     *
+     * @return array|stdClass|ArrayAccess|ContainerInterface The built change set.
+     */
+    protected function _buildUpdateChangeSet($params)
+    {
+        $changeSet = [];
+
+        foreach ($this->_getUpdateParamFieldMapping() as $_param => $_mapping) {
+            // If param not in request params, skip
+            if (!$this->_containerHas($params, $_param)) {
+                continue;
+            }
+
+            $field     = $this->_containerGet($_mapping, static::K_PARAM_FIELD);
+            $transform = $this->_containerHas($_mapping, static::K_PARAM_TRANSFORM)
+                ? $this->_containerGet($_mapping, static::K_PARAM_TRANSFORM)
+                : null;
+
+            // Get the value
+            $value = $this->_containerGet($params, $_param);
+            // Transform it if a transformation callback is present in the mapping config
+            $value = ($transform !== null) ? call_user_func_array($transform, [$value]) : $value;
+
+            $changeSet[$field] = $value;
+        }
+
+        return $changeSet;
     }
 
     /**
@@ -385,11 +430,18 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
         $condition = null;
 
         foreach ($this->_getUpdateConditionParamMapping() as $_param => $_info) {
-            $_compare = $this->_containerGet($_info, static::K_PARAM_COMPARE);
-            $_field   = $this->_containerGet($_info, static::K_PARAM_FIELD);
-            $_value   = $this->_containerHas($params, $_param)
+            $_compare   = $this->_containerGet($_info, static::K_PARAM_COMPARE);
+            $_field     = $this->_containerGet($_info, static::K_PARAM_FIELD);
+            $transform  = $this->_containerHas($_info, static::K_PARAM_TRANSFORM)
+                ? $this->_containerGet($_info, static::K_PARAM_TRANSFORM)
+                : null;
+
+            // Get the value
+            $_value = $this->_containerHas($params, $_param)
                 ? $this->_containerGet($params, $_param)
                 : null;
+            // Transform it if a transformation callback is present in the mapping config
+            $_value = ($transform !== null) ? call_user_func_array($transform, [$_value]) : $_value;
 
             $condition = $this->_addQueryCondition($condition, null, $_field, $_value, $_compare);
         }
@@ -412,11 +464,18 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
         $condition = null;
 
         foreach ($this->_getDeleteConditionParamMapping() as $_param => $_info) {
-            $_compare = $this->_containerGet($_info, static::K_PARAM_COMPARE);
-            $_field   = $this->_containerGet($_info, static::K_PARAM_FIELD);
-            $_value   = $this->_containerHas($params, $_param)
+            $_compare   = $this->_containerGet($_info, static::K_PARAM_COMPARE);
+            $_field     = $this->_containerGet($_info, static::K_PARAM_FIELD);
+            $transform  = $this->_containerHas($_info, static::K_PARAM_TRANSFORM)
+                ? $this->_containerGet($_info, static::K_PARAM_TRANSFORM)
+                : null;
+
+            // Get the value
+            $_value = $this->_containerHas($params, $_param)
                 ? $this->_containerGet($params, $_param)
                 : null;
+            // Transform it if a transformation callback is present in the mapping config
+            $_value = ($transform !== null) ? call_user_func_array($transform, [$_value]) : $_value;
 
             $condition = $this->_addQueryCondition($condition, null, $_field, $_value, $_compare);
         }
