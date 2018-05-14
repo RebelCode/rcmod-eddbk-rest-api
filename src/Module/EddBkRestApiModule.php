@@ -520,17 +520,22 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_booking_timezone_offset_transformer' => function () {
                     return function ($value, $source) {
+                        // Get client timezone name
                         $tzName = $this->_containerHas($source, 'client_tz')
                             ? $this->_containerGet($source, 'client_tz')
                             : null;
 
+                        // If no timezone name, assume UTC and return offset of 0
                         if (empty($tzName)) {
                             return 0;
                         }
 
+                        // Create the timezone and the date time at the start of the booking
+                        $start = $this->_containerGet($source, 'start');
                         $timezone = new DateTimeZone($tzName);
-                        $time = new DateTime('@' . $this->_containerGet($source, 'start'), new DateTimeZone('UTC'));
+                        $time = new DateTime('@' . $start, new DateTimeZone('UTC'));
 
+                        // Return the timezone offset at that the start time of the booking
                         return $timezone->getOffset($time);
                     };
                 },
@@ -542,11 +547,14 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_timestamp_datetime_transformer' => function (ContainerInterface $c) {
                     return new CallbackTransformer(function ($timestamp) use ($c) {
+                        // Get WordPress timezone, defaulting to UTC
                         $tzName = get_option('timezone_string');
                         $tzName = empty($tzName) ? 'UTC' : $tzName;
+                        // Create date time object with the timezone
                         $timezone = new DateTimeZone($tzName);
                         $dateTime = new DateTime('@' . $timestamp, $timezone);
 
+                        // Return formatted
                         return $dateTime->format($c->get('eddbk_rest_api/datetime_format'));
                     });
                 },
