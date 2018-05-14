@@ -45,6 +45,9 @@ class BookingsController extends AbstractBaseCqrsController
     /* @since [*next-version*] */
     use NormalizeArrayCapableTrait;
 
+    /* @since [*next-version*] */
+    use ParseIso8601CapableTrait;
+
     /**
      * The default number of items to return per page.
      *
@@ -251,15 +254,10 @@ class BookingsController extends AbstractBaseCqrsController
             throw $this->_createRuntimeException($this->__('The UPDATE resource model is null'));
         }
 
-        $changeSet = [];
+        $changeSet = $this->_buildUpdateChangeSet($params);
+        $condition = $this->_buildUpdateCondition($params);
 
-        foreach ($this->_getUpdateParamFieldMapping() as $_param => $_field) {
-            if ($this->_containerHas($params, $_param)) {
-                $changeSet[$_field] = $this->_containerGet($params, $_param);
-            }
-        }
-
-        $updateRm->update($changeSet, $this->_buildUpdateCondition($params));
+        $updateRm->update($changeSet, $condition);
 
         return [];
     }
@@ -342,20 +340,26 @@ class BookingsController extends AbstractBaseCqrsController
                 'field'   => 'id',
             ],
             'start' => [
-                'compare' => 'gte',
-                'entity'  => 'booking',
-                'field'   => 'start',
+                'compare'   => 'gte',
+                'entity'    => 'booking',
+                'field'     => 'start',
+                'transform' => [$this, '_parseIso8601'],
             ],
             'end' => [
-                'compare' => 'lte',
-                'entity'  => 'booking',
-                'field'   => 'end',
+                'compare'   => 'lte',
+                'entity'    => 'booking',
+                'field'     => 'end',
+                'transform' => [$this, '_parseIso8601'],
             ],
             'status' => [
-                'compare' => 'in',
-                'entity'  => 'booking',
-                'field'   => 'status',
-                'type'    => 'array',
+                'compare'   => 'in',
+                'entity'    => 'booking',
+                'field'     => 'status',
+                'transform' => function ($status) {
+                    return ($status !== null)
+                        ? explode(',', $status)
+                        : null;
+                },
             ],
             'service' => [
                 'compare' => 'eq',
@@ -419,12 +423,14 @@ class BookingsController extends AbstractBaseCqrsController
     {
         return [
             'start' => [
-                'field'    => 'start',
-                'required' => true,
+                'field'     => 'start',
+                'required'  => true,
+                'transform' => [$this, '_parseIso8601'],
             ],
             'end' => [
-                'field'    => 'end',
-                'required' => true,
+                'field'     => 'end',
+                'required'  => true,
+                'transform' => [$this, '_parseIso8601'],
             ],
             'service' => [
                 'field'    => 'service_id',
@@ -462,14 +468,33 @@ class BookingsController extends AbstractBaseCqrsController
     protected function _getUpdateParamFieldMapping()
     {
         return [
-            'start'    => 'start',
-            'end'      => 'end',
-            'service'  => 'service_id',
-            'resource' => 'resource_id',
-            'client'   => 'client_id',
-            'clientTz' => 'client_tz',
-            'payment'  => 'payment_id',
-            'notes'    => 'admin_notes',
+            'start' => [
+                'field'     => 'start',
+                'transform' => [$this, '_parseIso8601'],
+            ],
+            'end' => [
+                'field'     => 'end',
+                'transform' => [$this, '_parseIso8601'],
+            ],
+            'service' => [
+                'field'    => 'service_id',
+            ],
+            'resource' => [
+                'field'    => 'resource_id',
+            ],
+            'client' => [
+                'field'    => 'client_id',
+            ],
+            'clientTz' => [
+                'field'    => 'client_tz',
+            ],
+            'payment' => [
+                'field'    => 'payment_id',
+            ],
+            'notes' => [
+                'field'    => 'admin_notes',
+                'default'  => '',
+            ],
         ];
     }
 }
