@@ -32,7 +32,7 @@ $cfg['eddbk_rest_api']['namespace'] = '${eddbk_rest_api/name}/v${eddbk_rest_api/
  *
  * @since [*next-version*]
  */
-$cfg['eddbk_rest_api']['datetime_format'] = 'Y-m-d H:i:s';
+$cfg['eddbk_rest_api']['datetime_format'] = DATE_ISO8601;
 
 /*
  * The REST API routes.
