@@ -321,10 +321,10 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
                 ? $this->_containerGet($_info, static::K_PARAM_TRANSFORM)
                 : null;
 
-            // Get the param value
-            $_value = $this->_containerHas($params, $_param)
-                ? $this->_containerGet($params, $_param)
-                : null;
+            // Get the value
+            $_value = $this->_containerHas($params, $_param) ? $this->_containerGet($params, $_param) : null;
+            // Ensure it is not empty
+            $_value = strlen($_value) > 0 ? $_value : null;
 
             // If a transform callback is given in the info for the param, invoke it
             $_value = ($_transform !== null) ? call_user_func_array($_transform, [$_value]) : $_value;
@@ -358,6 +358,8 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
                 ? $this->_containerGet($_mapping, static::K_PARAM_TRANSFORM)
                 : null;
             $hasParam = $this->_containerHas($params, $_param);
+            $value    = $hasParam ? $this->_containerGet($params, $_param) : null;
+            $hasParam = $hasParam && $value !== null && strlen($value) > 0;
 
             if (!$hasParam && $required) {
                 throw $this->_createControllerException(
@@ -405,7 +407,9 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
                 : null;
 
             // Get the value
-            $value = $this->_containerGet($params, $_param);
+            $_value = $this->_containerHas($params, $_param) ? $this->_containerGet($params, $_param) : null;
+            // Ensure it is not empty
+            $_value = strlen($_value) > 0 ? $_value : null;
             // Transform it if a transformation callback is present in the mapping config
             $value = ($transform !== null) ? call_user_func_array($transform, [$value]) : $value;
 
@@ -437,9 +441,9 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
                 : null;
 
             // Get the value
-            $_value = $this->_containerHas($params, $_param)
-                ? $this->_containerGet($params, $_param)
-                : null;
+            $_value = $this->_containerHas($params, $_param) ? $this->_containerGet($params, $_param) : null;
+            // Ensure it is not empty
+            $_value = strlen($_value) > 0 ? $_value : null;
             // Transform it if a transformation callback is present in the mapping config
             $_value = ($transform !== null) ? call_user_func_array($transform, [$_value]) : $_value;
 
@@ -471,9 +475,9 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
                 : null;
 
             // Get the value
-            $_value = $this->_containerHas($params, $_param)
-                ? $this->_containerGet($params, $_param)
-                : null;
+            $_value = $this->_containerHas($params, $_param) ? $this->_containerGet($params, $_param) : null;
+            // Ensure it is not empty
+            $_value = strlen($_value) > 0 ? $_value : null;
             // Transform it if a transformation callback is present in the mapping config
             $_value = ($transform !== null) ? call_user_func_array($transform, [$_value]) : $_value;
 
