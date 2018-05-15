@@ -6,13 +6,15 @@
  * @since [*next-version*]
  */
 
-/*
- * The route for querying sessions.
- *
- * @since [*next-version*]
- */
-$cfg['eddbk_rest_api']['routes']['get_sessions'] = [
-    'pattern' => '/sessions',
-    'methods' => ['GET'],
-    'handler' => 'eddbk_rest_api_query_sessions_handler'
+return [
+    /*
+     * The route for querying sessions.
+     *
+     * @since [*next-version*]
+     */
+    'get_sessions' => [
+        'pattern' => '/sessions',
+        'methods' => ['GET'],
+        'handler' => 'eddbk_rest_api_query_sessions_handler'
+    ],
 ];

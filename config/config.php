@@ -6,39 +6,69 @@
  * @since [*next-version*]
  */
 
-/**
- * The REST API version number.
- *
- * @since [*next-version*]
- */
-$cfg['eddbk_rest_api']['version'] = '1';
+return [
+    'eddbk_rest_api' => [
+        /**
+         * The REST API version number.
+         *
+         * @since [*next-version*]
+         */
+        'version' => '1',
 
-/**
- * The identifying name of the REST API.
- *
- * @since [*next-version*]
- */
-$cfg['eddbk_rest_api']['name'] = 'eddbk';
+        /**
+         * The identifying name of the REST API.
+         *
+         * @since [*next-version*]
+         */
+        'name' => 'eddbk',
 
-/**
- * The REST API namespace.
- *
- * @since [*next-version*]
- */
-$cfg['eddbk_rest_api']['namespace'] = '${eddbk_rest_api/name}/v${eddbk_rest_api/version}';
+        /**
+         * The REST API namespace.
+         *
+         * @since [*next-version*]
+         */
+        'namespace' => '${eddbk_rest_api/name}/v${eddbk_rest_api/version}',
 
-/**
- * The date time format to use in REST API responses.
- *
- * @since [*next-version*]
- */
-$cfg['eddbk_rest_api']['datetime_format'] = DATE_ISO8601;
+        /**
+         * The date time format to use in REST API responses.
+         *
+         * @since [*next-version*]
+         */
+        'datetime_format' => DATE_ISO8601,
 
-/*
- * The REST API routes.
- *
- * @since [*next-version*]
- */
-require __DIR__ . '/routes.php';
+        /*
+         * The REST API routes.
+         *
+         * @since [*next-version*]
+         */
+        'routes' => [
+            /*
+             * The REST API routes related to bookings.
+             *
+             * @since [*next-version*]
+             */
+            'bookings' => require(__DIR__ . '/routes/bookings.php'),
 
-return $cfg;
+            /*
+             * The REST API routes related to sessions.
+             *
+             * @since [*next-version*]
+             */
+            'sessions' => require(__DIR__ . '/routes/sessions.php'),
+
+            /*
+             * The REST API routes related to services.
+             *
+             * @since [*next-version*]
+             */
+            'services' => require(__DIR__ . '/routes/services.php'),
+
+            /*
+             * The REST API routes related to clients.
+             *
+             * @since [*next-version*]
+             */
+            'clients' => require(__DIR__ . '/routes/clients.php'),
+        ]
+    ],
+];
