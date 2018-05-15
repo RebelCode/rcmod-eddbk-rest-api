@@ -114,7 +114,11 @@ class EddBkRestApiModule extends AbstractBaseModule
                  * @since [*next-version*]
                  */
                 'eddbk_services_controller' => function (ContainerInterface $c) {
-                    return new ServicesController($c->get('eddbk_rest_api_services_iterator_factory'));
+                    return new ServicesController(
+                        $c->get('eddbk_services_select_rm'),
+                        $c->get('sql_expression_builder'),
+                        $c->get('eddbk_rest_api_services_iterator_factory')
+                    );
                 },
 
                 /*
@@ -166,16 +170,11 @@ class EddBkRestApiModule extends AbstractBaseModule
                     return new GenericCallbackFactory(function ($config) use ($c) {
                         $items = $this->_containerGet($config, 'items');
 
-                        // Iterator of results, which are WP_Post instances
-                        $postsIterator = $this->_normalizeIterator($items);
+                        // Iterator of results, and transformer to apply to each
+                        $iterator    = $this->_normalizeIterator($items);
+                        $transformer = $c->get('eddbk_admin_edit_services_ui_state_transformer');
 
-                        // Iterate that transforms WP_Post instances to arrays
-                        $arrayIterator = new TransformerIterator(
-                            $postsIterator,
-                            $c->get('eddbk_post_array_transformer')
-                        );
-
-                        return new TransformerIterator($arrayIterator, $c->get('eddbk_rest_api_services_transformer'));
+                        return new TransformerIterator($iterator, $transformer);
                     });
                 },
 
