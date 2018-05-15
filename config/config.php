@@ -41,34 +41,11 @@ return [
          *
          * @since [*next-version*]
          */
-        'routes' => [
-            /*
-             * The REST API routes related to bookings.
-             *
-             * @since [*next-version*]
-             */
-            'bookings' => require(__DIR__ . '/routes/bookings.php'),
-
-            /*
-             * The REST API routes related to sessions.
-             *
-             * @since [*next-version*]
-             */
-            'sessions' => require(__DIR__ . '/routes/sessions.php'),
-
-            /*
-             * The REST API routes related to services.
-             *
-             * @since [*next-version*]
-             */
-            'services' => require(__DIR__ . '/routes/services.php'),
-
-            /*
-             * The REST API routes related to clients.
-             *
-             * @since [*next-version*]
-             */
-            'clients' => require(__DIR__ . '/routes/clients.php'),
-        ]
+        'routes' => array_merge(
+            require(__DIR__ . '/routes/bookings.php'),
+            require(__DIR__ . '/routes/sessions.php'),
+            require(__DIR__ . '/routes/services.php'),
+            require(__DIR__ . '/routes/clients.php')
+        )
     ],
 ];
