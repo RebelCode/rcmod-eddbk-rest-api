@@ -291,15 +291,45 @@ class BookingsController extends AbstractBaseCqrsController
     {
         $condition = parent::_buildSelectCondition($params);
 
-        if (!$this->_containerHas($params, 'search')) {
-            return $condition;
+        // Add condition to search by client
+        if ($this->_containerHas($params, 'search')) {
+            $search    = $this->_containerGet($params, 'search');
+            $condition = $this->_addClientsSearchCondition($condition, $search);
         }
 
-        // Add condition to search by client
-        $search    = $this->_containerGet($params, 'search');
-        $condition = $this->_addClientsSearchCondition($condition, $search);
+        // Add condition to filter by month
+        if ($this->_containerHas($params, 'month')) {
+            $month     = $this->_containerGet($params, 'month');
+            $condition = $this->_addMonthFilterCondition($condition, $month);
+        }
 
         return $condition;
+    }
+
+    /**
+     * Adds a condition to filter bookings by month.
+     *
+     * @since [*next-version*]
+     *
+     * @param LogicalExpressionInterface|null $condition The condition to add to.
+     * @param int|string|StringableInterface  $month     The month index.
+     *
+     * @return LogicalExpressionInterface The new condition.
+     */
+    protected function _addMonthFilterCondition($condition, $month)
+    {
+        $month = $this->_normalizeInt($month);
+
+        $b = $this->exprBuilder;
+
+        $monthCondition = $b->eq(
+            $b->fn('month', $b->fn('from_unixtime', $b->ef('booking', 'start'))),
+            $b->lit($month)
+        );
+
+        return ($condition !== null)
+            ? $b->and($condition, $monthCondition)
+            : $monthCondition;
     }
 
     /**
