@@ -143,7 +143,12 @@ class ServicesController extends AbstractBaseCqrsController
         }
 
         $condition = $this->_buildSelectCondition($params);
-        $condition = $exprBuilder->and($condition);
+
+        // The services RM is known to require AND as top-level expression
+        if ($condition !== null) {
+            $condition = $exprBuilder->and($condition);
+        }
+
         $services  = $selectRm->select($condition);
 
         return $services;
