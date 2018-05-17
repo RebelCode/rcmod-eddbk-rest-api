@@ -34,7 +34,7 @@ return [
          *
          * @since [*next-version*]
          */
-        'datetime_format' => DATE_ISO8601,
+        'datetime_format' => DATE_ATOM,
 
         /*
          * The REST API routes.
