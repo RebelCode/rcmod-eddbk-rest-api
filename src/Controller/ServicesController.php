@@ -199,7 +199,7 @@ class ServicesController extends AbstractBaseCqrsController
         return [
             'id' => [
                 'compare' => 'eq',
-                'entity'  => 'post',
+                'entity'  => 'service',
                 'field'   => 'id',
             ],
         ];
