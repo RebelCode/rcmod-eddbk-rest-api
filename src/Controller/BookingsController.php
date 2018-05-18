@@ -210,14 +210,7 @@ class BookingsController extends AbstractBaseCqrsController
 
             return $this->_get(['id' => $id]);
         } catch (CouldNotTransitionExceptionInterface $transitionEx) {
-            $validationEx = $transitionEx;
-            while ($validationEx !== null && !($validationEx instanceof ValidationFailedExceptionInterface)) {
-                $validationEx = $validationEx->getPrevious();
-            }
-
-            $errors = ($validationEx instanceof ValidationFailedExceptionInterface)
-                ? $validationEx->getValidationErrors()
-                : [];
+            $errors = $this->_getTransitionFailureMessages($transitionEx);
 
             throw $this->_createControllerException(
                 $transitionEx->getMessage(), 403, $transitionEx, $this, [
@@ -278,6 +271,31 @@ class BookingsController extends AbstractBaseCqrsController
         $deleteRm->delete($this->_buildDeleteCondition($params));
 
         return [];
+    }
+
+    /**
+     * Retrieves the transition failure messages from a transition failure exception.
+     *
+     * @since [*next-version*]
+     *
+     * @param CouldNotTransitionExceptionInterface $exception The transition failure exception.
+     *
+     * @return array|Stringable[]|string[]|Traversable The transition errors.
+     */
+    protected function _getTransitionFailureMessages(CouldNotTransitionExceptionInterface $exception)
+    {
+        $validationEx = $exception;
+        // Move up the stack until a validation exception is found
+        while ($validationEx !== null && !($validationEx instanceof ValidationFailedExceptionInterface)) {
+            $validationEx = $validationEx->getPrevious();
+        }
+
+        // Get the errors from the validation exception, if found
+        $errors = ($validationEx instanceof ValidationFailedExceptionInterface)
+            ? $validationEx->getValidationErrors()
+            : [];
+
+        return $errors;
     }
 
     /**
