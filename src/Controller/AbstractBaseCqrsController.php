@@ -402,6 +402,9 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
             }
 
             $field     = $this->_containerGet($_mapping, static::K_PARAM_FIELD);
+            $default   = $this->_containerHas($_mapping, static::K_PARAM_DEFAULT)
+                ? $this->_containerGet($_mapping, static::K_PARAM_DEFAULT)
+                : null;
             $transform = $this->_containerHas($_mapping, static::K_PARAM_TRANSFORM)
                 ? $this->_containerGet($_mapping, static::K_PARAM_TRANSFORM)
                 : null;
@@ -409,9 +412,11 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
             // Get the value
             $value = $this->_containerHas($params, $_param) ? $this->_containerGet($params, $_param) : null;
             // Ensure it is not empty
-            $value = strlen($value) > 0 ? $value : null;
+            $value = ($value !== null && strlen($value) > 0) ? $value : null;
             // Transform it if a transformation callback is present in the mapping config
             $value = ($transform !== null) ? call_user_func_array($transform, [$value]) : $value;
+            // Use default value if null
+            $value = ($value === null) ? $default : $value;
 
             $changeSet[$field] = $value;
         }
