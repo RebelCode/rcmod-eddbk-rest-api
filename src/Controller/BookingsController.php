@@ -2,6 +2,7 @@
 
 namespace RebelCode\EddBookings\RestApi\Controller;
 
+use Dhii\Data\Container\ContainerSetCapableTrait;
 use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\Factory\FactoryAwareTrait;
 use Dhii\Factory\FactoryInterface;
@@ -12,13 +13,16 @@ use Dhii\Storage\Resource\UpdateCapableInterface;
 use Dhii\Util\Normalization\NormalizeArrayCapableTrait;
 use Dhii\Util\Normalization\NormalizeIntCapableTrait;
 use Dhii\Util\String\StringableInterface;
+use Dhii\Util\String\StringableInterface as Stringable;
 use Dhii\Validation\Exception\ValidationFailedExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use RebelCode\Bookings\BookingFactoryInterface;
+use RebelCode\Bookings\BookingInterface;
 use RebelCode\Bookings\Exception\CouldNotTransitionExceptionInterface;
 use RebelCode\Bookings\Factory\BookingFactoryAwareTrait;
 use RebelCode\Bookings\TransitionerAwareTrait;
 use RebelCode\Bookings\TransitionerInterface;
+use Traversable;
 
 /**
  * The API controller for bookings.
@@ -47,6 +51,9 @@ class BookingsController extends AbstractBaseCqrsController
 
     /* @since [*next-version*] */
     use ParseIso8601CapableTrait;
+
+    /* @since [*next-version*] */
+    use ContainerSetCapableTrait;
 
     /**
      * The default number of items to return per page.
@@ -210,14 +217,7 @@ class BookingsController extends AbstractBaseCqrsController
 
             return $this->_get(['id' => $id]);
         } catch (CouldNotTransitionExceptionInterface $transitionEx) {
-            $validationEx = $transitionEx;
-            while ($validationEx !== null && !($validationEx instanceof ValidationFailedExceptionInterface)) {
-                $validationEx = $validationEx->getPrevious();
-            }
-
-            $errors = ($validationEx instanceof ValidationFailedExceptionInterface)
-                ? $validationEx->getValidationErrors()
-                : [];
+            $errors = $this->_getTransitionFailureMessages($transitionEx);
 
             throw $this->_createControllerException(
                 $transitionEx->getMessage(), 403, $transitionEx, $this, [
@@ -254,9 +254,47 @@ class BookingsController extends AbstractBaseCqrsController
             throw $this->_createRuntimeException($this->__('The UPDATE resource model is null'));
         }
 
-        $changeSet = $this->_buildUpdateChangeSet($params);
-        $condition = $this->_buildUpdateCondition($params);
+        $selectRm = $this->_getSelectRm();
 
+        if ($selectRm === null) {
+            throw $this->_createRuntimeException($this->__('The SELECT resource model is null'));
+        }
+
+        $condition = $this->_buildUpdateCondition($params);
+        $bookings  = $selectRm->select($condition);
+        $bookings  = $this->_normalizeArray($bookings);
+        $booking   = reset($bookings);
+
+        if (!($booking instanceof BookingInterface)) {
+            throw $this->_createControllerException(
+                $this->__('A booking for the given ID does not exist', []), 404, null, $this
+            );
+        }
+
+        // Prepare change set
+        $changeSet = $this->_buildUpdateChangeSet($params);
+
+        // If the transition was given in the request
+        if ($this->_containerHas($params, 'transition')) {
+            try {
+                // Read the status as a "transition"
+                $transition = $this->_containerGet($params, 'transition');
+                // Attempt transition
+                $booking = $this->_getTransitioner()->transition($booking, $transition);
+                // Update status in change set
+                $this->_containerSet($changeSet, 'status', $booking->getStatus());
+            } catch (CouldNotTransitionExceptionInterface $exception) {
+                $errors = $this->_getTransitionFailureMessages($exception);
+
+                throw $this->_createControllerException(
+                    $this->__('Failed to transition the booking'), 500, $exception, $this, [
+                        'errors' => $this->_normalizeArray($errors)
+                    ]
+                );
+            }
+        }
+
+        // Update the booking
         $updateRm->update($changeSet, $condition);
 
         return [];
@@ -278,6 +316,31 @@ class BookingsController extends AbstractBaseCqrsController
         $deleteRm->delete($this->_buildDeleteCondition($params));
 
         return [];
+    }
+
+    /**
+     * Retrieves the transition failure messages from a transition failure exception.
+     *
+     * @since [*next-version*]
+     *
+     * @param CouldNotTransitionExceptionInterface $exception The transition failure exception.
+     *
+     * @return array|Stringable[]|string[]|Traversable The transition errors.
+     */
+    protected function _getTransitionFailureMessages(CouldNotTransitionExceptionInterface $exception)
+    {
+        $validationEx = $exception;
+        // Move up the stack until a validation exception is found
+        while ($validationEx !== null && !($validationEx instanceof ValidationFailedExceptionInterface)) {
+            $validationEx = $validationEx->getPrevious();
+        }
+
+        // Get the errors from the validation exception, if found
+        $errors = ($validationEx instanceof ValidationFailedExceptionInterface)
+            ? $validationEx->getValidationErrors()
+            : [];
+
+        return $errors;
     }
 
     /**
