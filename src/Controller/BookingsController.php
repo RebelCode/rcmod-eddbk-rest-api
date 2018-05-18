@@ -500,30 +500,75 @@ class BookingsController extends AbstractBaseCqrsController
         return [
             'start' => [
                 'field'     => 'start',
-                'transform' => [$this, '_parseIso8601'],
+                'transform' => function ($value) {
+                    if (empty($value)) {
+                        throw $this->_createInvalidArgumentException(
+                            $this->__('Booking start time cannot be an empty value'), null, null, $value
+                        );
+                    }
+
+                    return $this->_parseIso8601($value);
+                },
             ],
             'end' => [
                 'field'     => 'end',
-                'transform' => [$this, '_parseIso8601'],
+                'transform' => function ($value) {
+                    if (empty($value)) {
+                        throw $this->_createInvalidArgumentException(
+                            $this->__('Booking end time cannot be an empty value'), null, null, $value
+                        );
+                    }
+
+                    return $this->_parseIso8601($value);
+                },
             ],
             'service' => [
-                'field'    => 'service_id',
+                'field'     => 'service_id',
+                'transform' => function ($value) {
+                    if (empty($value)) {
+                        throw $this->_createInvalidArgumentException(
+                            $this->__('Service ID cannot be an empty value'), null, null, $value
+                        );
+                    }
+
+                    return $value;
+                },
             ],
             'resource' => [
                 'field'    => 'resource_id',
+                'transform' => function ($value) {
+                    if (empty($value)) {
+                        throw $this->_createInvalidArgumentException(
+                            $this->__('Resource ID cannot be an empty value'), null, null, $value
+                        );
+                    }
+
+                    return $value;
+                },
             ],
             'client' => [
                 'field'    => 'client_id',
+                'transform' => function ($value) {
+                    if (empty($value)) {
+                        throw $this->_createInvalidArgumentException(
+                            $this->__('Client ID cannot be an empty value'), null, null, $value
+                        );
+                    }
+
+                    return $value;
+                },
             ],
             'clientTz' => [
-                'field'    => 'client_tz',
+                'field'   => 'client_tz',
+                'default' => 'UTC'
             ],
             'payment' => [
-                'field'    => 'payment_id',
+                'field'   => 'payment_id',
+                'default' => ''
             ],
             'notes' => [
-                'field'    => 'admin_notes',
-                'default'  => '',
+                'field'   => 'admin_notes',
+                'default' => '',
             ],
         ];
     }
