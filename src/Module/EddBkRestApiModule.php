@@ -453,7 +453,6 @@ class EddBkRestApiModule extends AbstractBaseModule
                         [
                             MapTransformer::K_SOURCE      => 'service_id',
                             MapTransformer::K_TARGET      => 'service',
-                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_service_id_transformer'),
                         ],
                         [
                             MapTransformer::K_SOURCE => 'resource_id',
