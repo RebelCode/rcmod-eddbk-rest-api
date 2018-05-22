@@ -33,7 +33,7 @@ class SessionsController extends AbstractBaseCqrsController
      *
      * @since [*next-version*]
      */
-    const DEFAULT_NUM_ITEMS_PER_PAGE = 100;
+    const DEFAULT_NUM_ITEMS_PER_PAGE = 500;
 
     /**
      * The default page number.
