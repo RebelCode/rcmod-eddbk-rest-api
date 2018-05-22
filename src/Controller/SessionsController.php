@@ -36,6 +36,13 @@ class SessionsController extends AbstractBaseCqrsController
     const DEFAULT_NUM_ITEMS_PER_PAGE = 500;
 
     /**
+     * The maximum (hard cap) number of items to return per page.
+     *
+     * @since [*next-version*]
+     */
+    const MAX_NUM_ITEMS_PER_PAGE = 1000;
+
+    /**
      * The default page number.
      *
      * @since [*next-version*]
@@ -76,6 +83,7 @@ class SessionsController extends AbstractBaseCqrsController
             ? $this->_containerGet($params, 'numItems')
             : static::DEFAULT_NUM_ITEMS_PER_PAGE;
         $numPerPage = $this->_normalizeInt($numPerPage);
+        $numPerPage = min($numPerPage, static::MAX_NUM_ITEMS_PER_PAGE);
 
         if ($numPerPage < 1) {
             throw $this->_createControllerException($this->__('Invalid number of items per page'), 400, null, $this);
