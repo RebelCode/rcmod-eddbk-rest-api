@@ -50,19 +50,30 @@ class SessionsController extends AbstractBaseCqrsController
     const DEFAULT_PAGE_NUMBER = 1;
 
     /**
+     * The order in which to query and provide sessions.
+     *
+     * @since [*next-version*]
+     *
+     * @var OrderInterface[]|Traversable
+     */
+    protected $ordering;
+
+    /**
      * Constructor.
      *
      * @since [*next-version*]
      *
-     * @param FactoryInterface       $iteratorFactory The iterator factory to use for the results.
-     * @param SelectCapableInterface $selectRm        The SELECT sessions resource model.
-     * @param object                 $exprBuilder     The expression builder.
+     * @param FactoryInterface             $iteratorFactory The iterator factory to use for the results.
+     * @param SelectCapableInterface       $selectRm        The SELECT sessions resource model.
+     * @param OrderInterface[]|Traversable $ordering        The ordering in which to query and provide sessions.
+     * @param object                       $exprBuilder     The expression builder.
      */
-    public function __construct($iteratorFactory, $selectRm, $exprBuilder)
+    public function __construct($iteratorFactory, $selectRm, $ordering, $exprBuilder)
     {
         $this->_setSelectRm($selectRm);
         $this->_setExprBuilder($exprBuilder);
         $this->_setFactory($iteratorFactory);
+        $this->ordering = $ordering;
     }
 
     /**
@@ -102,7 +113,7 @@ class SessionsController extends AbstractBaseCqrsController
         // Calculate query offset
         $offset = ($pageNum - 1) * $numPerPage;
 
-        return $selectRm->select($this->_buildSelectCondition($params), [], $numPerPage, $offset);
+        return $selectRm->select($this->_buildSelectCondition($params), $this->ordering, $numPerPage, $offset);
     }
 
     /**
