@@ -77,15 +77,15 @@ class SessionsController extends AbstractBaseCqrsController
             : static::DEFAULT_NUM_ITEMS_PER_PAGE;
         $numPerPage = $this->_normalizeInt($numPerPage);
 
+        if ($numPerPage < 1) {
+            throw $this->_createControllerException($this->__('Invalid number of items per page'), 400, null, $this);
+        }
+
         // Get page number
         $pageNum = $this->_containerHas($params, 'page')
             ? $this->_containerGet($params, 'page')
             : static::DEFAULT_PAGE_NUMBER;
         $pageNum = $this->_normalizeInt($pageNum);
-
-        if ($numPerPage < 1) {
-            throw $this->_createControllerException($this->__('Invalid number of items per page'), 400, null, $this);
-        }
 
         if ($pageNum < 1) {
             throw $this->_createControllerException($this->__('Invalid page number'), 400, null, $this);
