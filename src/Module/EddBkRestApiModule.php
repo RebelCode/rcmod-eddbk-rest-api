@@ -140,7 +140,9 @@ class EddBkRestApiModule extends AbstractBaseModule
                         $c->get('eddbk_rest_api_sessions_iterator_factory'),
                         $c->get('sessions_select_rm'),
                         $c->get('eddbk_rest_api_sessions_ordering'),
-                        $c->get('sql_expression_builder')
+                        $c->get('sql_expression_builder'),
+                        $c->get('eddbk_rest_api/controllers/sessions/default_num_sessions_per_page'),
+                        $c->get('eddbk_rest_api/controllers/sessions/max_num_sessions_per_page')
                     );
                 },
 

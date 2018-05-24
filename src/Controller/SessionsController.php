@@ -7,6 +7,7 @@ use Dhii\Factory\FactoryInterface;
 use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Storage\Resource\SelectCapableInterface;
 use Dhii\Util\Normalization\NormalizeIntCapableTrait;
+use Dhii\Util\String\StringableInterface as Stringable;
 use Traversable;
 
 /**
@@ -29,20 +30,6 @@ class SessionsController extends AbstractBaseCqrsController
     use ParseIso8601CapableTrait;
 
     /**
-     * The default number of items to return per page.
-     *
-     * @since [*next-version*]
-     */
-    const DEFAULT_NUM_ITEMS_PER_PAGE = 500;
-
-    /**
-     * The maximum (hard cap) number of items to return per page.
-     *
-     * @since [*next-version*]
-     */
-    const MAX_NUM_ITEMS_PER_PAGE = 1000;
-
-    /**
      * The default page number.
      *
      * @since [*next-version*]
@@ -59,21 +46,49 @@ class SessionsController extends AbstractBaseCqrsController
     protected $ordering;
 
     /**
+     * The default number of items to return per page.
+     *
+     * @since [*next-version*]
+     *
+     * @var int|float|string|Stringable
+     */
+    protected $defaultNumPerPage;
+
+    /**
+     * The maximum (hard cap) number of items to return per page.
+     *
+     * @since [*next-version*]
+     *
+     * @var int|float|string|Stringable
+     */
+    protected $maxNumPerPage;
+
+    /**
      * Constructor.
      *
      * @since [*next-version*]
      *
-     * @param FactoryInterface             $iteratorFactory The iterator factory to use for the results.
-     * @param SelectCapableInterface       $selectRm        The SELECT sessions resource model.
-     * @param OrderInterface[]|Traversable $ordering        The ordering in which to query and provide sessions.
-     * @param object                       $exprBuilder     The expression builder.
+     * @param FactoryInterface             $iteratorFactory   The iterator factory to use for the results.
+     * @param SelectCapableInterface       $selectRm          The SELECT sessions resource model.
+     * @param OrderInterface[]|Traversable $ordering          The ordering in which to query and provide sessions.
+     * @param object                       $exprBuilder       The expression builder.
+     * @param int|float|string|Stringable  $defaultNumPerPage The default number of items to return per page.
+     * @param int|float|string|Stringable  $maxNumPerPage     The maximum number of items to return per page.
      */
-    public function __construct($iteratorFactory, $selectRm, $ordering, $exprBuilder)
-    {
+    public function __construct(
+        $iteratorFactory,
+        $selectRm,
+        $ordering,
+        $exprBuilder,
+        $defaultNumPerPage,
+        $maxNumPerPage
+    ) {
         $this->_setSelectRm($selectRm);
         $this->_setExprBuilder($exprBuilder);
         $this->_setFactory($iteratorFactory);
-        $this->ordering = $ordering;
+        $this->ordering          = $ordering;
+        $this->defaultNumPerPage = $defaultNumPerPage;
+        $this->maxNumPerPage     = $maxNumPerPage;
     }
 
     /**
@@ -92,9 +107,9 @@ class SessionsController extends AbstractBaseCqrsController
         // Get number of items per page
         $numPerPage = $this->_containerHas($params, 'numItems')
             ? $this->_containerGet($params, 'numItems')
-            : static::DEFAULT_NUM_ITEMS_PER_PAGE;
+            : $this->defaultNumPerPage;
         $numPerPage = $this->_normalizeInt($numPerPage);
-        $numPerPage = min($numPerPage, static::MAX_NUM_ITEMS_PER_PAGE);
+        $numPerPage = min($numPerPage, $this->maxNumPerPage);
 
         if ($numPerPage < 1) {
             throw $this->_createControllerException($this->__('Invalid number of items per page'), 400, null, $this);

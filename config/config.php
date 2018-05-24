@@ -46,6 +46,34 @@ return [
             require(__DIR__ . '/routes/sessions.php'),
             require(__DIR__ . '/routes/services.php'),
             require(__DIR__ . '/routes/clients.php')
-        )
+        ),
+
+        /*
+         * Configuration for the REST API controllers.
+         *
+         * @since [*next-version*]
+         */
+        'controllers' => [
+            /*
+             * Configuration for the REST API sessions controller.
+             *
+             * @since [*next-version*]
+             */
+            'sessions' => [
+                /**
+                 * The default number of items to return per page.
+                 *
+                 * @since [*next-version*]
+                 */
+                'default_num_sessions_per_page' => 500,
+
+                /**
+                 * The maximum (hard cap) number of items to return per page.
+                 *
+                 * @since [*next-version*]
+                 */
+                'max_num_sessions_per_page' => 1000,
+            ]
+        ],
     ],
 ];
