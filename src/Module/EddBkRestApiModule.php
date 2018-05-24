@@ -139,8 +139,26 @@ class EddBkRestApiModule extends AbstractBaseModule
                     return new SessionsController(
                         $c->get('eddbk_rest_api_sessions_iterator_factory'),
                         $c->get('sessions_select_rm'),
-                        $c->get('sql_expression_builder')
+                        $c->get('eddbk_rest_api_sessions_ordering'),
+                        $c->get('sql_expression_builder'),
+                        $c->get('eddbk_rest_api/controllers/sessions/default_num_sessions_per_page'),
+                        $c->get('eddbk_rest_api/controllers/sessions/max_num_sessions_per_page')
                     );
+                },
+
+                /**
+                 * The order to use for sessions in the REST API.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_sessions_ordering' => function (ContainerInterface $c) {
+                    return [
+                        $c->get('sql_order_factory')->make([
+                            'entity'    => 'session',
+                            'field'     => 'start',
+                            'ascending' => true,
+                        ]),
+                    ];
                 },
 
                 /*-------------------------------------------------------------*\
@@ -453,7 +471,6 @@ class EddBkRestApiModule extends AbstractBaseModule
                         [
                             MapTransformer::K_SOURCE      => 'service_id',
                             MapTransformer::K_TARGET      => 'service',
-                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_service_id_transformer'),
                         ],
                         [
                             MapTransformer::K_SOURCE => 'resource_id',
