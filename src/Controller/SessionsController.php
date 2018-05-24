@@ -6,6 +6,7 @@ use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
 use Dhii\Factory\FactoryInterface;
 use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Storage\Resource\SelectCapableInterface;
+use Dhii\Storage\Resource\Sql\OrderInterface;
 use Dhii\Util\Normalization\NormalizeIntCapableTrait;
 use Dhii\Util\String\StringableInterface as Stringable;
 use Traversable;
