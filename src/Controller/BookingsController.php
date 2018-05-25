@@ -193,9 +193,24 @@ class BookingsController extends AbstractBaseCqrsController
      */
     protected function _post($params = [])
     {
+        $selectRm = $this->_getSelectRm();
+        if ($selectRm === null) {
+            throw $this->_createRuntimeException($this->__('The SELECT resource model is null'));
+        }
+
         $insertRm = $this->_getInsertRm();
         if ($insertRm === null) {
             throw $this->_createRuntimeException($this->__('The INSERT resource model is null'));
+        }
+
+        $updateRm = $this->_getUpdateRm();
+        if ($updateRm === null) {
+            throw $this->_createRuntimeException($this->__('The UPDATE resource model is null'));
+        }
+
+        $deleteRm = $this->_getDeleteRm();
+        if ($deleteRm === null) {
+            throw $this->_createRuntimeException($this->__('The DELETE resource model is null'));
         }
 
         $booking = $this->_getBookingFactory()->make($this->_buildInsertRecord($params));
@@ -203,22 +218,39 @@ class BookingsController extends AbstractBaseCqrsController
             throw $this->_createControllerException($this->__('Cannot transition empty booking'), 400, null, $this);
         }
 
+        $ids = $insertRm->insert([$booking]);
+        $id  = reset($ids);
+
+        $b = $this->exprBuilder;
+
+        $idCondition = $b->eq(
+            $b->var('id'),
+            $b->lit($id)
+        );
+
+        $bookings = $selectRm->select($idCondition);
+        $booking  = reset($bookings);
+
         try {
-            // Read the status as a "transition"
+            // Read the "transition" from the request params
             $transition = $this->_containerGet($params, 'transition');
             // Attempt transition
             $booking = $this->_getTransitioner()->transition($booking, $transition);
 
-            $ids = $insertRm->insert([$booking]);
-            $id  = null;
-            foreach ($ids as $id) {
-                break;
+            // Booking must be a traversable to be a valid change set
+            if ($booking instanceof Traversable) {
+                // Update the booking in storage after transitioning
+                $updateRm->update($booking, $idCondition);
             }
 
+            // Respond with the booking info
             return $this->_get(['id' => $id]);
         } catch (CouldNotTransitionExceptionInterface $transitionEx) {
+            // If transition failed, delete the booking
+            $deleteRm->delete($idCondition);
+            // Get the transition failure messages from the exception
             $errors = $this->_getTransitionFailureMessages($transitionEx);
-
+            // and throw a controller exception
             throw $this->_createControllerException(
                 $transitionEx->getMessage(), 403, $transitionEx, $this, [
                     'errors' => $this->_normalizeArray($errors),
