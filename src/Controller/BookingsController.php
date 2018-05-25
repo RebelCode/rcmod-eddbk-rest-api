@@ -3,6 +3,7 @@
 namespace RebelCode\EddBookings\RestApi\Controller;
 
 use Dhii\Data\Container\ContainerSetCapableTrait;
+use Dhii\Data\Container\NormalizeContainerCapableTrait;
 use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\Factory\FactoryAwareTrait;
 use Dhii\Factory\FactoryInterface;
@@ -15,6 +16,7 @@ use Dhii\Util\Normalization\NormalizeIntCapableTrait;
 use Dhii\Util\String\StringableInterface;
 use Dhii\Util\String\StringableInterface as Stringable;
 use Dhii\Validation\Exception\ValidationFailedExceptionInterface;
+use InvalidArgumentException;
 use Psr\Container\NotFoundExceptionInterface;
 use RebelCode\Bookings\BookingFactoryInterface;
 use RebelCode\Bookings\BookingInterface;
@@ -48,6 +50,9 @@ class BookingsController extends AbstractBaseCqrsController
 
     /* @since [*next-version*] */
     use NormalizeArrayCapableTrait;
+
+    /* @since [*next-version*] */
+    use NormalizeContainerCapableTrait;
 
     /* @since [*next-version*] */
     use ParseIso8601CapableTrait;
@@ -193,9 +198,24 @@ class BookingsController extends AbstractBaseCqrsController
      */
     protected function _post($params = [])
     {
+        $selectRm = $this->_getSelectRm();
+        if ($selectRm === null) {
+            throw $this->_createRuntimeException($this->__('The SELECT resource model is null'));
+        }
+
         $insertRm = $this->_getInsertRm();
         if ($insertRm === null) {
             throw $this->_createRuntimeException($this->__('The INSERT resource model is null'));
+        }
+
+        $updateRm = $this->_getUpdateRm();
+        if ($updateRm === null) {
+            throw $this->_createRuntimeException($this->__('The UPDATE resource model is null'));
+        }
+
+        $deleteRm = $this->_getDeleteRm();
+        if ($deleteRm === null) {
+            throw $this->_createRuntimeException($this->__('The DELETE resource model is null'));
         }
 
         $booking = $this->_getBookingFactory()->make($this->_buildInsertRecord($params));
@@ -203,22 +223,41 @@ class BookingsController extends AbstractBaseCqrsController
             throw $this->_createControllerException($this->__('Cannot transition empty booking'), 400, null, $this);
         }
 
+        $ids = $insertRm->insert([$booking]);
+        $id  = reset($ids);
+
+        $b = $this->exprBuilder;
+
+        $idCondition = $b->eq(
+            $b->var('id'),
+            $b->lit($id)
+        );
+
+        $bookings = $selectRm->select($idCondition);
+        $booking  = reset($bookings);
+
         try {
             // Read the status as a "transition"
             $transition = $this->_containerGet($params, 'transition');
             // Attempt transition
             $booking = $this->_getTransitioner()->transition($booking, $transition);
 
-            $ids = $insertRm->insert([$booking]);
-            $id  = null;
-            foreach ($ids as $id) {
-                break;
+            try {
+                // Update the booking in storage after transitioning
+                $changeSet = $this->_normalizeContainer($booking);
+                $updateRm->update($changeSet, $idCondition);
+            } catch (InvalidArgumentException $exception) {
+                // Booking is not a valid container - cannot use it as a change set
             }
 
+            // Respond with the booking info
             return $this->_get(['id' => $id]);
         } catch (CouldNotTransitionExceptionInterface $transitionEx) {
+            // If transition failed, delete the booking
+            $deleteRm->delete($idCondition);
+            // Get the transition failure messages from the exception
             $errors = $this->_getTransitionFailureMessages($transitionEx);
-
+            // and throw a controller exception
             throw $this->_createControllerException(
                 $transitionEx->getMessage(), 403, $transitionEx, $this, [
                     'errors' => $this->_normalizeArray($errors),
