@@ -237,7 +237,7 @@ class BookingsController extends AbstractBaseCqrsController
         $booking  = reset($bookings);
 
         try {
-            // Read the status as a "transition"
+            // Read the "transition" from the request params
             $transition = $this->_containerGet($params, 'transition');
             // Attempt transition
             $booking = $this->_getTransitioner()->transition($booking, $transition);
