@@ -3,7 +3,6 @@
 namespace RebelCode\EddBookings\RestApi\Controller;
 
 use Dhii\Data\Container\ContainerSetCapableTrait;
-use Dhii\Data\Container\NormalizeContainerCapableTrait;
 use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\Factory\FactoryAwareTrait;
 use Dhii\Factory\FactoryInterface;
@@ -16,7 +15,6 @@ use Dhii\Util\Normalization\NormalizeIntCapableTrait;
 use Dhii\Util\String\StringableInterface;
 use Dhii\Util\String\StringableInterface as Stringable;
 use Dhii\Validation\Exception\ValidationFailedExceptionInterface;
-use InvalidArgumentException;
 use Psr\Container\NotFoundExceptionInterface;
 use RebelCode\Bookings\BookingFactoryInterface;
 use RebelCode\Bookings\BookingInterface;
@@ -50,9 +48,6 @@ class BookingsController extends AbstractBaseCqrsController
 
     /* @since [*next-version*] */
     use NormalizeArrayCapableTrait;
-
-    /* @since [*next-version*] */
-    use NormalizeContainerCapableTrait;
 
     /* @since [*next-version*] */
     use ParseIso8601CapableTrait;
@@ -242,12 +237,10 @@ class BookingsController extends AbstractBaseCqrsController
             // Attempt transition
             $booking = $this->_getTransitioner()->transition($booking, $transition);
 
-            try {
+            // Booking must be a traversable to be a valid change set
+            if ($booking instanceof Traversable) {
                 // Update the booking in storage after transitioning
-                $changeSet = $this->_normalizeContainer($booking);
-                $updateRm->update($changeSet, $idCondition);
-            } catch (InvalidArgumentException $exception) {
-                // Booking is not a valid container - cannot use it as a change set
+                $updateRm->update($booking, $idCondition);
             }
 
             // Respond with the booking info
