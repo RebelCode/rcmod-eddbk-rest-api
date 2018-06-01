@@ -418,8 +418,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                             MapTransformer::K_TARGET => 'id',
                         ],
                         [
-                            MapTransformer::K_SOURCE => 'post_title',
-                            MapTransformer::K_TARGET => 'name',
+                            MapTransformer::K_SOURCE => 'name',
                         ],
                         [
                             MapTransformer::K_SOURCE => 'description',
