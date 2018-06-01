@@ -422,6 +422,13 @@ class EddBkRestApiModule extends AbstractBaseModule
                             MapTransformer::K_TARGET => 'name',
                         ],
                         [
+                            MapTransformer::K_SOURCE => 'description',
+                        ],
+                        [
+                            MapTransformer::K_SOURCE => 'image_url',
+                            MapTransformer::K_TARGET => 'imageSrc',
+                        ],
+                        [
                             MapTransformer::K_TARGET      => 'color',
                             MapTransformer::K_TRANSFORMER => function () {
                                 return '#00ccff';
