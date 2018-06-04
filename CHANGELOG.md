@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [[*next-version*]] - YYYY-MM-DD
+
+## [0.1-alpha3] - 2018-06-04
 ### Changed
 - Now re-using an existing services transformer, for consistency and to avoid duplication across modules.
 
