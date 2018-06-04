@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Now re-using an existing services transformer, for consistency and to avoid duplication across modules.
 
+### Fixed
+- Bookings now get created before initial transition. This fixes related errors.
+
 ## [0.1-alpha2] - 2018-05-24
 ### Changed
 - Optimized responses from session endpoint: now excluding a lot of extra service-related data.
