@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [[*next-version*]] - YYYY-MM-DD
+### Changed
+- Now re-using an existing services transformer, for consistency and to avoid duplication across modules.
+
 ### Fixed
 - Bookings now get created before initial transition. This fixes related errors.
 

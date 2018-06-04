@@ -190,7 +190,7 @@ class EddBkRestApiModule extends AbstractBaseModule
 
                         // Iterator of results, and transformer to apply to each
                         $iterator    = $this->_normalizeIterator($items);
-                        $transformer = $c->get('eddbk_admin_edit_services_ui_state_transformer');
+                        $transformer = $c->get('eddbk_rest_api_services_transformer');
 
                         return new TransformerIterator($iterator, $transformer);
                     });
@@ -412,22 +412,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  * @since [*next-version*]
                  */
                 'eddbk_rest_api_services_transformer' => function (ContainerInterface $c) {
-                    return new MapTransformer([
-                        [
-                            MapTransformer::K_SOURCE => 'ID',
-                            MapTransformer::K_TARGET => 'id',
-                        ],
-                        [
-                            MapTransformer::K_SOURCE => 'post_title',
-                            MapTransformer::K_TARGET => 'name',
-                        ],
-                        [
-                            MapTransformer::K_TARGET      => 'color',
-                            MapTransformer::K_TRANSFORMER => function () {
-                                return '#00ccff';
-                            },
-                        ],
-                    ]);
+                    return $c->get('eddbk_admin_edit_services_ui_state_transformer');
                 },
 
                 /*
