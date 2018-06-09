@@ -65,14 +65,14 @@ return [
                  *
                  * @since [*next-version*]
                  */
-                'default_num_sessions_per_page' => 500,
+                'default_num_sessions_per_page' => 5000,
 
                 /**
                  * The maximum (hard cap) number of items to return per page.
                  *
                  * @since [*next-version*]
                  */
-                'max_num_sessions_per_page' => 1000,
+                'max_num_sessions_per_page' => 10000,
             ]
         ],
     ],
