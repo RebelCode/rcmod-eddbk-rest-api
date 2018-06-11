@@ -446,9 +446,7 @@ class BookingsController extends AbstractBaseCqrsController
             $clientIds[] = $this->_containerGet($_client, 'id');
         }
 
-        $clientIdList = implode(',', $clientIds);
-
-        return $this->_addQueryCondition($condition, 'booking', 'client_id', $clientIdList, 'like');
+        return $this->_addQueryCondition($condition, 'booking', 'client_id', $clientIds, 'in');
     }
 
     /**

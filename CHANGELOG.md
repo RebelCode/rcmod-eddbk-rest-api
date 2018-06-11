@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Increased the sessions response default and hard limits by 10 times.
 
+### Fixed
+- The bookings search query was only working when the query string was more than a certain length.
+
 ## [0.1-alpha3] - 2018-06-04
 ### Changed
 - Now re-using an existing services transformer, for consistency and to avoid duplication across modules.
