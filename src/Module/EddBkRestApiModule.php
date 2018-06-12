@@ -138,7 +138,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                 'eddbk_sessions_controller' => function (ContainerInterface $c) {
                     return new SessionsController(
                         $c->get('eddbk_rest_api_sessions_iterator_factory'),
-                        $c->get('sessions_select_rm'),
+                        $c->get('unbooked_sessions_select_rm'),
                         $c->get('eddbk_rest_api_sessions_ordering'),
                         $c->get('sql_expression_builder'),
                         $c->get('eddbk_rest_api/controllers/sessions/default_num_sessions_per_page'),
