@@ -2,6 +2,7 @@
 
 namespace RebelCode\EddBookings\RestApi\Controller;
 
+use Dhii\Data\Container\ContainerFactoryInterface;
 use Dhii\Data\Container\ContainerSetCapableTrait;
 use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\Factory\FactoryAwareTrait;
@@ -70,6 +71,15 @@ class BookingsController extends AbstractBaseCqrsController
     const DEFAULT_PAGE_NUMBER = 1;
 
     /**
+     * The factory for creating composite containers.
+     *
+     * @since [*next-version*]
+     *
+     * @var ContainerFactoryInterface
+     */
+    protected $compositeContainerFactory;
+
+    /**
      * The clients controller.
      *
      * @since [*next-version*]
@@ -83,18 +93,20 @@ class BookingsController extends AbstractBaseCqrsController
      *
      * @since [*next-version*]
      *
-     * @param FactoryInterface        $iteratorFactory     The iterator factory to use for the results.
-     * @param BookingFactoryInterface $bookingFactory      The booking factory.
-     * @param TransitionerInterface   $bookingTransitioner The booking transitioner.
-     * @param SelectCapableInterface  $selectRm            The SELECT bookings resource model.
-     * @param InsertCapableInterface  $insertRm            The INSERT bookings resource model.
-     * @param UpdateCapableInterface  $updateRm            The UPDATE bookings resource model.
-     * @param DeleteCapableInterface  $deleteRm            The DELETE bookings resource model.
-     * @param object                  $exprBuilder         The expression builder.
-     * @param ControllerInterface     $clientsController   The clients controller.
+     * @param FactoryInterface          $iteratorFactory           The iterator factory to use for the results.
+     * @param ContainerFactoryInterface $compositeContainerFactory The factory for creating composite containers.
+     * @param BookingFactoryInterface   $bookingFactory            The booking factory.
+     * @param TransitionerInterface     $bookingTransitioner       The booking transitioner.
+     * @param SelectCapableInterface    $selectRm                  The SELECT bookings resource model.
+     * @param InsertCapableInterface    $insertRm                  The INSERT bookings resource model.
+     * @param UpdateCapableInterface    $updateRm                  The UPDATE bookings resource model.
+     * @param DeleteCapableInterface    $deleteRm                  The DELETE bookings resource model.
+     * @param object                    $exprBuilder               The expression builder.
+     * @param ControllerInterface       $clientsController         The clients controller.
      */
     public function __construct(
         FactoryInterface $iteratorFactory,
+        ContainerFactoryInterface $compositeContainerFactory,
         BookingFactoryInterface $bookingFactory,
         TransitionerInterface $bookingTransitioner,
         SelectCapableInterface $selectRm,
@@ -143,6 +155,30 @@ class BookingsController extends AbstractBaseCqrsController
         }
 
         $this->clientsController = $clientsController;
+    }
+
+    /**
+     * Retrieves the composite container factory.
+     *
+     * @since [*next-version*]
+     *
+     * @return ContainerFactoryInterface The composite container factory instance.
+     */
+    protected function _getCompositeContainerFactory()
+    {
+        return $this->compositeContainerFactory;
+    }
+
+    /**
+     * Sets the composite container factory.
+     *
+     * @since [*next-version*]
+     *
+     * @param ContainerFactoryInterface $compositeContainerFactory The composite container factory instance.
+     */
+    protected function _setCompositeContainerFactory(ContainerFactoryInterface $compositeContainerFactory)
+    {
+        $this->compositeContainerFactory = $compositeContainerFactory;
     }
 
     /**
