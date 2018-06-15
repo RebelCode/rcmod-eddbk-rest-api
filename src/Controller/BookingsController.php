@@ -342,6 +342,15 @@ class BookingsController extends AbstractBaseCqrsController
         // Prepare change set
         $changeSet = $this->_buildUpdateChangeSet($params);
 
+        $booking = $this->_getBookingFactory()->make(
+            $this->_getCompositeContainerFactory()->make([
+                'containers' => [
+                    $changeSet,
+                    $booking
+                ]
+            ])
+        );
+
         // If the transition was given in the request
         if ($this->_containerHas($params, 'transition')) {
             try {
