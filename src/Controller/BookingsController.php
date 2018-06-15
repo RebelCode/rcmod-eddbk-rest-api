@@ -117,6 +117,7 @@ class BookingsController extends AbstractBaseCqrsController
         ControllerInterface $clientsController = null
     ) {
         $this->_setIteratorFactory($iteratorFactory);
+        $this->_setCompositeContainerFactory($compositeContainerFactory);
         $this->_setBookingFactory($bookingFactory);
         $this->_setTransitioner($bookingTransitioner);
         $this->_setSelectRm($selectRm);
