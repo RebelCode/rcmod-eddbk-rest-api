@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2dcf72e7f56e6d4045db0509cc4be878",
+    "content-hash": "1780a92f344e9dfb61c36c771cfedb44",
     "packages": [
         {
             "name": "dhii/args-list-validation",
@@ -1694,16 +1694,16 @@
         },
         {
             "name": "dhii/normalization-helper-base",
-            "version": "v0.1-alpha2",
+            "version": "v0.1-alpha4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Dhii/normalization-helper-base.git",
-                "reference": "ecbd44dc80533ec93a8cac1fb8f36ba3697f9798"
+                "reference": "1b64f0ea6b3e32f9478f854f6049500795b51da7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Dhii/normalization-helper-base/zipball/ecbd44dc80533ec93a8cac1fb8f36ba3697f9798",
-                "reference": "ecbd44dc80533ec93a8cac1fb8f36ba3697f9798",
+                "url": "https://api.github.com/repos/Dhii/normalization-helper-base/zipball/1b64f0ea6b3e32f9478f854f6049500795b51da7",
+                "reference": "1b64f0ea6b3e32f9478f854f6049500795b51da7",
                 "shasum": ""
             },
             "require": {
@@ -1738,7 +1738,7 @@
                 }
             ],
             "description": "Functionality for normalizing values.",
-            "time": "2018-02-12T09:41:29+00:00"
+            "time": "2018-06-04T08:55:31+00:00"
         },
         {
             "name": "dhii/psr-14",
@@ -2216,16 +2216,16 @@
         },
         {
             "name": "dhii/wp-events",
-            "version": "v0.3-alpha1",
+            "version": "v0.3-alpha2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Dhii/wp-events.git",
-                "reference": "265f8dd9a79b97d23e1c7abaae56c27694138f3b"
+                "reference": "feee39e602709ae0e5d557d3ae48694d3c7310da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Dhii/wp-events/zipball/265f8dd9a79b97d23e1c7abaae56c27694138f3b",
-                "reference": "265f8dd9a79b97d23e1c7abaae56c27694138f3b",
+                "url": "https://api.github.com/repos/Dhii/wp-events/zipball/feee39e602709ae0e5d557d3ae48694d3c7310da",
+                "reference": "feee39e602709ae0e5d557d3ae48694d3c7310da",
                 "shasum": ""
             },
             "require": {
@@ -2265,7 +2265,7 @@
                 }
             ],
             "description": "A PSR-14 compliant event wrapper for WordPress.",
-            "time": "2018-05-11T10:15:34+00:00"
+            "time": "2018-05-29T10:55:27+00:00"
         },
         {
             "name": "psr/container",
@@ -2999,23 +2999,23 @@
         },
         {
             "name": "johnpbloch/wordpress-core",
-            "version": "4.9.6",
+            "version": "4.9.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/johnpbloch/wordpress-core.git",
-                "reference": "6ff81eb3d93d326b78a8bc0f120e72c161ec58c8"
+                "reference": "1116e10f71f8fb811856df212af652c427bc6bd1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/johnpbloch/wordpress-core/zipball/6ff81eb3d93d326b78a8bc0f120e72c161ec58c8",
-                "reference": "6ff81eb3d93d326b78a8bc0f120e72c161ec58c8",
+                "url": "https://api.github.com/repos/johnpbloch/wordpress-core/zipball/1116e10f71f8fb811856df212af652c427bc6bd1",
+                "reference": "1116e10f71f8fb811856df212af652c427bc6bd1",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2"
             },
             "provide": {
-                "wordpress/core-implementation": "4.9.6"
+                "wordpress/core-implementation": "4.9.7"
             },
             "type": "wordpress-core",
             "notification-url": "https://packagist.org/downloads/",
@@ -3035,7 +3035,7 @@
                 "cms",
                 "wordpress"
             ],
-            "time": "2018-05-17T20:02:55+00:00"
+            "time": "2018-07-05T18:12:13+00:00"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -3606,6 +3606,218 @@
             "time": "2014-01-02T16:42:27+00:00"
         },
         {
+            "name": "rebelcode/expression-wp-query-builder",
+            "version": "v0.1-alpha1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/RebelCode/expression-wp-query-builder-abstract.git",
+                "reference": "1f72a94ad22cd56aa50cc88bfb6ac068e732bf0c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/RebelCode/expression-wp-query-builder-abstract/zipball/1f72a94ad22cd56aa50cc88bfb6ac068e732bf0c",
+                "reference": "1f72a94ad22cd56aa50cc88bfb6ac068e732bf0c",
+                "shasum": ""
+            },
+            "require": {
+                "dhii/expression-interface": "^0.2",
+                "dhii/sql-interface": "^0.1",
+                "php": "^5.4 | ^7.0"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "<=0.3.2",
+                "dhii/php-cs-fixer-config": "^0.1",
+                "dhii/stringable-interface": "^0.1",
+                "phpunit/phpunit": "^4.8",
+                "ptrofimov/xpmock": "^1.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "RebelCode\\WordPress\\Query\\Builder\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "RebelCode",
+                    "email": "dev@rebelcode.com"
+                }
+            ],
+            "description": "Abstract functionality for building WP_Query args using expressions.",
+            "time": "2018-05-16T10:53:34+00:00"
+        },
+        {
+            "name": "rebelcode/rcmod-eddbk-cqrs",
+            "version": "v0.1-alpha2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/RebelCode/rcmod-eddbk-cqrs.git",
+                "reference": "383c5785c462fd7a250ff2eeba2f9a3087d31448"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/RebelCode/rcmod-eddbk-cqrs/zipball/383c5785c462fd7a250ff2eeba2f9a3087d31448",
+                "reference": "383c5785c462fd7a250ff2eeba2f9a3087d31448",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.4 | ^7.0",
+                "rebelcode/modular": "^0.1-alpha1",
+                "rebelcode/wp-cqrs-resource-models": "^0.1-alpha1"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "<=0.3.2",
+                "dhii/php-cs-fixer-config": "^0.1",
+                "johnpbloch/wordpress-core": "^4.0",
+                "phpunit/phpunit": "^4.8",
+                "ptrofimov/xpmock": "^1.1"
+            },
+            "type": "rc-module",
+            "autoload": {
+                "psr-4": {
+                    "RebelCode\\EddBookings\\Storage\\Resource\\Module\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "RebelCode",
+                    "email": "dev@rebelcode.com"
+                }
+            ],
+            "description": "A RebelCode module that provides the CQRS resource models for EDD Bookings.",
+            "time": "2018-06-05T08:43:59+00:00"
+        },
+        {
+            "name": "rebelcode/sql-cqrs-resource-models-abstract",
+            "version": "v0.2-alpha1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/RebelCode/sql-cqrs-resource-models-abstract.git",
+                "reference": "00b6d29fb626c55569e6e6670247634c28ae79cf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/RebelCode/sql-cqrs-resource-models-abstract/zipball/00b6d29fb626c55569e6e6670247634c28ae79cf",
+                "reference": "00b6d29fb626c55569e6e6670247634c28ae79cf",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.4 | ^7.0"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "<=0.3.2",
+                "dhii/data-container-interface": "^0.2",
+                "dhii/exception-interface": "0.2-alpha3",
+                "dhii/expression-interface": "^0.2",
+                "dhii/output-renderer-interface": "^0.3",
+                "dhii/php-cs-fixer-config": "^0.1",
+                "dhii/sql-interface": "^0.1",
+                "dhii/stringable-interface": "^0.1",
+                "phpunit/phpunit": "^4.8",
+                "ptrofimov/xpmock": "^1.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop": "0.2.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "RebelCode\\Storage\\Resource\\Sql\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "RebelCode",
+                    "email": "dev@rebelcode.com"
+                }
+            ],
+            "description": "Abstract functionality for SQL CQRS resource models.",
+            "time": "2018-06-14T14:59:00+00:00"
+        },
+        {
+            "name": "rebelcode/wp-cqrs-resource-models",
+            "version": "v0.1-alpha2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/RebelCode/wp-cqrs-resource-models.git",
+                "reference": "2d73f5248aeba61c3604cbd14da18459e8c919a9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/RebelCode/wp-cqrs-resource-models/zipball/2d73f5248aeba61c3604cbd14da18459e8c919a9",
+                "reference": "2d73f5248aeba61c3604cbd14da18459e8c919a9",
+                "shasum": ""
+            },
+            "require": {
+                "dhii/callback-abstract": "^0.1-alpha4",
+                "dhii/container-helper-base": "^0.1",
+                "dhii/cqrs-resource-model-interface": "^0.1-alpha2",
+                "dhii/data-container-base": "^0.1",
+                "dhii/exception": "^0.1-alpha4",
+                "dhii/i18n-helper-base": "^0.1",
+                "dhii/iterator-helper-base": "^0.1-alpha2",
+                "dhii/normalization-helper-base": "^0.1",
+                "php": "^5.4 | ^7.0",
+                "rebelcode/expression-wp-query-builder": "^0.1-alpha1",
+                "rebelcode/sql-cqrs-resource-models-abstract": "^0.2-alpha1"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "<=0.3.2",
+                "dhii/expression-interface": "^0.2",
+                "dhii/factory-interface": "^0.1-alpha2",
+                "dhii/invocable-interface": "^0.1-alpha1",
+                "dhii/output-renderer-interface": "^0.3",
+                "dhii/php-cs-fixer-config": "^0.1",
+                "dhii/sql-interface": "^0.1",
+                "dhii/stringable-interface": "^0.1",
+                "johnpbloch/wordpress-core": "^4.0",
+                "phpunit/phpunit": "^4.8",
+                "ptrofimov/xpmock": "^1.1"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-develop": "0.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "RebelCode\\Storage\\Resource\\WordPress\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "RebelCode",
+                    "email": "dev@rebelcode.com"
+                }
+            ],
+            "description": "Functionality for WordPress CQRS resource models.",
+            "time": "2018-06-14T16:50:25+00:00"
+        },
+        {
             "name": "satooshi/php-coveralls",
             "version": "v1.0.2",
             "source": {
@@ -3664,6 +3876,7 @@
                 "github",
                 "test"
             ],
+            "abandoned": "php-coveralls/php-coveralls",
             "time": "2017-10-14T23:15:34+00:00"
         },
         {
@@ -4040,7 +4253,7 @@
         },
         {
             "name": "symfony/config",
-            "version": "v2.8.40",
+            "version": "v2.8.42",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/config.git",
@@ -4097,7 +4310,7 @@
         },
         {
             "name": "symfony/console",
-            "version": "v2.8.40",
+            "version": "v2.8.42",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
@@ -4158,16 +4371,16 @@
         },
         {
             "name": "symfony/debug",
-            "version": "v2.8.40",
+            "version": "v2.8.42",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/debug.git",
-                "reference": "fe8838e11cf7dbaf324bd6f51d065d873ccf78a2"
+                "reference": "a26ddce7fe4e884097d72435653bc7e703411f26"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/debug/zipball/fe8838e11cf7dbaf324bd6f51d065d873ccf78a2",
-                "reference": "fe8838e11cf7dbaf324bd6f51d065d873ccf78a2",
+                "url": "https://api.github.com/repos/symfony/debug/zipball/a26ddce7fe4e884097d72435653bc7e703411f26",
+                "reference": "a26ddce7fe4e884097d72435653bc7e703411f26",
                 "shasum": ""
             },
             "require": {
@@ -4211,11 +4424,11 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2018-05-15T21:17:45+00:00"
+            "time": "2018-06-22T15:01:26+00:00"
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.8.40",
+            "version": "v2.8.42",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
@@ -4275,16 +4488,16 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v2.8.40",
+            "version": "v2.8.42",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "1ed4b265550ec43d2ceaa0e9e57b0bc4eeb1b541"
+                "reference": "0f685c099aca7ba86bcc31850186dbfe84a4a8a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/1ed4b265550ec43d2ceaa0e9e57b0bc4eeb1b541",
-                "reference": "1ed4b265550ec43d2ceaa0e9e57b0bc4eeb1b541",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/0f685c099aca7ba86bcc31850186dbfe84a4a8a1",
+                "reference": "0f685c099aca7ba86bcc31850186dbfe84a4a8a1",
                 "shasum": ""
             },
             "require": {
@@ -4321,20 +4534,20 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2018-05-15T21:17:45+00:00"
+            "time": "2018-06-21T09:24:14+00:00"
         },
         {
             "name": "symfony/finder",
-            "version": "v2.8.40",
+            "version": "v2.8.42",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "79764d21163db295f0daf8bd9d9b91f97e65db6a"
+                "reference": "995cd7c28a0778cece02e2133b4d813dc509dfc3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/79764d21163db295f0daf8bd9d9b91f97e65db6a",
-                "reference": "79764d21163db295f0daf8bd9d9b91f97e65db6a",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/995cd7c28a0778cece02e2133b4d813dc509dfc3",
+                "reference": "995cd7c28a0778cece02e2133b4d813dc509dfc3",
                 "shasum": ""
             },
             "require": {
@@ -4370,7 +4583,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2018-05-15T21:17:45+00:00"
+            "time": "2018-06-19T11:07:17+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -4488,16 +4701,16 @@
         },
         {
             "name": "symfony/process",
-            "version": "v2.8.40",
+            "version": "v2.8.42",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "713952f2ccbcc8342ecdbe1cb313d3e2da8aad28"
+                "reference": "542d88b350c42750fdc14e73860ee96dd423e95d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/713952f2ccbcc8342ecdbe1cb313d3e2da8aad28",
-                "reference": "713952f2ccbcc8342ecdbe1cb313d3e2da8aad28",
+                "url": "https://api.github.com/repos/symfony/process/zipball/542d88b350c42750fdc14e73860ee96dd423e95d",
+                "reference": "542d88b350c42750fdc14e73860ee96dd423e95d",
                 "shasum": ""
             },
             "require": {
@@ -4533,11 +4746,11 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2018-05-15T21:17:45+00:00"
+            "time": "2018-05-27T07:40:52+00:00"
         },
         {
             "name": "symfony/stopwatch",
-            "version": "v2.8.40",
+            "version": "v2.8.42",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/stopwatch.git",
@@ -4586,7 +4799,7 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.40",
+            "version": "v2.8.42",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
