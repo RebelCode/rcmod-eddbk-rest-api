@@ -281,35 +281,39 @@ class BookingsController extends AbstractBaseCqrsController
             throw $this->_createRuntimeException($this->__('The DELETE resource model is null'));
         }
 
-        $booking = $this->_getBookingFactory()->make($this->_buildInsertRecord($params));
+        // Create state-aware booking from params
+        $booking = $this->_getStateAwareFactory()->make([
+            StateAwareFactoryInterface::K_DATA => $this->_buildInsertRecord($params)
+        ]);
         if (empty($booking)) {
             throw $this->_createControllerException($this->__('Cannot transition empty booking'), 400, null, $this);
         }
 
-        $ids = $insertRm->insert([$booking]);
+        // Insert into database
+        $ids = $insertRm->insert([$booking->getState()]);
         $id  = reset($ids);
 
+        // Fetch from database - record should now have an ID
         $b = $this->exprBuilder;
-
         $idCondition = $b->eq(
             $b->var('id'),
             $b->lit($id)
         );
-
-        $bookings = $selectRm->select($idCondition);
-        $booking  = reset($bookings);
+        $bookings    = $selectRm->select($idCondition);
+        $bookingData = reset($bookings);
 
         try {
             // Read the "transition" from the request params
             $transition = $this->_containerGet($params, 'transition');
+            // Create state-aware booking from data retrieved from DB
+            $booking = $this->_getStateAwareFactory()->make([
+                StateAwareFactoryInterface::K_DATA => $bookingData
+            ]);
             // Attempt transition
             $booking = $this->_getTransitioner()->transition($booking, $transition);
 
-            // Booking must be a traversable to be a valid change set
-            if ($booking instanceof Traversable) {
-                // Update the booking in storage after transitioning
-                $updateRm->update($booking, $idCondition);
-            }
+            // Update the booking in storage after transitioning
+            $updateRm->update($booking->getState(), $idCondition);
 
             // Respond with the booking info
             return $this->_get(['id' => $id]);
