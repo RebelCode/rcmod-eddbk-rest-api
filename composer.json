@@ -14,10 +14,10 @@
     "require": {
         "php": "^5.4 | ^7.0",
         "rebelcode/modular": "^0.1-alpha1",
-        "rebelcode/booking-transitioner": "^0.1-alpha1",
+        "rebelcode/booking-transitioner": "^0.2-alpha1",
         "rebelcode/transformers": "^0.1-alpha1",
         "dhii/data-object-abstract": "^0.1-alpha1",
-        "dhii/cqrs-resource-model-interface": "^0.1-alpha2",
+        "dhii/cqrs-resource-model-interface": "^0.2-alpha1",
         "dhii/expression-interface": "^0.1 | ^0.2",
         "dhii/iterator-base": "^0.1-alpha3",
         "dhii/iterator-helper-base": "^0.1-alpha2",
