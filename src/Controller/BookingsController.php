@@ -17,13 +17,13 @@ use Dhii\Storage\Resource\SelectCapableInterface;
 use Dhii\Storage\Resource\UpdateCapableInterface;
 use Dhii\Util\Normalization\NormalizeArrayCapableTrait;
 use Dhii\Util\Normalization\NormalizeIntCapableTrait;
+use Dhii\Util\Normalization\NormalizeIterableCapableTrait;
 use Dhii\Util\String\StringableInterface;
 use Dhii\Util\String\StringableInterface as Stringable;
 use Dhii\Validation\Exception\ValidationFailedExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use RebelCode\Bookings\BookingFactoryInterface;
-use RebelCode\Bookings\BookingInterface;
-use RebelCode\Bookings\Factory\BookingFactoryAwareTrait;
+use stdClass;
 use Traversable;
 
 /**
@@ -47,6 +47,9 @@ class BookingsController extends AbstractBaseCqrsController
 
     /* @since [*next-version*] */
     use NormalizeArrayCapableTrait;
+
+    /* @since [*next-version*] */
+    use NormalizeIterableCapableTrait;
 
     /* @since [*next-version*] */
     use ParseIso8601CapableTrait;
@@ -364,38 +367,28 @@ class BookingsController extends AbstractBaseCqrsController
             throw $this->_createRuntimeException($this->__('The SELECT resource model is null'));
         }
 
-        $condition = $this->_buildUpdateCondition($params);
-        $bookings  = $selectRm->select($condition);
-        $bookings  = $this->_normalizeArray($bookings);
-        $booking   = reset($bookings);
-
-        if (!($booking instanceof BookingInterface)) {
-            throw $this->_createControllerException(
-                $this->__('A booking for the given ID does not exist', []), 404, null, $this
-            );
-        }
+        $condition   = $this->_buildUpdateCondition($params);
+        $bookings    = $selectRm->select($condition);
+        $bookings    = $this->_normalizeArray($bookings);
+        $bookingData = reset($bookings);
+        $bookingData = $this->_normalizeIterable($bookingData);
 
         // Prepare change set
         $changeSet = $this->_buildUpdateChangeSet($params);
-
-        $booking = $this->_getBookingFactory()->make(
-            $this->_getCompositeContainerFactory()->make([
-                'containers' => [
-                    $changeSet,
-                    $booking
-                ]
-            ])
-        );
+        // Create state-aware booking with the booking data patched against the change set in the request
+        $booking = $this->_getStateAwareFactory()->make([
+            StateAwareFactoryInterface::K_DATA => $this->_patchBookingData($bookingData, $changeSet)
+        ]);
 
         // If the transition was given in the request
         if ($this->_containerHas($params, 'transition')) {
             try {
-                // Read the status as a "transition"
+                // Get transition from request params
                 $transition = $this->_containerGet($params, 'transition');
-                // Attempt transition
+                // Attempt transition on booking
                 $booking = $this->_getTransitioner()->transition($booking, $transition);
-                // Update status in change set
-                $this->_containerSet($changeSet, 'status', $booking->getStatus());
+                // Update the booking
+                $updateRm->update($booking->getState(), $condition);
             } catch (CouldNotTransitionExceptionInterface $exception) {
                 $errors = $this->_getTransitionFailureMessages($exception);
 
@@ -406,9 +399,6 @@ class BookingsController extends AbstractBaseCqrsController
                 );
             }
         }
-
-        // Update the booking
-        $updateRm->update($changeSet, $condition);
 
         return [];
     }
@@ -429,6 +419,27 @@ class BookingsController extends AbstractBaseCqrsController
         $deleteRm->delete($this->_buildDeleteCondition($params));
 
         return [];
+    }
+
+    /**
+     * Patches the given booking data with a change set.
+     *
+     * @since [*next-version*]
+     *
+     * @param array|stdClass|Traversable $bookingData The booking data.
+     * @param array|stdClass|Traversable $changeSet   The change set.
+     *
+     * @return array|stdClass|Traversable The patched data.
+     */
+    protected function _patchBookingData($bookingData, $changeSet)
+    {
+        $patched = $this->_normalizeArray($bookingData);
+
+        foreach ($changeSet as $_key => $_val) {
+            $patched[$_key] = $_val;
+        }
+
+        return $patched;
     }
 
     /**
