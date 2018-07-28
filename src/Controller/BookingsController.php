@@ -4,6 +4,10 @@ namespace RebelCode\EddBookings\RestApi\Controller;
 
 use Dhii\Data\Container\ContainerFactoryInterface;
 use Dhii\Data\Container\ContainerSetCapableTrait;
+use Dhii\Data\Exception\CouldNotTransitionExceptionInterface;
+use Dhii\Data\StateAwareFactoryInterface;
+use Dhii\Data\TransitionerAwareTrait;
+use Dhii\Data\TransitionerInterface;
 use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\Factory\FactoryAwareTrait;
 use Dhii\Factory\FactoryInterface;
@@ -19,10 +23,7 @@ use Dhii\Validation\Exception\ValidationFailedExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use RebelCode\Bookings\BookingFactoryInterface;
 use RebelCode\Bookings\BookingInterface;
-use RebelCode\Bookings\Exception\CouldNotTransitionExceptionInterface;
 use RebelCode\Bookings\Factory\BookingFactoryAwareTrait;
-use RebelCode\Bookings\TransitionerAwareTrait;
-use RebelCode\Bookings\TransitionerInterface;
 use Traversable;
 
 /**
@@ -37,9 +38,6 @@ class BookingsController extends AbstractBaseCqrsController
         _getFactory as _getIteratorFactory;
         _setFactory as _setIteratorFactory;
     }
-
-    /* @since [*next-version*] */
-    use BookingFactoryAwareTrait;
 
     /* @since [*next-version*] */
     use TransitionerAwareTrait;
@@ -89,6 +87,15 @@ class BookingsController extends AbstractBaseCqrsController
     protected $clientsController;
 
     /**
+     * The factory to use for creating state-aware bookings.
+     *
+     * @since [*next-version*]
+     *
+     * @var StateAwareFactoryInterface
+     */
+    protected $stateAwareFactory;
+
+    /**
      * Constructor.
      *
      * @since [*next-version*]
@@ -118,7 +125,7 @@ class BookingsController extends AbstractBaseCqrsController
     ) {
         $this->_setIteratorFactory($iteratorFactory);
         $this->_setCompositeContainerFactory($compositeContainerFactory);
-        $this->_setBookingFactory($bookingFactory);
+        $this->_setStateAwareFactory($bookingFactory);
         $this->_setTransitioner($bookingTransitioner);
         $this->_setSelectRm($selectRm);
         $this->_setInsertRm($insertRm);
@@ -180,6 +187,30 @@ class BookingsController extends AbstractBaseCqrsController
     protected function _setCompositeContainerFactory(ContainerFactoryInterface $compositeContainerFactory)
     {
         $this->compositeContainerFactory = $compositeContainerFactory;
+    }
+
+    /**
+     * Retrieves the state-aware factory.
+     *
+     * @since [*next-version*]
+     *
+     * @return StateAwareFactoryInterface The state-aware factory instance.
+     */
+    protected function _getStateAwareFactory()
+    {
+        return $this->stateAwareFactory;
+    }
+
+    /**
+     * Sets the state-aware factory.
+     *
+     * @since [*next-version*]
+     *
+     * @param StateAwareFactoryInterface $stateAwareFactory The state-aware factory instance.
+     */
+    protected function _setStateAwareFactory(StateAwareFactoryInterface $stateAwareFactory)
+    {
+        $this->stateAwareFactory = $stateAwareFactory;
     }
 
     /**
