@@ -193,15 +193,15 @@ class SessionsController extends AbstractBaseCqrsController
                 'field'   => 'id',
             ],
             'start' => [
-                'compare'   => 'gte',
+                'compare'   => 'gt',
                 'entity'    => 'session',
-                'field'     => 'start',
+                'field'     => 'end',
                 'transform' => [$this, '_parseIso8601'],
             ],
             'end' => [
-                'compare'   => 'lte',
+                'compare'   => 'lt',
                 'entity'    => 'session',
-                'field'     => 'end',
+                'field'     => 'start',
                 'transform' => [$this, '_parseIso8601'],
             ],
             'service' => [
