@@ -4,6 +4,7 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/dhii/collections-interface" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/dhii/config-interface" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/dhii/container-helper-base" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/dhii/cqrs-resource-model-interface" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/dhii/data-container-interface" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/dhii/data-state-abstract" vcs="Git" />
@@ -26,9 +27,13 @@
     <mapping directory="$PROJECT_DIR$/vendor/rebelcode/booking-interface" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/rebelcode/booking-transitioner" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/rebelcode/booking-transitioner-interface" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/rebelcode/expression-wp-query-builder" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/rebelcode/modular" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/rebelcode/module-iterator-abstract" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/rebelcode/rcmod-eddbk-cqrs" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/rebelcode/sql-cqrs-resource-models-abstract" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/rebelcode/transformers" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/rebelcode/wp-cqrs-resource-models" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/symfony/config" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/symfony/console" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/symfony/debug" vcs="Git" />
