@@ -94,6 +94,9 @@
       <path value="$PROJECT_DIR$/vendor/dhii/data-state-interface" />
       <path value="$PROJECT_DIR$/vendor/dhii/cqrs-resource-model-interface" />
       <path value="$PROJECT_DIR$/vendor/symfony/stopwatch" />
+      <path value="$PROJECT_DIR$/vendor/rebelcode/expression-wp-query-builder" />
+      <path value="$PROJECT_DIR$/vendor/rebelcode/wp-cqrs-resource-models" />
+      <path value="$PROJECT_DIR$/vendor/rebelcode/sql-cqrs-resource-models-abstract" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="5.4.0" />

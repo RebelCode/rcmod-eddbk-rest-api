@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [[*next-version*]] - YYYY-MM-DD
 
+## [0.1-alpha6] - 2018-07-12
+### Fixed
+- Added missing dev-dependency on a module package (#25).
+
 ## [0.1-alpha5] - 2018-06-12
 ### Changed
 - Now using the new unbooked sessions RM in controller, instead of just the sessions one.
