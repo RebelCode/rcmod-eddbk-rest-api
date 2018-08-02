@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [[*next-version*]] - YYYY-MM-DD
+### Fixed
+- Sessions that only partially coincide with the queried `start` and `end` range were not included in the response.
 
 ## [0.1-alpha6] - 2018-07-12
 ### Fixed
