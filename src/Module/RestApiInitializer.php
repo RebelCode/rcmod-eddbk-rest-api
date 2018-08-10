@@ -151,8 +151,8 @@ class RestApiInitializer implements InvocableInterface
             $_handler = $this->_containerGet($_methodConfig, 'handler');
 
             // Get authorization validator key
-            $_authValKey = $this->_containerHas($_methodConfig, 'auth')
-                ? $this->_containerGet($_methodConfig, 'auth')
+            $_authValKey = $this->_containerHas($_methodConfig, 'authval')
+                ? $this->_containerGet($_methodConfig, 'authval')
                 : null;
             // Get authorization validator from container
             $_authVal = $_authValKey !== null
