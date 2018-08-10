@@ -193,9 +193,12 @@ class RestApiInitializer implements InvocableInterface
             }
         } catch (ValidationFailedExceptionInterface $exception) {
             return new WP_Error(
-                $exception->getCode(),
+                'eddbk_rest_api_unauthorized',
                 $this->__('You are not authorized to access this route'),
-                $exception->getValidationErrors()
+                [
+                    'status'  => 401,
+                    'reasons' => $exception->getValidationErrors()
+                ]
             );
         }
 
