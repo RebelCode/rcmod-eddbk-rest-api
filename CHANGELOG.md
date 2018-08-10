@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [[*next-version*]] - YYYY-MM-DD
+### Added
+- Route config may specify a validator service to be used for authorization.
+- An authorization validator `UserIsAdminAuthValidator` for WordPress administrator users.
+- Bookings and clients routes now only authorize admin users.
+
 ### Fixed
 - Sessions that only partially coincide with the queried `start` and `end` range were not included in the response.
 
