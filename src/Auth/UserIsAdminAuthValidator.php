@@ -45,7 +45,7 @@ class UserIsAdminAuthValidator implements ValidatorInterface
         }
 
         if ($userId === 0) {
-            $errors[] = 'User is an anonymous guest user and is not logged in';
+            $errors[] = 'User is not logged in (ID 0)';
         }
 
         if (!empty($errors)) {
