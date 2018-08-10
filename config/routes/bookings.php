@@ -12,10 +12,11 @@ return [
      *
      * @since [*next-version*]
      */
-    'get_bookings' => [
+    'get_bookings'     => [
         'pattern' => '/bookings',
         'methods' => ['GET'],
-        'handler' => 'eddbk_rest_api_query_bookings_handler'
+        'handler' => 'eddbk_rest_api_query_bookings_handler',
+        'authval' => 'eddbk_rest_api_user_is_admin_auth_validator',
     ],
 
     /*
@@ -26,7 +27,8 @@ return [
     'get_booking_info' => [
         'pattern' => '/bookings/(?P<id>[\d]+)',
         'methods' => ['GET'],
-        'handler' => 'eddbk_rest_api_get_booking_info_handler'
+        'handler' => 'eddbk_rest_api_get_booking_info_handler',
+        'authval' => 'eddbk_rest_api_user_is_admin_auth_validator',
     ],
 
     /*
@@ -34,10 +36,11 @@ return [
      *
      * @since [*next-version*]
      */
-    'create_booking' => [
+    'create_booking'   => [
         'pattern' => '/bookings',
         'methods' => ['POST'],
-        'handler' => 'eddbk_rest_api_create_booking_handler'
+        'handler' => 'eddbk_rest_api_create_booking_handler',
+        'authval' => 'eddbk_rest_api_user_is_admin_auth_validator',
     ],
 
     /*
@@ -45,10 +48,11 @@ return [
      *
      * @since [*next-version*]
      */
-    'update_booking' => [
+    'update_booking'   => [
         'pattern' => '/bookings/(?P<id>[\d]+)',
         'methods' => ['PATCH'],
-        'handler' => 'eddbk_rest_api_update_booking_handler'
+        'handler' => 'eddbk_rest_api_update_booking_handler',
+        'authval' => 'eddbk_rest_api_user_is_admin_auth_validator',
     ],
 
     /*
@@ -56,9 +60,10 @@ return [
      *
      * @since [*next-version*]
      */
-    'delete_booking' => [
+    'delete_booking'   => [
         'pattern' => '/bookings/(?P<id>[\d]+)',
         'methods' => ['DELETE'],
-        'handler' => 'eddbk_rest_api_delete_booking_handler'
+        'handler' => 'eddbk_rest_api_delete_booking_handler',
+        'authval' => 'eddbk_rest_api_user_is_admin_auth_validator',
     ],
 ];
