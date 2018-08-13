@@ -46,14 +46,21 @@ class UserIsAdminAuthValidator extends AbstractValidatorBase implements Validato
      */
     protected function _getValidationErrors($userId)
     {
-        $errors = [];
-
-        if (!$this->_isUserAdmin($userId)) {
-            $errors[] = $this->__('User is not an administrator');
+        // If an admin, return without errors
+        if ($this->_isUserAdmin($userId)) {
+            return [];
         }
 
+        // Otherwise, create error list
+        $errors = [
+            $this->__('User is not an administrator')
+        ];
+
+        // Check for additional reasons
+
+        // If user is not logged in, add an addition error
         if ($userId === 0) {
-            $errors[] = $this->__('User is not logged in (ID 0)');
+            $errors[] = $this->__('Not a user or not logged in (ID: 0)');
         }
 
         return $errors;
