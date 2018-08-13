@@ -2,12 +2,9 @@
 
 namespace RebelCode\EddBookings\RestApi\Auth;
 
-use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
-use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Util\Normalization\NormalizeIterableCapableTrait;
-use Dhii\Util\Normalization\NormalizeStringCapableTrait;
 use Dhii\Util\String\StringableInterface as Stringable;
-use Dhii\Validation\CreateValidationFailedExceptionCapableTrait;
+use Dhii\Validation\AbstractValidatorBase;
 use Dhii\Validation\ValidatorInterface;
 
 /**
@@ -15,22 +12,10 @@ use Dhii\Validation\ValidatorInterface;
  *
  * @since [*next-version*]
  */
-class UserIsAdminAuthValidator implements ValidatorInterface
+class UserIsAdminAuthValidator extends AbstractValidatorBase implements ValidatorInterface
 {
     /* @since [*next-version*] */
-    use NormalizeStringCapableTrait;
-
-    /* @since [*next-version*] */
     use NormalizeIterableCapableTrait;
-
-    /* @since [*next-version*] */
-    use CreateInvalidArgumentExceptionCapableTrait;
-
-    /* @since [*next-version*] */
-    use CreateValidationFailedExceptionCapableTrait;
-
-    /* @since [*next-version*] */
-    use StringTranslatingTrait;
 
     /**
      * The WordPress capability that determines if a user is an admin.
@@ -58,7 +43,7 @@ class UserIsAdminAuthValidator implements ValidatorInterface
      *
      * @since [*next-version*]
      */
-    public function validate($userId)
+    protected function _getValidationErrors($userId)
     {
         $errors = [];
 
@@ -70,11 +55,7 @@ class UserIsAdminAuthValidator implements ValidatorInterface
             $errors[] = $this->__('User is not logged in (ID 0)');
         }
 
-        if (!empty($errors)) {
-            throw $this->_createValidationFailedException(
-                $this->__('User is not an administrator user'), null, null, $this, $userId, $errors
-            );
-        }
+        return $errors;
     }
 
     /**
