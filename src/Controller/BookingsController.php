@@ -3,6 +3,10 @@
 namespace RebelCode\EddBookings\RestApi\Controller;
 
 use Dhii\Data\Container\ContainerSetCapableTrait;
+use Dhii\Data\Exception\CouldNotTransitionExceptionInterface;
+use Dhii\Data\StateAwareFactoryInterface;
+use Dhii\Data\TransitionerAwareTrait;
+use Dhii\Data\TransitionerInterface;
 use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\Factory\FactoryAwareTrait;
 use Dhii\Factory\FactoryInterface;
@@ -12,16 +16,12 @@ use Dhii\Storage\Resource\SelectCapableInterface;
 use Dhii\Storage\Resource\UpdateCapableInterface;
 use Dhii\Util\Normalization\NormalizeArrayCapableTrait;
 use Dhii\Util\Normalization\NormalizeIntCapableTrait;
+use Dhii\Util\Normalization\NormalizeIterableCapableTrait;
 use Dhii\Util\String\StringableInterface;
 use Dhii\Util\String\StringableInterface as Stringable;
 use Dhii\Validation\Exception\ValidationFailedExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
-use RebelCode\Bookings\BookingFactoryInterface;
-use RebelCode\Bookings\BookingInterface;
-use RebelCode\Bookings\Exception\CouldNotTransitionExceptionInterface;
-use RebelCode\Bookings\Factory\BookingFactoryAwareTrait;
-use RebelCode\Bookings\TransitionerAwareTrait;
-use RebelCode\Bookings\TransitionerInterface;
+use stdClass;
 use Traversable;
 
 /**
@@ -38,9 +38,6 @@ class BookingsController extends AbstractBaseCqrsController
     }
 
     /* @since [*next-version*] */
-    use BookingFactoryAwareTrait;
-
-    /* @since [*next-version*] */
     use TransitionerAwareTrait;
 
     /* @since [*next-version*] */
@@ -48,6 +45,9 @@ class BookingsController extends AbstractBaseCqrsController
 
     /* @since [*next-version*] */
     use NormalizeArrayCapableTrait;
+
+    /* @since [*next-version*] */
+    use NormalizeIterableCapableTrait;
 
     /* @since [*next-version*] */
     use ParseIso8601CapableTrait;
@@ -79,23 +79,32 @@ class BookingsController extends AbstractBaseCqrsController
     protected $clientsController;
 
     /**
+     * The factory to use for creating state-aware bookings.
+     *
+     * @since [*next-version*]
+     *
+     * @var StateAwareFactoryInterface
+     */
+    protected $stateAwareFactory;
+
+    /**
      * Constructor.
      *
      * @since [*next-version*]
      *
-     * @param FactoryInterface        $iteratorFactory     The iterator factory to use for the results.
-     * @param BookingFactoryInterface $bookingFactory      The booking factory.
-     * @param TransitionerInterface   $bookingTransitioner The booking transitioner.
-     * @param SelectCapableInterface  $selectRm            The SELECT bookings resource model.
-     * @param InsertCapableInterface  $insertRm            The INSERT bookings resource model.
-     * @param UpdateCapableInterface  $updateRm            The UPDATE bookings resource model.
-     * @param DeleteCapableInterface  $deleteRm            The DELETE bookings resource model.
-     * @param object                  $exprBuilder         The expression builder.
-     * @param ControllerInterface     $clientsController   The clients controller.
+     * @param FactoryInterface           $iteratorFactory     The iterator factory to use for the results.
+     * @param StateAwareFactoryInterface $bookingFactory      The booking factory.
+     * @param TransitionerInterface      $bookingTransitioner The booking transitioner.
+     * @param SelectCapableInterface     $selectRm            The SELECT bookings resource model.
+     * @param InsertCapableInterface     $insertRm            The INSERT bookings resource model.
+     * @param UpdateCapableInterface     $updateRm            The UPDATE bookings resource model.
+     * @param DeleteCapableInterface     $deleteRm            The DELETE bookings resource model.
+     * @param object                     $exprBuilder         The expression builder.
+     * @param ControllerInterface        $clientsController   The clients controller.
      */
     public function __construct(
         FactoryInterface $iteratorFactory,
-        BookingFactoryInterface $bookingFactory,
+        StateAwareFactoryInterface $bookingFactory,
         TransitionerInterface $bookingTransitioner,
         SelectCapableInterface $selectRm,
         InsertCapableInterface $insertRm,
@@ -105,7 +114,7 @@ class BookingsController extends AbstractBaseCqrsController
         ControllerInterface $clientsController = null
     ) {
         $this->_setIteratorFactory($iteratorFactory);
-        $this->_setBookingFactory($bookingFactory);
+        $this->_setStateAwareFactory($bookingFactory);
         $this->_setTransitioner($bookingTransitioner);
         $this->_setSelectRm($selectRm);
         $this->_setInsertRm($insertRm);
@@ -143,6 +152,30 @@ class BookingsController extends AbstractBaseCqrsController
         }
 
         $this->clientsController = $clientsController;
+    }
+
+    /**
+     * Retrieves the state-aware factory.
+     *
+     * @since [*next-version*]
+     *
+     * @return StateAwareFactoryInterface The state-aware factory instance.
+     */
+    protected function _getStateAwareFactory()
+    {
+        return $this->stateAwareFactory;
+    }
+
+    /**
+     * Sets the state-aware factory.
+     *
+     * @since [*next-version*]
+     *
+     * @param StateAwareFactoryInterface $stateAwareFactory The state-aware factory instance.
+     */
+    protected function _setStateAwareFactory(StateAwareFactoryInterface $stateAwareFactory)
+    {
+        $this->stateAwareFactory = $stateAwareFactory;
     }
 
     /**
@@ -213,35 +246,39 @@ class BookingsController extends AbstractBaseCqrsController
             throw $this->_createRuntimeException($this->__('The DELETE resource model is null'));
         }
 
-        $booking = $this->_getBookingFactory()->make($this->_buildInsertRecord($params));
+        // Create state-aware booking from params
+        $booking = $this->_getStateAwareFactory()->make([
+            StateAwareFactoryInterface::K_DATA => $this->_buildInsertRecord($params)
+        ]);
         if (empty($booking)) {
             throw $this->_createControllerException($this->__('Cannot transition empty booking'), 400, null, $this);
         }
 
-        $ids = $insertRm->insert([$booking]);
+        // Insert into database
+        $ids = $insertRm->insert([$booking->getState()]);
         $id  = reset($ids);
 
+        // Fetch from database - record should now have an ID
         $b = $this->exprBuilder;
-
         $idCondition = $b->eq(
             $b->var('id'),
             $b->lit($id)
         );
-
-        $bookings = $selectRm->select($idCondition);
-        $booking  = reset($bookings);
+        $bookings    = $selectRm->select($idCondition);
+        $bookingData = reset($bookings);
 
         try {
             // Read the "transition" from the request params
             $transition = $this->_containerGet($params, 'transition');
+            // Create state-aware booking from data retrieved from DB
+            $booking = $this->_getStateAwareFactory()->make([
+                StateAwareFactoryInterface::K_DATA => $bookingData
+            ]);
             // Attempt transition
             $booking = $this->_getTransitioner()->transition($booking, $transition);
 
-            // Booking must be a traversable to be a valid change set
-            if ($booking instanceof Traversable) {
-                // Update the booking in storage after transitioning
-                $updateRm->update($booking, $idCondition);
-            }
+            // Update the booking in storage after transitioning
+            $updateRm->update($booking->getState(), $idCondition);
 
             // Respond with the booking info
             return $this->_get(['id' => $id]);
@@ -292,29 +329,28 @@ class BookingsController extends AbstractBaseCqrsController
             throw $this->_createRuntimeException($this->__('The SELECT resource model is null'));
         }
 
-        $condition = $this->_buildUpdateCondition($params);
-        $bookings  = $selectRm->select($condition);
-        $bookings  = $this->_normalizeArray($bookings);
-        $booking   = reset($bookings);
-
-        if (!($booking instanceof BookingInterface)) {
-            throw $this->_createControllerException(
-                $this->__('A booking for the given ID does not exist', []), 404, null, $this
-            );
-        }
+        $condition   = $this->_buildUpdateCondition($params);
+        $bookings    = $selectRm->select($condition);
+        $bookings    = $this->_normalizeArray($bookings);
+        $bookingData = reset($bookings);
+        $bookingData = $this->_normalizeIterable($bookingData);
 
         // Prepare change set
         $changeSet = $this->_buildUpdateChangeSet($params);
+        // Create state-aware booking with the booking data patched against the change set in the request
+        $booking = $this->_getStateAwareFactory()->make([
+            StateAwareFactoryInterface::K_DATA => $this->_patchBookingData($bookingData, $changeSet)
+        ]);
 
         // If the transition was given in the request
         if ($this->_containerHas($params, 'transition')) {
             try {
-                // Read the status as a "transition"
+                // Get transition from request params
                 $transition = $this->_containerGet($params, 'transition');
-                // Attempt transition
+                // Attempt transition on booking
                 $booking = $this->_getTransitioner()->transition($booking, $transition);
-                // Update status in change set
-                $this->_containerSet($changeSet, 'status', $booking->getStatus());
+                // Update the booking
+                $updateRm->update($booking->getState(), $condition);
             } catch (CouldNotTransitionExceptionInterface $exception) {
                 $errors = $this->_getTransitionFailureMessages($exception);
 
@@ -325,9 +361,6 @@ class BookingsController extends AbstractBaseCqrsController
                 );
             }
         }
-
-        // Update the booking
-        $updateRm->update($changeSet, $condition);
 
         return [];
     }
@@ -348,6 +381,27 @@ class BookingsController extends AbstractBaseCqrsController
         $deleteRm->delete($this->_buildDeleteCondition($params));
 
         return [];
+    }
+
+    /**
+     * Patches the given booking data with a change set.
+     *
+     * @since [*next-version*]
+     *
+     * @param array|stdClass|Traversable $bookingData The booking data.
+     * @param array|stdClass|Traversable $changeSet   The change set.
+     *
+     * @return array|stdClass|Traversable The patched data.
+     */
+    protected function _patchBookingData($bookingData, $changeSet)
+    {
+        $patched = $this->_normalizeArray($bookingData);
+
+        foreach ($changeSet as $_key => $_val) {
+            $patched[$_key] = $_val;
+        }
+
+        return $patched;
     }
 
     /**
