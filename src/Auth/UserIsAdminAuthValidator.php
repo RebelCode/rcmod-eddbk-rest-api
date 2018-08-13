@@ -63,11 +63,11 @@ class UserIsAdminAuthValidator implements ValidatorInterface
         $errors = [];
 
         if (!user_can($userId, 'manage_options')) {
-            $errors[] = 'User does not have admin capability "manage_options"';
+            $errors[] = $this->__('User is not an administrator');
         }
 
         if ($userId === 0) {
-            $errors[] = 'User is not logged in (ID 0)';
+            $errors[] = $this->__('User is not logged in (ID 0)');
         }
 
         if (!empty($errors)) {
