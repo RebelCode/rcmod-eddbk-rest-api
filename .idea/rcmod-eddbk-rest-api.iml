@@ -20,6 +20,9 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/data-key-value-aware-interface" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/data-object-abstract" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/data-path-aware-interface" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/data-state-abstract" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/data-state-base" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/data-state-interface" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/evaluable-interface" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/event-interface" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/exception" />
@@ -68,13 +71,12 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/psr/container" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/psr/log" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/ptrofimov/xpmock" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/booking-abstract" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/booking-interface" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/booking-transitioner" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/booking-transitioner-interface" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/expression-wp-query-builder" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/modular" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/module-iterator-abstract" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/rcmod-eddbk-cqrs" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/sql-cqrs-resource-models-abstract" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/transformers" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/wp-cqrs-resource-models" />

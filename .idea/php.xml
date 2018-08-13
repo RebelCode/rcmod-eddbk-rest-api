@@ -68,12 +68,10 @@
       <path value="$PROJECT_DIR$/vendor/dhii/iterator-base" />
       <path value="$PROJECT_DIR$/vendor/dhii/data-hierarchy-interface" />
       <path value="$PROJECT_DIR$/vendor/dhii/data-path-aware-interface" />
-      <path value="$PROJECT_DIR$/vendor/rebelcode/booking-transitioner-interface" />
       <path value="$PROJECT_DIR$/vendor/dhii/state-machine-abstract" />
       <path value="$PROJECT_DIR$/vendor/dhii/data-identifiable-interface" />
       <path value="$PROJECT_DIR$/vendor/dhii/time-interface" />
       <path value="$PROJECT_DIR$/vendor/rebelcode/booking-transitioner" />
-      <path value="$PROJECT_DIR$/vendor/rebelcode/booking-abstract" />
       <path value="$PROJECT_DIR$/vendor/rebelcode/booking-interface" />
       <path value="$PROJECT_DIR$/vendor/dhii/machine-state-machine-interface" />
       <path value="$PROJECT_DIR$/vendor/rebelcode/transformers" />
@@ -97,6 +95,9 @@
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
       <path value="$PROJECT_DIR$/vendor/phpspec/prophecy" />
       <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher" />
+      <path value="$PROJECT_DIR$/vendor/dhii/data-state-base" />
+      <path value="$PROJECT_DIR$/vendor/dhii/data-state-abstract" />
+      <path value="$PROJECT_DIR$/vendor/dhii/data-state-interface" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="5.4.0" />
