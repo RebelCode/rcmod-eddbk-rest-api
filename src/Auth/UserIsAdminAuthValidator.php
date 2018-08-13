@@ -62,7 +62,7 @@ class UserIsAdminAuthValidator implements ValidatorInterface
     {
         $errors = [];
 
-        if (!user_can($userId, 'manage_options')) {
+        if (!$this->_isUserAdmin($userId)) {
             $errors[] = $this->__('User is not an administrator');
         }
 
@@ -75,5 +75,34 @@ class UserIsAdminAuthValidator implements ValidatorInterface
                 $this->__('User is not an administrator user'), null, null, $this, $userId, $errors
             );
         }
+    }
+
+    /**
+     * Checks if a WordPress user is an admin, by ID.
+     *
+     * @since [*next-version*]
+     *
+     * @param int|string|Stringable $userId The ID of the user to check.
+     *
+     * @return bool True if the user is a WordPress admin, false if not.
+     */
+    protected function _isUserAdmin($userId)
+    {
+        return $this->_wpUserCan($userId, $this->_normalizeString($this->adminCapability));
+    }
+
+    /**
+     * Checks if a WordPress user, by ID, has a specific capability.
+     *
+     * @since [*next-version*]
+     *
+     * @param int|string|Stringable $userId     The ID of the user to check.
+     * @param string|Stringable     $capability The capability to check for.
+     *
+     * @return bool True if the user has the capability, false if not.
+     */
+    protected function _wpUserCan($userId, $capability)
+    {
+        return user_can($userId, $capability);
     }
 }
