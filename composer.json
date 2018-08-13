@@ -21,6 +21,7 @@
         "dhii/expression-interface": "^0.1 | ^0.2",
         "dhii/iterator-base": "^0.1-alpha3",
         "dhii/iterator-helper-base": "^0.1-alpha2",
+        "dhii/validation-base": "^0.2-alpha1",
         "dhii/normalization-helper-base": "^0.1-alpha2",
         "dhii/sql-interface": "dev-develop"
     },

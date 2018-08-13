@@ -39,13 +39,10 @@
       <path value="$PROJECT_DIR$/vendor/phpunit/phpunit-mock-objects" />
       <path value="$PROJECT_DIR$/vendor/phpunit/php-code-coverage" />
       <path value="$PROJECT_DIR$/vendor/phpunit/phpunit" />
-      <path value="$PROJECT_DIR$/vendor/phpspec/prophecy" />
       <path value="$PROJECT_DIR$/vendor/phpunit/php-file-iterator" />
       <path value="$PROJECT_DIR$/vendor/phpunit/php-timer" />
       <path value="$PROJECT_DIR$/vendor/phpunit/php-text-template" />
-      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
       <path value="$PROJECT_DIR$/vendor/symfony/stopwatch" />
-      <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher" />
       <path value="$PROJECT_DIR$/vendor/ptrofimov/xpmock" />
       <path value="$PROJECT_DIR$/vendor/rebelcode/module-iterator-abstract" />
       <path value="$PROJECT_DIR$/vendor/rebelcode/modular" />
@@ -96,6 +93,10 @@
       <path value="$PROJECT_DIR$/vendor/rebelcode/expression-wp-query-builder" />
       <path value="$PROJECT_DIR$/vendor/rebelcode/wp-cqrs-resource-models" />
       <path value="$PROJECT_DIR$/vendor/rebelcode/sql-cqrs-resource-models-abstract" />
+      <path value="$PROJECT_DIR$/vendor/rebelcode/rcmod-eddbk-cqrs" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/vendor/phpspec/prophecy" />
+      <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="5.4.0" />
