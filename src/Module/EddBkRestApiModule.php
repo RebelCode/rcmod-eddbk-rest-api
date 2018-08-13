@@ -14,6 +14,7 @@ use Dhii\Util\String\StringableInterface as Stringable;
 use IteratorIterator;
 use Psr\Container\ContainerInterface;
 use Psr\EventManager\EventManagerInterface;
+use RebelCode\EddBookings\RestApi\Auth\UserIsAdminAuthValidator;
 use RebelCode\EddBookings\RestApi\Controller\BookingsController;
 use RebelCode\EddBookings\RestApi\Controller\ClientsController;
 use RebelCode\EddBookings\RestApi\Controller\ServicesController;
@@ -548,6 +549,19 @@ class EddBkRestApiModule extends AbstractBaseModule
 
                         return $post->to_array();
                     });
+                },
+
+                /*-------------------------------------------------------------*\
+                 * REST API route handlers - Auth Validators                   *
+                \*-------------------------------------------------------------*/
+
+                /*
+                 * The authorization validator that only authorizes administrator users.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_user_is_admin_auth_validator' => function (ContainerInterface $c) {
+                    return new UserIsAdminAuthValidator($c->get('eddbk_rest_api/admin_capability'));
                 },
 
                 /*-------------------------------------------------------------*\

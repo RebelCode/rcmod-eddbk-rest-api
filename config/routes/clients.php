@@ -15,7 +15,8 @@ return [
     'get_clients' => [
         'pattern' => '/clients',
         'methods' => ['GET'],
-        'handler' => 'eddbk_rest_api_query_clients_handler'
+        'handler' => 'eddbk_rest_api_query_clients_handler',
+        'authval' => 'eddbk_rest_api_user_is_admin_auth_validator',
     ],
 
     /*
@@ -26,7 +27,8 @@ return [
     'get_client_info' => [
         'pattern' => '/clients/(?P<id>[\d]+)',
         'methods' => ['GET'],
-        'handler' => 'eddbk_rest_api_get_client_info_handler'
+        'handler' => 'eddbk_rest_api_get_client_info_handler',
+        'authval' => 'eddbk_rest_api_user_is_admin_auth_validator',
     ],
 
     /*
@@ -37,6 +39,7 @@ return [
     'create_client' => [
         'pattern' => '/clients',
         'methods' => ['POST'],
-        'handler' => 'eddbk_rest_api_create_client_handler'
+        'handler' => 'eddbk_rest_api_create_client_handler',
+        'authval' => 'eddbk_rest_api_user_is_admin_auth_validator',
     ],
 ];

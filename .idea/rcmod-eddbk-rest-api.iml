@@ -73,7 +73,6 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/ptrofimov/xpmock" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/booking-interface" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/booking-transitioner" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/booking-transitioner-interface" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/expression-wp-query-builder" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/modular" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/module-iterator-abstract" />

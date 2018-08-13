@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "b380389813acde6a164fe50c68f37aaa",
+    "content-hash": "d1936e8d54961d04afc5160cbf6cbe36",
     "packages": [
         {
             "name": "dhii/args-list-validation",
@@ -3050,23 +3050,23 @@
         },
         {
             "name": "johnpbloch/wordpress-core",
-            "version": "4.9.7",
+            "version": "4.9.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/johnpbloch/wordpress-core.git",
-                "reference": "1116e10f71f8fb811856df212af652c427bc6bd1"
+                "reference": "50323f9b91d7689d615b4af02caf9d80584b1cfc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/johnpbloch/wordpress-core/zipball/1116e10f71f8fb811856df212af652c427bc6bd1",
-                "reference": "1116e10f71f8fb811856df212af652c427bc6bd1",
+                "url": "https://api.github.com/repos/johnpbloch/wordpress-core/zipball/50323f9b91d7689d615b4af02caf9d80584b1cfc",
+                "reference": "50323f9b91d7689d615b4af02caf9d80584b1cfc",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2"
             },
             "provide": {
-                "wordpress/core-implementation": "4.9.7"
+                "wordpress/core-implementation": "4.9.8"
             },
             "type": "wordpress-core",
             "notification-url": "https://packagist.org/downloads/",
@@ -3086,7 +3086,7 @@
                 "cms",
                 "wordpress"
             ],
-            "time": "2018-07-05T18:12:13+00:00"
+            "time": "2018-08-02T21:48:32+00:00"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -3139,16 +3139,16 @@
         },
         {
             "name": "phpspec/prophecy",
-            "version": "1.7.6",
+            "version": "1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpspec/prophecy.git",
-                "reference": "33a7e3c4fda54e912ff6338c48823bd5c0f0b712"
+                "reference": "4ba436b55987b4bf311cb7c6ba82aa528aac0a06"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/33a7e3c4fda54e912ff6338c48823bd5c0f0b712",
-                "reference": "33a7e3c4fda54e912ff6338c48823bd5c0f0b712",
+                "url": "https://api.github.com/repos/phpspec/prophecy/zipball/4ba436b55987b4bf311cb7c6ba82aa528aac0a06",
+                "reference": "4ba436b55987b4bf311cb7c6ba82aa528aac0a06",
                 "shasum": ""
             },
             "require": {
@@ -3160,12 +3160,12 @@
             },
             "require-dev": {
                 "phpspec/phpspec": "^2.5|^3.2",
-                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.5"
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.5 || ^7.1"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.7.x-dev"
+                    "dev-master": "1.8.x-dev"
                 }
             },
             "autoload": {
@@ -3198,7 +3198,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2018-04-18T13:57:24+00:00"
+            "time": "2018-08-05T17:53:17+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -3708,22 +3708,22 @@
         },
         {
             "name": "rebelcode/rcmod-eddbk-cqrs",
-            "version": "v0.1-alpha2",
+            "version": "v0.1-alpha3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/RebelCode/rcmod-eddbk-cqrs.git",
-                "reference": "383c5785c462fd7a250ff2eeba2f9a3087d31448"
+                "reference": "457c50aadbea40844ab237a22d415cd913187bf3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/RebelCode/rcmod-eddbk-cqrs/zipball/383c5785c462fd7a250ff2eeba2f9a3087d31448",
-                "reference": "383c5785c462fd7a250ff2eeba2f9a3087d31448",
+                "url": "https://api.github.com/repos/RebelCode/rcmod-eddbk-cqrs/zipball/457c50aadbea40844ab237a22d415cd913187bf3",
+                "reference": "457c50aadbea40844ab237a22d415cd913187bf3",
                 "shasum": ""
             },
             "require": {
                 "php": "^5.4 | ^7.0",
                 "rebelcode/modular": "^0.1-alpha1",
-                "rebelcode/wp-cqrs-resource-models": "^0.1-alpha1"
+                "rebelcode/wp-cqrs-resource-models": "^0.1-alpha1 | ^0.2-alpha1"
             },
             "require-dev": {
                 "codeclimate/php-test-reporter": "<=0.3.2",
@@ -3749,7 +3749,7 @@
                 }
             ],
             "description": "A RebelCode module that provides the CQRS resource models for EDD Bookings.",
-            "time": "2018-06-05T08:43:59+00:00"
+            "time": "2018-08-12T10:15:21+00:00"
         },
         {
             "name": "rebelcode/sql-cqrs-resource-models-abstract",
@@ -3806,7 +3806,7 @@
         },
         {
             "name": "rebelcode/wp-cqrs-resource-models",
-            "version": "dev-develop",
+            "version": "v0.2-alpha1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/RebelCode/wp-cqrs-resource-models.git",
@@ -4639,25 +4639,28 @@
         },
         {
             "name": "symfony/polyfill-ctype",
-            "version": "v1.8.0",
+            "version": "v1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
-                "reference": "7cc359f1b7b80fc25ed7796be7d96adc9b354bae"
+                "reference": "e3d826245268269cd66f8326bd8bc066687b4a19"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/7cc359f1b7b80fc25ed7796be7d96adc9b354bae",
-                "reference": "7cc359f1b7b80fc25ed7796be7d96adc9b354bae",
+                "url": "https://api.github.com/repos/symfony/polyfill-ctype/zipball/e3d826245268269cd66f8326bd8bc066687b4a19",
+                "reference": "e3d826245268269cd66f8326bd8bc066687b4a19",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
+            "suggest": {
+                "ext-ctype": "For best performance"
+            },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.8-dev"
+                    "dev-master": "1.9-dev"
                 }
             },
             "autoload": {
@@ -4690,20 +4693,20 @@
                 "polyfill",
                 "portable"
             ],
-            "time": "2018-04-30T19:57:29+00:00"
+            "time": "2018-08-06T14:22:27+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.8.0",
+            "version": "v1.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "3296adf6a6454a050679cde90f95350ad604b171"
+                "reference": "d0cd638f4634c16d8df4508e847f14e9e43168b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/3296adf6a6454a050679cde90f95350ad604b171",
-                "reference": "3296adf6a6454a050679cde90f95350ad604b171",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/d0cd638f4634c16d8df4508e847f14e9e43168b8",
+                "reference": "d0cd638f4634c16d8df4508e847f14e9e43168b8",
                 "shasum": ""
             },
             "require": {
@@ -4715,7 +4718,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.8-dev"
+                    "dev-master": "1.9-dev"
                 }
             },
             "autoload": {
@@ -4749,7 +4752,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2018-04-26T10:06:28+00:00"
+            "time": "2018-08-06T14:22:27+00:00"
         },
         {
             "name": "symfony/process",

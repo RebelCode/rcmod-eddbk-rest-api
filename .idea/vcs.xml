@@ -23,6 +23,7 @@
     <mapping directory="$PROJECT_DIR$/vendor/dhii/type-interface" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/dhii/wp-events" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/johnpbloch/wordpress-core" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/phpspec/prophecy" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/rebelcode/booking-abstract" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/rebelcode/booking-interface" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/rebelcode/booking-transitioner" vcs="Git" />
@@ -37,9 +38,11 @@
     <mapping directory="$PROJECT_DIR$/vendor/symfony/config" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/symfony/console" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/symfony/debug" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/symfony/event-dispatcher" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/symfony/filesystem" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/symfony/finder" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/symfony/polyfill-ctype" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/symfony/process" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/symfony/stopwatch" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/vendor/symfony/yaml" vcs="Git" />

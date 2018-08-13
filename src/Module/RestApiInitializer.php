@@ -5,6 +5,7 @@ namespace RebelCode\EddBookings\RestApi\Module;
 use ArrayAccess;
 use Dhii\Data\Container\ContainerAwareTrait;
 use Dhii\Data\Container\ContainerGetCapableTrait;
+use Dhii\Data\Container\ContainerHasCapableTrait;
 use Dhii\Data\Container\CreateContainerExceptionCapableTrait;
 use Dhii\Data\Container\CreateNotFoundExceptionCapableTrait;
 use Dhii\Data\Container\NormalizeContainerCapableTrait;
@@ -15,9 +16,12 @@ use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Invocation\InvocableInterface;
 use Dhii\Util\Normalization\NormalizeArrayCapableTrait;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
+use Dhii\Validation\Exception\ValidationFailedExceptionInterface;
+use Dhii\Validation\ValidatorInterface;
 use Psr\Container\ContainerInterface;
 use stdClass;
 use Traversable;
+use WP_Error;
 
 /**
  * Initializes the REST API.
@@ -35,6 +39,11 @@ class RestApiInitializer implements InvocableInterface
      * @since [*next-version*]
      */
     use ContainerAwareTrait;
+
+    /*
+     * @since [*next-version*]
+     */
+    use ContainerHasCapableTrait;
 
     /*
      * @since [*next-version*]
@@ -141,17 +150,59 @@ class RestApiInitializer implements InvocableInterface
             $_methods = $this->_containerGet($_methodConfig, 'methods');
             $_handler = $this->_containerGet($_methodConfig, 'handler');
 
+            // Get authorization validator key
+            $_authValKey = $this->_containerHas($_methodConfig, 'authval')
+                ? $this->_containerGet($_methodConfig, 'authval')
+                : null;
+            // Get authorization validator from container
+            $_authVal = $_authValKey !== null
+                ? $this->_getContainer()->get($_authValKey)
+                : null;
+
             if (!isset($routes[$_pattern])) {
                 $routes[$_pattern] = [];
             }
 
             $routes[$_pattern][] = [
-                'methods'  => $this->_normalizeArray($_methods),
-                'callback' => $this->_getContainer()->get($_handler),
+                'methods'             => $this->_normalizeArray($_methods),
+                'callback'            => $this->_getContainer()->get($_handler),
+                'permission_callback' => function () use ($_authVal) {
+                    return $this->_isUserAuthorizedCallback($_authVal, get_current_user_id());
+                }
             ];
         }
 
         return $routes;
+    }
+
+    /**
+     * The callback used to check if a user is authorized to access a route.
+     *
+     * @since [*next-version*]
+     *
+     * @param ValidatorInterface|null $authValidator The validator to use to authorize, if any.
+     * @param int|string|null         $userId        The ID of the user to authorize.
+     *
+     * @return bool|WP_Error True on success, WP_Error on failure.
+     */
+    protected function _isUserAuthorizedCallback($authValidator, $userId)
+    {
+        try {
+            if ($authValidator instanceof ValidatorInterface) {
+                $authValidator->validate($userId);
+            }
+        } catch (ValidationFailedExceptionInterface $exception) {
+            return new WP_Error(
+                'eddbk_rest_api_unauthorized',
+                $this->__('You are not authorized to access this route'),
+                [
+                    'status'  => 401,
+                    'reasons' => $exception->getValidationErrors()
+                ]
+            );
+        }
+
+        return true;
     }
 
     /**

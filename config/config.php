@@ -75,5 +75,12 @@ return [
                 'max_num_sessions_per_page' => 10000,
             ]
         ],
+
+        /*
+         * The WordPress capability that is used to determine if a user is an admin.
+         *
+         * @since [*next-version*]
+         */
+        'admin_capability' => 'manage_options'
     ],
 ];
