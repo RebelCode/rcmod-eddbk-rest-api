@@ -6,6 +6,7 @@ use Dhii\Util\Normalization\NormalizeIterableCapableTrait;
 use Dhii\Util\String\StringableInterface as Stringable;
 use Dhii\Validation\AbstractValidatorBase;
 use Dhii\Validation\ValidatorInterface;
+use Exception as RootException;
 
 /**
  * An authorization validator that validates whether a user is an administrator.
@@ -85,5 +86,23 @@ class UserIsAdminAuthValidator extends AbstractValidatorBase implements Validato
     protected function _wpUserCan($userId, $capability)
     {
         return user_can($userId, $capability);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _createValidationFailedException(
+        $message = null,
+        $code = null,
+        RootException $previous = null,
+        ValidatorInterface $validator = null,
+        $subject = null,
+        $validationErrors = null
+    ) {
+        return parent::_createValidationFailedException(
+            null, $code, $previous, $validator, $subject, $validationErrors
+        );
     }
 }
