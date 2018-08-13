@@ -561,7 +561,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  * @since [*next-version*]
                  */
                 'eddbk_rest_api_user_is_admin_auth_validator' => function (ContainerInterface $c) {
-                    return new UserIsAdminAuthValidator();
+                    return new UserIsAdminAuthValidator($c->get('eddbk_rest_api/admin_capability'));
                 },
 
                 /*-------------------------------------------------------------*\

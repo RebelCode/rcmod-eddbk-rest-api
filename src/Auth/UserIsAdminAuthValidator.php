@@ -6,6 +6,7 @@ use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
 use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Util\Normalization\NormalizeIterableCapableTrait;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
+use Dhii\Util\String\StringableInterface as Stringable;
 use Dhii\Validation\CreateValidationFailedExceptionCapableTrait;
 use Dhii\Validation\ValidatorInterface;
 
@@ -30,6 +31,27 @@ class UserIsAdminAuthValidator implements ValidatorInterface
 
     /* @since [*next-version*] */
     use StringTranslatingTrait;
+
+    /**
+     * The WordPress capability that determines if a user is an admin.
+     *
+     * @since [*next-version*]
+     *
+     * @var string|Stringable
+     */
+    protected $adminCapability;
+
+    /**
+     * Constructor.
+     *
+     * @since [*next-version*]
+     *
+     * @param string|Stringable $adminCapability The WordPress capability that determines if a user is an admin.
+     */
+    public function __construct($adminCapability)
+    {
+        $this->adminCapability = $adminCapability;
+    }
 
     /**
      * {@inheritdoc}
