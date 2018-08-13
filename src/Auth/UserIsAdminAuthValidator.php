@@ -94,22 +94,4 @@ class UserIsAdminAuthValidator extends AbstractValidatorBase implements Validato
     {
         return user_can($userId, $capability);
     }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @since [*next-version*]
-     */
-    protected function _createValidationFailedException(
-        $message = null,
-        $code = null,
-        RootException $previous = null,
-        ValidatorInterface $validator = null,
-        $subject = null,
-        $validationErrors = null
-    ) {
-        return parent::_createValidationFailedException(
-            null, $code, $previous, $validator, $subject, $validationErrors
-        );
-    }
 }
