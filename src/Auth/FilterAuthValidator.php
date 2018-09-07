@@ -69,10 +69,10 @@ class FilterAuthValidator extends AbstractValidatorBase implements ValidatorInte
      *
      * @since [*next-version*]
      */
-    protected function _getValidationErrors($routeConfig)
+    protected function _getValidationErrors($request)
     {
         $event  = $this->_trigger('eddbk_rest_api_client_auth', [
-            'config'        => $routeConfig,
+            'request'       => $request,
             $this->paramKey => $this->paramDefault,
         ]);
         $isAuth = $event->getParam($this->paramKey);
