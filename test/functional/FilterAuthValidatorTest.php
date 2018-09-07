@@ -57,6 +57,7 @@ class FilterAuthValidatorTest extends TestCase
         $subject = new TestSubject(
             $this->createEventManager(),
             $this->createEventFactory(),
+            'event',
             'param_key'
         );
 
@@ -76,12 +77,14 @@ class FilterAuthValidatorTest extends TestCase
     {
         $eventManager = $this->createEventManager();
         $eventFactory = $this->createEventFactory();
+        $event        = uniqid('event-');
         $key          = uniqid('key-');
         $default      = (bool) rand(0, 1);
 
         $subject = new TestSubject(
             $eventManager,
             $eventFactory,
+            $event,
             $key,
             $default
         );
@@ -102,12 +105,14 @@ class FilterAuthValidatorTest extends TestCase
     {
         $eventManager = $this->createEventManager();
         $eventFactory = $this->createEventFactory();
+        $event        = uniqid('event-');
         $key          = uniqid('key-');
         $default      = (bool) rand(0, 1);
 
         $subject = new TestSubject(
             $eventManager,
             $eventFactory,
+            $event,
             $key,
             $default
         );
@@ -141,12 +146,14 @@ class FilterAuthValidatorTest extends TestCase
     {
         $eventManager = $this->createEventManager();
         $eventFactory = $this->createEventFactory();
+        $event        = uniqid('event-');
         $key          = uniqid('key-');
         $default      = (bool) rand(0, 1);
 
         $subject = new TestSubject(
             $eventManager,
             $eventFactory,
+            $event,
             $key,
             $default
         );

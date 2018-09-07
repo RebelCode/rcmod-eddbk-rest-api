@@ -575,6 +575,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                     return new FilterAuthValidator(
                         $c->get('event_manager'),
                         $c->get('event_factory'),
+                        $c->get('eddbk_rest_api/auth/filter_validator/event_name'),
                         $c->get('eddbk_rest_api/auth/filter_validator/event_param_key'),
                         $c->get('eddbk_rest_api/auth/filter_validator/event_param_default')
                     );
