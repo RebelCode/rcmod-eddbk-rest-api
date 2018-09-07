@@ -6,7 +6,6 @@ use Dhii\Util\Normalization\NormalizeIterableCapableTrait;
 use Dhii\Util\String\StringableInterface as Stringable;
 use Dhii\Validation\AbstractValidatorBase;
 use Dhii\Validation\ValidatorInterface;
-use Exception as RootException;
 
 /**
  * An authorization validator that validates whether a user is an administrator.
@@ -44,26 +43,38 @@ class UserIsAdminAuthValidator extends AbstractValidatorBase implements Validato
      *
      * @since [*next-version*]
      */
-    protected function _getValidationErrors($userId)
+    protected function _getValidationErrors($routeConfig)
     {
-        // If an admin, return without errors
-        if ($this->_isUserAdmin($userId)) {
+        $userId = $this->_getCurrentUserId();
+
+        // If user is not logged in, return with a single error
+        if ($userId === 0) {
+            return [
+                $this->__('Not a user or not logged in')
+            ];
+        }
+
+        // If user is an admin, return without errors
+        if ($this->_isUserAdmin($this->_getCurrentUserId())) {
             return [];
         }
 
-        // Otherwise, create error list
-        $errors = [
+        // Otherwise, return with error
+        return [
             $this->__('User is not an administrator')
         ];
+    }
 
-        // Check for additional reasons
-
-        // If user is not logged in, add an addition error
-        if ($userId === 0) {
-            $errors[] = $this->__('Not a user or not logged in (ID: 0)');
-        }
-
-        return $errors;
+    /**
+     * Retrieves the currently logged in WordPress user's ID.
+     *
+     * @since [*next-version*]
+     *
+     * @return int The current user ID, or `0` if not logged in.
+     */
+    protected function _getCurrentUserId()
+    {
+        return get_current_user_id();
     }
 
     /**

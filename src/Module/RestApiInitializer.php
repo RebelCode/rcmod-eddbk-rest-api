@@ -163,33 +163,36 @@ class RestApiInitializer implements InvocableInterface
                 $routes[$_pattern] = [];
             }
 
-            $routes[$_pattern][] = [
+            $_finalConfig = [];
+            $_finalConfig = [
                 'methods'             => $this->_normalizeArray($_methods),
                 'callback'            => $this->_getContainer()->get($_handler),
-                'permission_callback' => function () use ($_authVal) {
-                    return $this->_isUserAuthorizedCallback($_authVal, get_current_user_id());
+                'permission_callback' => function () use ($_authVal, &$_finalConfig) {
+                    return $this->_isAuthorized($_authVal, $_finalConfig);
                 }
             ];
+
+            $routes[$_pattern][] = $_finalConfig;
         }
 
         return $routes;
     }
 
     /**
-     * The callback used to check if a user is authorized to access a route.
+     * The callback used to check if the requester is authorized to access the route.
      *
      * @since [*next-version*]
      *
-     * @param ValidatorInterface|null $authValidator The validator to use to authorize, if any.
-     * @param int|string|null         $userId        The ID of the user to authorize.
+     * @param ValidatorInterface|null                       $authValidator The validator to use to authorize, if any.
+     * @param array|stdClass|ArrayAccess|ContainerInterface $routeConfig   The config of the route.
      *
      * @return bool|WP_Error True on success, WP_Error on failure.
      */
-    protected function _isUserAuthorizedCallback($authValidator, $userId)
+    protected function _isAuthorized($authValidator, $routeConfig)
     {
         try {
             if ($authValidator instanceof ValidatorInterface) {
-                $authValidator->validate($userId);
+                $authValidator->validate($routeConfig);
             }
         } catch (ValidationFailedExceptionInterface $exception) {
             return new WP_Error(
