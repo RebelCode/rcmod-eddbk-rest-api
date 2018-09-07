@@ -100,7 +100,7 @@ return [
                  *
                  * @since [*next-version*]
                  */
-                'event_param_key'     => '',
+                'event_param_key'     => 'is_authorized',
                 /*
                  * The default value of the event param to filter.
                  *
