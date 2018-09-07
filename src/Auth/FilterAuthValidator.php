@@ -24,6 +24,15 @@ class FilterAuthValidator extends AbstractValidatorBase implements ValidatorInte
     use NormalizeIterableCapableTrait;
 
     /**
+     * The name of the event to trigger.
+     *
+     * @since [*next-version*]
+     *
+     * @var string|Stringable
+     */
+    protected $eventName;
+
+    /**
      * The key to use in event params for the boolean flag.
      *
      * @since [*next-version*]
@@ -48,17 +57,20 @@ class FilterAuthValidator extends AbstractValidatorBase implements ValidatorInte
      *
      * @param EventManagerInterface $eventManager The event manager instance to use for triggering the filter event.
      * @param EventFactoryInterface $eventFactory The event factory to use for creating event instances.
+     * @param string|Stringable     $eventName    The name of the event to trigger.
      * @param string|Stringable     $paramKey     The key to use in event params for the boolean flag.
      * @param bool                  $paramDefault The default boolean value to use for the boolean flag.
      */
     public function __construct(
         EventManagerInterface $eventManager,
         EventFactoryInterface $eventFactory,
+        $eventName,
         $paramKey,
         $paramDefault = false
     ) {
         $this->paramKey     = $paramKey;
         $this->paramDefault = $paramDefault;
+        $this->eventName    = $eventName;
 
         $this->_setEventManager($eventManager);
         $this->_setEventFactory($eventFactory);
@@ -71,7 +83,7 @@ class FilterAuthValidator extends AbstractValidatorBase implements ValidatorInte
      */
     protected function _getValidationErrors($request)
     {
-        $event  = $this->_trigger('eddbk_rest_api_client_auth', [
+        $event  = $this->_trigger($this->eventName, [
             'request'       => $request,
             $this->paramKey => $this->paramDefault,
         ]);

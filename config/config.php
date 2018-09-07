@@ -96,11 +96,19 @@ return [
              */
             'filter_validator' => [
                 /*
+                 * The name of the event to trigger.
+                 *
+                 * @since [*next-version*]
+                 */
+                'event_name'          => 'eddbk_rest_api_client_auth',
+
+                /*
                  * The key of the event param to filter.
                  *
                  * @since [*next-version*]
                  */
                 'event_param_key'     => 'is_authorized',
+
                 /*
                  * The default value of the event param to filter.
                  *
