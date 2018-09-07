@@ -43,7 +43,7 @@ class UserIsAdminAuthValidator extends AbstractValidatorBase implements Validato
      *
      * @since [*next-version*]
      */
-    protected function _getValidationErrors($routeConfig)
+    protected function _getValidationErrors($request)
     {
         $userId = $this->_getCurrentUserId();
 

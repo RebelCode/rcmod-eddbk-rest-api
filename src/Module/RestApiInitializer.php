@@ -22,6 +22,7 @@ use Psr\Container\ContainerInterface;
 use stdClass;
 use Traversable;
 use WP_Error;
+use WP_REST_Request;
 
 /**
  * Initializes the REST API.
@@ -163,13 +164,12 @@ class RestApiInitializer implements InvocableInterface
                 $routes[$_pattern] = [];
             }
 
-            $_finalConfig = [];
             $_finalConfig = [
                 'methods'             => $this->_normalizeArray($_methods),
                 'callback'            => $this->_getContainer()->get($_handler),
-                'permission_callback' => function () use ($_authVal, &$_finalConfig) {
-                    return $this->_isAuthorized($_authVal, $_finalConfig);
-                }
+                'permission_callback' => function ($request) use ($_authVal) {
+                    return $this->_isAuthorized($_authVal, $request);
+                },
             ];
 
             $routes[$_pattern][] = $_finalConfig;
@@ -183,16 +183,16 @@ class RestApiInitializer implements InvocableInterface
      *
      * @since [*next-version*]
      *
-     * @param ValidatorInterface|null                       $authValidator The validator to use to authorize, if any.
-     * @param array|stdClass|ArrayAccess|ContainerInterface $routeConfig   The config of the route.
+     * @param ValidatorInterface|null $authValidator The validator to use to authorize, if any.
+     * @param WP_REST_Request         $request       The request.
      *
      * @return bool|WP_Error True on success, WP_Error on failure.
      */
-    protected function _isAuthorized($authValidator, $routeConfig)
+    protected function _isAuthorized($authValidator, $request)
     {
         try {
             if ($authValidator instanceof ValidatorInterface) {
-                $authValidator->validate($routeConfig);
+                $authValidator->validate($request);
             }
         } catch (ValidationFailedExceptionInterface $exception) {
             return new WP_Error(
@@ -200,7 +200,7 @@ class RestApiInitializer implements InvocableInterface
                 $this->__('You are not authorized to access this route'),
                 [
                     'status'  => 401,
-                    'reasons' => $exception->getValidationErrors()
+                    'reasons' => $exception->getValidationErrors(),
                 ]
             );
         }
