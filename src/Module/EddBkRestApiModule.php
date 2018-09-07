@@ -597,6 +597,19 @@ class EddBkRestApiModule extends AbstractBaseModule
                 \*-------------------------------------------------------------*/
 
                 /*
+                 * The handler that checks and verifies a nonce to authorize WordPress client apps.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_wp_client_app_auth_nonce_handler' => function (ContainerInterface $c) {
+                    return new FilterAuthNonceHandler(
+                        $c->get('eddbk_rest_api/auth/filter_validator/handler/header'),
+                        $c->get('eddbk_rest_api/auth/filter_validator/handler/nonce'),
+                        $c->get('eddbk_rest_api/auth/filter_validator/event_param_key')
+                    );
+                },
+
+                /*
                  * The REST API initializer - initializes the routes and handlers when invoked.
                  *
                  * @since [*next-version*]
