@@ -634,7 +634,12 @@ class EddBkRestApiModule extends AbstractBaseModule
         }
 
         $this->_attach('rest_api_init', $c->get('eddbk_rest_api_initializer'));
-        $this->_attach('eddbk_rest_api_client_auth', $c->get('eddbk_rest_api_wp_client_app_auth_nonce_handler'));
+
+        // Attach handler for WP client apps to be authorized by nonce
+        $this->_attach(
+            $c->get('eddbk_rest_api/auth/filter_validator/event_name'),
+            $c->get('eddbk_rest_api_wp_client_app_auth_nonce_handler')
+        );
     }
 
     /**
