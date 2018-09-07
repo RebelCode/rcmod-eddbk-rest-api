@@ -15,6 +15,7 @@ use IteratorIterator;
 use Psr\Container\ContainerInterface;
 use Psr\EventManager\EventManagerInterface;
 use RebelCode\EddBookings\RestApi\Auth\FilterAuthValidator;
+use RebelCode\EddBookings\RestApi\Auth\TolerantCompositeValidator;
 use RebelCode\EddBookings\RestApi\Auth\UserIsAdminAuthValidator;
 use RebelCode\EddBookings\RestApi\Controller\BookingsController;
 use RebelCode\EddBookings\RestApi\Controller\ClientsController;
@@ -577,6 +578,18 @@ class EddBkRestApiModule extends AbstractBaseModule
                         $c->get('eddbk_rest_api/auth/filter_validator/event_param_key'),
                         $c->get('eddbk_rest_api/auth/filter_validator/event_param_default')
                     );
+                },
+
+                /*
+                 * The authorization validator that authorizes WordPress client apps.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_wp_client_app_auth_validator' => function (ContainerInterface $c) {
+                    return new TolerantCompositeValidator([
+                        $c->get('eddbk_rest_api_user_is_admin_auth_validator'),
+                        $c->get('eddbk_rest_api_client_event_auth_validator')
+                    ]);
                 },
 
                 /*-------------------------------------------------------------*\
