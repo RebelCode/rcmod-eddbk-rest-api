@@ -81,6 +81,33 @@ return [
          *
          * @since [*next-version*]
          */
-        'admin_capability' => 'manage_options'
+        'admin_capability' => 'manage_options',
+
+        /*
+         * Configuration for authorization.
+         *
+         * @since [*next-version*]
+         */
+        'auth' => [
+            /*
+             * Configuration for the filter auth validator.
+             *
+             * @since [*next-version*]
+             */
+            'filter_validator' => [
+                /*
+                 * The key of the event param to filter.
+                 *
+                 * @since [*next-version*]
+                 */
+                'event_param_key'     => '',
+                /*
+                 * The default value of the event param to filter.
+                 *
+                 * @since [*next-version*]
+                 */
+                'event_param_default' => false,
+            ],
+        ],
     ],
 ];

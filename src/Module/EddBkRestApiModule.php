@@ -14,6 +14,7 @@ use Dhii\Util\String\StringableInterface as Stringable;
 use IteratorIterator;
 use Psr\Container\ContainerInterface;
 use Psr\EventManager\EventManagerInterface;
+use RebelCode\EddBookings\RestApi\Auth\FilterAuthValidator;
 use RebelCode\EddBookings\RestApi\Auth\UserIsAdminAuthValidator;
 use RebelCode\EddBookings\RestApi\Controller\BookingsController;
 use RebelCode\EddBookings\RestApi\Controller\ClientsController;
@@ -562,6 +563,20 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_user_is_admin_auth_validator' => function (ContainerInterface $c) {
                     return new UserIsAdminAuthValidator($c->get('eddbk_rest_api/admin_capability'));
+                },
+
+                /*
+                 * The authorization validator that authorizes client apps via filter event.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_client_app_auth_validator' => function (ContainerInterface $c) {
+                    return new FilterAuthValidator(
+                        $c->get('event_manager'),
+                        $c->get('event_factory'),
+                        $c->get('eddbk_rest_api/auth/filter_validator/event_param_key'),
+                        $c->get('eddbk_rest_api/auth/filter_validator/event_param_default')
+                    );
                 },
 
                 /*-------------------------------------------------------------*\
