@@ -107,6 +107,27 @@ return [
                  * @since [*next-version*]
                  */
                 'event_param_default' => false,
+
+                /*
+                 * Configuration for the provided handler of the filter auth validator event.
+                 *
+                 * @since [*next-version*]
+                 */
+                'handler' => [
+                    /*
+                     * The name of the header from where to get the nonce.
+                     *
+                     * @since [*next-version*]
+                     */
+                    'header' => 'X-EDDBK-Nonce',
+
+                    /*
+                     * The name of the nonce to verify.
+                     *
+                     * @since [*next-version*]
+                     */
+                    'nonce'  => 'eddbk_rest_api',
+                ],
             ],
         ],
     ],
