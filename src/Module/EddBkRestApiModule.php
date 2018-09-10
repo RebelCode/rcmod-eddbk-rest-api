@@ -631,9 +631,12 @@ class EddBkRestApiModule extends AbstractBaseModule
                  * @since [*next-version*]
                  */
                 'eddbk_rest_api_wp_client_app_auth_nonce_handler' => function (ContainerInterface $c) {
+                    /* @var $nonce NonceInterface */
+                    $nonce = $c->get('eddbk_rest_api_wp_client_app_nonce');
+
                     return new FilterAuthNonceHandler(
                         $c->get('eddbk_rest_api/auth/filter_validator/handler/header'),
-                        $c->get('eddbk_rest_api/auth/filter_validator/handler/nonce'),
+                        $nonce->getId(),
                         $c->get('eddbk_rest_api/auth/filter_validator/event_param_key')
                     );
                 },
