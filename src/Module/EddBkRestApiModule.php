@@ -37,6 +37,9 @@ use RebelCode\Transformers\CallbackTransformer;
 use RebelCode\Transformers\MapTransformer;
 use RebelCode\Transformers\NoOpTransformer;
 use RebelCode\Transformers\TransformerIterator;
+use RebelCode\WordPress\Nonce\Factory\NonceFactory;
+use RebelCode\WordPress\Nonce\Factory\NonceFactoryInterface;
+use RebelCode\WordPress\Nonce\NonceInterface;
 use Traversable;
 use WP_Post;
 
@@ -596,6 +599,31 @@ class EddBkRestApiModule extends AbstractBaseModule
                 /*-------------------------------------------------------------*\
                  * Misc. REST API services                                     *
                 \*-------------------------------------------------------------*/
+
+                /**
+                 * The factory that creates WordPress nonce instances for the REST API.
+                 *
+                 * @since [*next-version*]
+                 *
+                 * @return NonceFactoryInterface
+                 */
+                'eddbk_rest_api_nonce_factory' => function (ContainerInterface $c) {
+                    return new NonceFactory();
+                },
+
+                /**
+                 * The nonce used to authorize WordPress client apps.
+                 *
+                 * @return NonceInterface
+                 */
+                'eddbk_rest_api_wp_client_app_nonce' => function (ContainerInterface $c) {
+                    $factory = $c->get('eddbk_rest_api_nonce_factory');
+                    $nonceId = $c->get('eddbk_rest_api/auth/filter_validator/handler/nonce');
+
+                    return $factory->make([
+                        NonceFactoryInterface::K_CONFIG_ID => $nonceId
+                    ]);
+                },
 
                 /*
                  * The handler that checks and verifies a nonce to authorize WordPress client apps.
