@@ -98,6 +98,9 @@
       <path value="$PROJECT_DIR$/vendor/dhii/data-state-base" />
       <path value="$PROJECT_DIR$/vendor/dhii/data-state-abstract" />
       <path value="$PROJECT_DIR$/vendor/dhii/data-state-interface" />
+      <path value="$PROJECT_DIR$/vendor/rebelcode/wp-nonce" />
+      <path value="$PROJECT_DIR$/vendor/rebelcode/wp-nonce-interface" />
+      <path value="$PROJECT_DIR$/vendor/dhii/output-renderer-interface" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="5.4.0" />
