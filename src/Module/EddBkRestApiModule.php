@@ -578,9 +578,9 @@ class EddBkRestApiModule extends AbstractBaseModule
                     return new FilterAuthValidator(
                         $c->get('event_manager'),
                         $c->get('event_factory'),
-                        $c->get('eddbk_rest_api/auth/filter_validator/event_name'),
-                        $c->get('eddbk_rest_api/auth/filter_validator/event_param_key'),
-                        $c->get('eddbk_rest_api/auth/filter_validator/event_param_default')
+                        $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/event_name'),
+                        $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/event_param_key'),
+                        $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/event_param_default')
                     );
                 },
 
@@ -618,7 +618,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_wp_client_app_nonce' => function (ContainerInterface $c) {
                     $factory = $c->get('eddbk_rest_api_nonce_factory');
-                    $nonceId = $c->get('eddbk_rest_api/auth/filter_validator/handler/nonce');
+                    $nonceId = $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/handler/nonce');
 
                     return $factory->make([
                         NonceFactoryInterface::K_CONFIG_ID => $nonceId
@@ -634,10 +634,11 @@ class EddBkRestApiModule extends AbstractBaseModule
                     /* @var $nonce NonceInterface */
                     $nonce = $c->get('eddbk_rest_api_wp_client_app_nonce');
 
-                    return new FilterAuthNonceHandler(
-                        $c->get('eddbk_rest_api/auth/filter_validator/handler/header'),
+                    return new TransientNonceAuthHandler(
+                        $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/handler/header'),
                         $nonce->getId(),
-                        $c->get('eddbk_rest_api/auth/filter_validator/event_param_key')
+                        $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/event_param_key'),
+                        $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/transient_name')
                     );
                 },
 
@@ -668,7 +669,7 @@ class EddBkRestApiModule extends AbstractBaseModule
 
         // Attach handler for WP client apps to be authorized by nonce
         $this->_attach(
-            $c->get('eddbk_rest_api/auth/filter_validator/event_name'),
+            $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/event_name'),
             $c->get('eddbk_rest_api_wp_client_app_auth_nonce_handler')
         );
     }

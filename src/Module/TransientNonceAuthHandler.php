@@ -15,7 +15,7 @@ use WP_REST_Request;
  *
  * @since [*next-version*]
  */
-class FilterAuthNonceHandler implements InvocableInterface
+class TransientNonceAuthHandler implements InvocableInterface
 {
     /* @since [*next-version*] */
     use CreateInvalidArgumentExceptionCapableTrait;
@@ -54,19 +54,30 @@ class FilterAuthNonceHandler implements InvocableInterface
     protected $paramKey;
 
     /**
+     * The name of the transient.
+     *
+     * @since [*next-version*]
+     *
+     * @var string|Stringable
+     */
+    protected $transientName;
+
+    /**
      * Constructor.
      *
      * @since [*next-version*]
      *
-     * @param string|Stringable $header   The name of the header from where to get the nonce.
-     * @param string|Stringable $nonce    The name of the nonce to verify.
-     * @param string|Stringable $paramKey The key of the event param to filter.
+     * @param string|Stringable $header        The name of the header from where to get the nonce.
+     * @param string|Stringable $nonce         The name of the nonce to verify.
+     * @param string|Stringable $paramKey      The key of the event param to filter.
+     * @param string|Stringable $transientName The name of the transient.
      */
-    public function __construct($header, $nonce, $paramKey)
+    public function __construct($header, $nonce, $paramKey, $transientName)
     {
-        $this->header   = $header;
-        $this->nonce    = $nonce;
-        $this->paramKey = $paramKey;
+        $this->header        = $header;
+        $this->nonce         = $nonce;
+        $this->paramKey      = $paramKey;
+        $this->transientName = $transientName;
     }
 
     /**
@@ -110,6 +121,9 @@ class FilterAuthNonceHandler implements InvocableInterface
      */
     protected function _verifyNonce($nonce, $name)
     {
-        return wp_verify_nonce($nonce, $name);
+        $expected = (string) get_transient($this->transientName);
+        $actual   = (string) $nonce;
+
+        return $expected === $actual;
     }
 }

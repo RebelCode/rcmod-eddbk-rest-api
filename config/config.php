@@ -90,11 +90,11 @@ return [
          */
         'auth' => [
             /*
-             * Configuration for the filter auth validator.
+             * Configuration for the filter auth validator that uses a nonce stored in a transient.
              *
              * @since [*next-version*]
              */
-            'filter_validator' => [
+            'transient_nonce_filter_validator' => [
                 /*
                  * The name of the event to trigger.
                  *
@@ -115,6 +115,20 @@ return [
                  * @since [*next-version*]
                  */
                 'event_param_default' => false,
+
+                /*
+                 * The name of the transient where the nonce is stored.
+                 *
+                 * @since [*next-version*]
+                 */
+                'transient_name'      => 'eddbk_rest_api_client_nonce',
+
+                /*
+                 * The expiry time of the nonce transient, in seconds.
+                 *
+                 * @since [*next-version*]
+                 */
+                'transient_expiry'    => 24 * 60 * 60,
 
                 /*
                  * Configuration for the provided handler of the filter auth validator event.
