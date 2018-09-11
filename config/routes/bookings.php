@@ -40,7 +40,7 @@ return [
         'pattern' => '/bookings',
         'methods' => ['POST'],
         'handler' => 'eddbk_rest_api_create_booking_handler',
-        'authval' => 'eddbk_rest_api_user_is_admin_auth_validator',
+        'authval' => 'eddbk_rest_api_client_app_auth_validator',
     ],
 
     /*

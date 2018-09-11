@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [[*next-version*]] - YYYY-MM-DD
 ### Added
 - New mechanism for custom authorization using events.
+- Added handler to authorize certain WP apps by nonce.
+
+## Changed
+- Booking creation endpoint may be authorized by nonce.
 
 ## [0.1-alpha7] - 2018-08-13
 ### Added

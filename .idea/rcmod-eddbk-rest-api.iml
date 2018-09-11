@@ -43,6 +43,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/machine-state-machine-interface" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/module-interface" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/normalization-helper-base" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/output-renderer-interface" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/php-cs-fixer-config" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/psr-14" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/dhii/sql-interface" />
@@ -80,6 +81,8 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/sql-cqrs-resource-models-abstract" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/transformers" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/wp-cqrs-resource-models" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/wp-nonce" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/rebelcode/wp-nonce-interface" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/satooshi/php-coveralls" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/sebastian/comparator" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/sebastian/diff" />

@@ -37,6 +37,9 @@ use RebelCode\Transformers\CallbackTransformer;
 use RebelCode\Transformers\MapTransformer;
 use RebelCode\Transformers\NoOpTransformer;
 use RebelCode\Transformers\TransformerIterator;
+use RebelCode\WordPress\Nonce\Factory\NonceFactory;
+use RebelCode\WordPress\Nonce\Factory\NonceFactoryInterface;
+use RebelCode\WordPress\Nonce\NonceInterface;
 use Traversable;
 use WP_Post;
 
@@ -575,9 +578,9 @@ class EddBkRestApiModule extends AbstractBaseModule
                     return new FilterAuthValidator(
                         $c->get('event_manager'),
                         $c->get('event_factory'),
-                        $c->get('eddbk_rest_api/auth/filter_validator/event_name'),
-                        $c->get('eddbk_rest_api/auth/filter_validator/event_param_key'),
-                        $c->get('eddbk_rest_api/auth/filter_validator/event_param_default')
+                        $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/event_name'),
+                        $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/event_param_key'),
+                        $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/event_param_default')
                     );
                 },
 
@@ -596,6 +599,62 @@ class EddBkRestApiModule extends AbstractBaseModule
                 /*-------------------------------------------------------------*\
                  * Misc. REST API services                                     *
                 \*-------------------------------------------------------------*/
+
+                /**
+                 * The factory that creates WordPress nonce instances for the REST API.
+                 *
+                 * @since [*next-version*]
+                 *
+                 * @return NonceFactoryInterface
+                 */
+                'eddbk_rest_api_nonce_factory' => function (ContainerInterface $c) {
+                    return new NonceFactory();
+                },
+
+                /**
+                 * The factory that creates the WordPress client app auth nonce instance.
+                 *
+                 * @since [*next-version*]
+                 *
+                 * @return NonceFactoryInterface
+                 */
+                'eddbk_rest_api_wp_client_app_nonce_factory' => function (ContainerInterface $c) {
+                    return new TransientNonceFactory(
+                        $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/transient_name'),
+                        $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/transient_expiry')
+                    );
+                },
+
+                /**
+                 * The nonce used to authorize WordPress client apps.
+                 *
+                 * @return NonceInterface
+                 */
+                'eddbk_rest_api_wp_client_app_nonce' => function (ContainerInterface $c) {
+                    $factory = $c->get('eddbk_rest_api_wp_client_app_nonce_factory');
+                    $nonceId = $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/handler/nonce');
+
+                    return $factory->make([
+                        NonceFactoryInterface::K_CONFIG_ID => $nonceId
+                    ]);
+                },
+
+                /*
+                 * The handler that checks and verifies a nonce to authorize WordPress client apps.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_wp_client_app_auth_nonce_handler' => function (ContainerInterface $c) {
+                    /* @var $nonce NonceInterface */
+                    $nonce = $c->get('eddbk_rest_api_wp_client_app_nonce');
+
+                    return new TransientNonceAuthHandler(
+                        $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/handler/header'),
+                        $nonce->getId(),
+                        $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/event_param_key'),
+                        $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/transient_name')
+                    );
+                },
 
                 /*
                  * The REST API initializer - initializes the routes and handlers when invoked.
@@ -621,6 +680,12 @@ class EddBkRestApiModule extends AbstractBaseModule
         }
 
         $this->_attach('rest_api_init', $c->get('eddbk_rest_api_initializer'));
+
+        // Attach handler for WP client apps to be authorized by nonce
+        $this->_attach(
+            $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/event_name'),
+            $c->get('eddbk_rest_api_wp_client_app_auth_nonce_handler')
+        );
     }
 
     /**
