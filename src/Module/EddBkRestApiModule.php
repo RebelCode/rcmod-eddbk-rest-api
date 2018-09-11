@@ -612,12 +612,26 @@ class EddBkRestApiModule extends AbstractBaseModule
                 },
 
                 /**
+                 * The factory that creates the WordPress client app auth nonce instance.
+                 *
+                 * @since [*next-version*]
+                 *
+                 * @return NonceFactoryInterface
+                 */
+                'eddbk_rest_api_wp_client_app_nonce_factory' => function (ContainerInterface $c) {
+                    return new TransientNonceFactory(
+                        $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/transient_name'),
+                        $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/transient_expiry')
+                    );
+                },
+
+                /**
                  * The nonce used to authorize WordPress client apps.
                  *
                  * @return NonceInterface
                  */
                 'eddbk_rest_api_wp_client_app_nonce' => function (ContainerInterface $c) {
-                    $factory = $c->get('eddbk_rest_api_nonce_factory');
+                    $factory = $c->get('eddbk_rest_api_wp_client_app_nonce_factory');
                     $nonceId = $c->get('eddbk_rest_api/auth/transient_nonce_filter_validator/handler/nonce');
 
                     return $factory->make([
