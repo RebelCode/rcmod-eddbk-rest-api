@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - New mechanism for custom authorization using events.
 - Added handler to authorize certain WP apps by nonce.
 
-## Changed
+### Changed
 - Booking creation endpoint may be authorized by nonce.
 
 ## [0.1-alpha7] - 2018-08-13
