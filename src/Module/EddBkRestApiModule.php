@@ -574,7 +574,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_client_app_auth_validator' => function (ContainerInterface $c) {
+                'eddbk_rest_api_filter_event_auth_validator' => function (ContainerInterface $c) {
                     return new FilterAuthValidator(
                         $c->get('event_manager'),
                         $c->get('event_factory'),
@@ -592,7 +592,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                 'eddbk_rest_api_wp_client_app_auth_validator' => function (ContainerInterface $c) {
                     return new TolerantCompositeValidator([
                         $c->get('eddbk_rest_api_user_is_admin_auth_validator'),
-                        $c->get('eddbk_rest_api_client_event_auth_validator')
+                        $c->get('eddbk_rest_api_filter_event_auth_validator')
                     ]);
                 },
 

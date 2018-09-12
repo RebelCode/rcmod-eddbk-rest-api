@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [[*next-version*]] - YYYY-MM-DD
+### Fixed
+- The `POST /bookings` route was not authorizing logged in users.
 
 ## [0.1-alpha8] - 2018-09-11
 ### Added
