@@ -2,6 +2,7 @@
 
 namespace RebelCode\EddBookings\RestApi\Controller;
 
+use ArrayAccess;
 use Dhii\Data\Container\ContainerGetCapableTrait;
 use Dhii\Data\Container\ContainerHasCapableTrait;
 use Dhii\Data\Container\CreateContainerExceptionCapableTrait;
@@ -13,17 +14,22 @@ use Dhii\Exception\CreateRuntimeExceptionCapableTrait;
 use Dhii\Factory\FactoryAwareTrait;
 use Dhii\Factory\FactoryInterface;
 use Dhii\I18n\StringTranslatingTrait;
-use Dhii\Storage\Resource\SelectCapableInterface;
+use Dhii\Util\Normalization\NormalizeIntCapableTrait;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
-use Traversable;
-use WP_Query;
+use Dhii\Util\String\StringableInterface as Stringable;
+use InvalidArgumentException;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use RebelCode\Entity\EntityManagerInterface;
+use stdClass;
 
 /**
  * The API controller for services.
  *
  * @since [*next-version*]
  */
-class ServicesController extends AbstractBaseCqrsController
+class ServicesController extends AbstractBaseController
 {
     /* @since [*next-version*] */
     use FactoryAwareTrait {
@@ -36,6 +42,9 @@ class ServicesController extends AbstractBaseCqrsController
 
     /* @since [*next-version*] */
     use ContainerHasCapableTrait;
+
+    /* @since [*next-version*] */
+    use NormalizeIntCapableTrait;
 
     /* @since [*next-version*] */
     use NormalizeKeyCapableTrait;
@@ -62,61 +71,42 @@ class ServicesController extends AbstractBaseCqrsController
     use StringTranslatingTrait;
 
     /**
-     * The services SELECT resource model.
+     * The default number of items to return per page.
+     *
+     * @since [*next-version*]
+     */
+    const DEFAULT_NUM_ITEMS_PER_PAGE = 20;
+
+    /**
+     * The default page number.
+     *
+     * @since [*next-version*]
+     */
+    const DEFAULT_PAGE_NUMBER = 1;
+
+    /**
+     * The services entity manager.
      *
      * @since [*next-version*]
      *
-     * @var SelectCapableInterface
+     * @var EntityManagerInterface
      */
-    protected $servicesSelectRm;
+    protected $entityManager;
 
     /**
      * Constructor.
      *
      * @since [*next-version*]
      *
-     * @param SelectCapableInterface $servicesSelectRm The services SELECT resource model.
-     * @param object|null            $exprBuilder      The expression builder.
-     * @param FactoryInterface       $iteratorFactory  The iterator factory to use for the results.
+     * @param EntityManagerInterface $entityManager   The services entity manager.
+     * @param FactoryInterface       $iteratorFactory The iterator factory to use for the results.
      */
     public function __construct(
-        SelectCapableInterface $servicesSelectRm,
-        $exprBuilder,
+        EntityManagerInterface $entityManager,
         FactoryInterface $iteratorFactory
     ) {
+        $this->entityManager = $entityManager;
         $this->_setIteratorFactory($iteratorFactory);
-        $this->_setExprBuilder($exprBuilder);
-        $this->servicesSelectRm = $servicesSelectRm;
-    }
-
-    /**
-     * Retrieves the services SELECT resource model.
-     *
-     * @since [*next-version*]
-     *
-     * @return SelectCapableInterface The services SELECT resource model.
-     */
-    protected function _getServicesSelectRm()
-    {
-        return $this->servicesSelectRm;
-    }
-
-    /**
-     * Sets the services SELECT resource model.
-     *
-     * @since [*next-version*]
-     *
-     * @param SelectCapableInterface $servicesSelectRm The services SELECT resource model.
-     */
-    protected function _setServicesSelectRm($servicesSelectRm)
-    {
-        if ($servicesSelectRm !== null && !($servicesSelectRm instanceof SelectCapableInterface)) {
-            throw $this->_createInvalidArgumentException(
-                $this->__('Argument is not a SELECT resource model'), null, null, $servicesSelectRm
-            );
-        }
-
-        $this->servicesSelectRm = $servicesSelectRm;
     }
 
     /**
@@ -126,32 +116,24 @@ class ServicesController extends AbstractBaseCqrsController
      */
     public function _get($params = [])
     {
-        $selectRm = $this->_getServicesSelectRm();
-
-        if ($selectRm === null) {
-            throw $this->_createRuntimeException(
-                $this->__('The services SELECT resource model is null'), null, null
-            );
+        // Get number of items per page
+        $numPerPage = $this->_containerGetDefault($params, 'numItems', static::DEFAULT_NUM_ITEMS_PER_PAGE);
+        $numPerPage = $this->_normalizeInt($numPerPage);
+        if ($numPerPage < 1) {
+            throw $this->_createControllerException($this->__('Invalid number of items per page'), 400, null, $this);
         }
 
-        $exprBuilder = $this->_getExprBuilder();
-
-        if ($exprBuilder === null) {
-            throw $this->_createRuntimeException(
-                $this->__('The SQL expression builder is null'), null, null
-            );
+        // Get page number
+        $pageNum = $this->_containerGetDefault($params, 'page', static::DEFAULT_PAGE_NUMBER);
+        $pageNum = $this->_normalizeInt($pageNum);
+        if ($pageNum < 1) {
+            throw $this->_createControllerException($this->__('Invalid page number'), 400, null, $this);
         }
 
-        $condition = $this->_buildSelectCondition($params);
+        // Calculate query offset
+        $offset = ($pageNum - 1) * $numPerPage;
 
-        // The services RM is known to require AND as top-level expression
-        if ($condition !== null) {
-            $condition = $exprBuilder->and($condition);
-        }
-
-        $services  = $selectRm->select($condition);
-
-        return $services;
+        return $this->entityManager->query($params, $numPerPage, $offset);
     }
 
     /**
@@ -161,7 +143,15 @@ class ServicesController extends AbstractBaseCqrsController
      */
     protected function _post($params = [])
     {
-        return;
+        try {
+            $id = $this->_containerGet($params, 'id');
+        } catch (NotFoundExceptionInterface $exception) {
+            throw $this->_createControllerException(
+                $this->__('A service ID must be specified'), 400, $exception, $this
+            );
+        }
+
+        $this->entityManager->set($id, $params);
     }
 
     /**
@@ -171,7 +161,15 @@ class ServicesController extends AbstractBaseCqrsController
      */
     protected function _put($params = [])
     {
-        throw $this->_createControllerException($this->__('Not implemented'), 405, null, $this);
+        try {
+            $id = $this->_containerGet($params, 'id');
+        } catch (NotFoundExceptionInterface $exception) {
+            throw $this->_createControllerException(
+                $this->__('A service ID must be specified'), 400, $exception, $this
+            );
+        }
+
+        $this->entityManager->set($id, $params);
     }
 
     /**
@@ -181,7 +179,15 @@ class ServicesController extends AbstractBaseCqrsController
      */
     protected function _patch($params = [])
     {
-        throw $this->_createControllerException($this->__('Not implemented'), 405, null, $this);
+        try {
+            $id = $this->_containerGet($params, 'id');
+        } catch (NotFoundExceptionInterface $exception) {
+            throw $this->_createControllerException(
+                $this->__('A service ID must be specified'), 400, $exception, $this
+            );
+        }
+
+        $this->entityManager->update($id, $params);
     }
 
     /**
@@ -191,62 +197,37 @@ class ServicesController extends AbstractBaseCqrsController
      */
     protected function _delete($params = [])
     {
-        throw $this->_createControllerException($this->__('Not implemented'), 405, null, $this);
+        try {
+            $id = $this->_containerGet($params, 'id');
+        } catch (NotFoundExceptionInterface $exception) {
+            throw $this->_createControllerException(
+                $this->__('A service ID must be specified'), 400, $exception, $this
+            );
+        }
+
+        $this->entityManager->delete($id);
     }
 
     /**
-     * {@inheritdoc}
+     * Retrieves a value from a container or data set, defaulting to a given value if not found.
      *
      * @since [*next-version*]
-     */
-    protected function _getSelectConditionParamMapping()
-    {
-        return [
-            'id' => [
-                'compare' => 'eq',
-                'entity'  => 'service',
-                'field'   => 'id',
-            ],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
      *
-     * @since [*next-version*]
-     */
-    protected function _getInsertParamFieldMapping()
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
+     * @param array|ArrayAccess|stdClass|ContainerInterface $container The container to read from.
+     * @param string|int|float|bool|Stringable              $key       The key of the value to retrieve.
+     * @param mixed                                         $default   Optional value to default to.
      *
-     * @since [*next-version*]
-     */
-    protected function _getUpdateParamFieldMapping()
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
+     * @throws InvalidArgumentException    If container is invalid.
+     * @throws ContainerExceptionInterface If an error occurred while reading from the container.
      *
-     * @since [*next-version*]
+     * @return mixed The value mapped to the given key, or the $default value if the key was not found.
      */
-    protected function _getUpdateConditionParamMapping()
+    protected function _containerGetDefault($container, $key, $default = null)
     {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @since [*next-version*]
-     */
-    protected function _getDeleteConditionParamMapping()
-    {
-        return [];
+        try {
+            return $this->_containerGet($container, $key);
+        } catch (NotFoundExceptionInterface $exception) {
+            return $default;
+        }
     }
 }
