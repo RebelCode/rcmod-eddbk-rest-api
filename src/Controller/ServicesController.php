@@ -143,15 +143,9 @@ class ServicesController extends AbstractBaseController
      */
     protected function _post($params = [])
     {
-        try {
-            $id = $this->_containerGet($params, 'id');
-        } catch (NotFoundExceptionInterface $exception) {
-            throw $this->_createControllerException(
-                $this->__('A service ID must be specified'), 400, $exception, $this
-            );
-        }
+        $id = $this->servicesManager->add($params);
 
-        $this->servicesManager->set($id, $params);
+        return $this->_get(['id' => $id]);
     }
 
     /**
