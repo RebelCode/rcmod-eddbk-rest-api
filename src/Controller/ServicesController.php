@@ -133,7 +133,10 @@ class ServicesController extends AbstractBaseController
         // Calculate query offset
         $offset = ($pageNum - 1) * $numPerPage;
 
-        return $this->servicesManager->query($params, $numPerPage, $offset);
+        $query = $params;
+        $query = $this->_snakeCaseParams($query);
+
+        return $this->servicesManager->query($query, $numPerPage, $offset);
     }
 
     /**
@@ -143,7 +146,7 @@ class ServicesController extends AbstractBaseController
      */
     protected function _post($params = [])
     {
-        $id = $this->servicesManager->add($params);
+        $id = $this->servicesManager->add($this->_snakeCaseParams($params));
 
         return $this->_get(['id' => $id]);
     }
@@ -155,6 +158,8 @@ class ServicesController extends AbstractBaseController
      */
     protected function _put($params = [])
     {
+        $params = $this->_snakeCaseParams($params);
+
         try {
             $id = $this->_containerGet($params, 'id');
         } catch (NotFoundExceptionInterface $exception) {
@@ -175,6 +180,8 @@ class ServicesController extends AbstractBaseController
      */
     protected function _patch($params = [])
     {
+        $params = $this->_snakeCaseParams($params);
+
         try {
             $id = $this->_containerGet($params, 'id');
         } catch (NotFoundExceptionInterface $exception) {
@@ -195,6 +202,8 @@ class ServicesController extends AbstractBaseController
      */
     protected function _delete($params = [])
     {
+        $params = $this->_snakeCaseParams($params);
+
         try {
             $id = $this->_containerGet($params, 'id');
         } catch (NotFoundExceptionInterface $exception) {
@@ -206,6 +215,42 @@ class ServicesController extends AbstractBaseController
         $this->servicesManager->delete($id);
 
         return [];
+    }
+
+    /**
+     * Processes the params to change camelCase param keys to snake_case.
+     *
+     * @since [*next-version*]
+     *
+     * @param array $params The params to process.
+     *
+     * @return array The processed params.
+     */
+    protected function _snakeCaseParams($params = [])
+    {
+        $newParams = [];
+
+        foreach ($params as $_key => $_value) {
+            $_newKey  = $this->_camelCaseToSnakeCase($_key);
+
+            $newParams[$_newKey] = $_value;
+        }
+
+        return $newParams;
+    }
+
+    /**
+     * Converts a given camelCase string to snake_case.
+     *
+     * @since [*next-version*]
+     *
+     * @param string $input The input camel case string.
+     *
+     * @return string The output snake case string.
+     */
+    protected function _camelCaseToSnakeCase($input)
+    {
+        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $input));
     }
 
     /**
