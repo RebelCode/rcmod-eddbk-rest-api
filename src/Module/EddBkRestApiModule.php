@@ -29,6 +29,7 @@ use RebelCode\EddBookings\RestApi\Handlers\Bookings\UpdateBookingHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\ClientInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\CreateClientHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\QueryClientsHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Services\DeleteServiceHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Services\QueryServicesHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Services\ServiceInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Sessions\QuerySessionsHandler;
