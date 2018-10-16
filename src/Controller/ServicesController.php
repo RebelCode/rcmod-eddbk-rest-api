@@ -170,6 +170,8 @@ class ServicesController extends AbstractBaseController
         }
 
         $this->servicesManager->set($id, $params);
+
+        return $this->_get(['id' => $id]);
     }
 
     /**
@@ -188,6 +190,8 @@ class ServicesController extends AbstractBaseController
         }
 
         $this->servicesManager->update($id, $params);
+
+        return $this->_get(['id' => $id]);
     }
 
     /**
@@ -206,6 +210,8 @@ class ServicesController extends AbstractBaseController
         }
 
         $this->servicesManager->delete($id);
+
+        return [];
     }
 
     /**
