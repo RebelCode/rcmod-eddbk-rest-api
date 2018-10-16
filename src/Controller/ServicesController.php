@@ -85,27 +85,27 @@ class ServicesController extends AbstractBaseController
     const DEFAULT_PAGE_NUMBER = 1;
 
     /**
-     * The services entity manager.
+     * The services manager.
      *
      * @since [*next-version*]
      *
      * @var EntityManagerInterface
      */
-    protected $entityManager;
+    protected $servicesManager;
 
     /**
      * Constructor.
      *
      * @since [*next-version*]
      *
-     * @param EntityManagerInterface $entityManager   The services entity manager.
+     * @param EntityManagerInterface $servicesManager The services manager.
      * @param FactoryInterface       $iteratorFactory The iterator factory to use for the results.
      */
     public function __construct(
-        EntityManagerInterface $entityManager,
+        EntityManagerInterface $servicesManager,
         FactoryInterface $iteratorFactory
     ) {
-        $this->entityManager = $entityManager;
+        $this->servicesManager = $servicesManager;
         $this->_setIteratorFactory($iteratorFactory);
     }
 
@@ -133,7 +133,7 @@ class ServicesController extends AbstractBaseController
         // Calculate query offset
         $offset = ($pageNum - 1) * $numPerPage;
 
-        return $this->entityManager->query($params, $numPerPage, $offset);
+        return $this->servicesManager->query($params, $numPerPage, $offset);
     }
 
     /**
@@ -151,7 +151,7 @@ class ServicesController extends AbstractBaseController
             );
         }
 
-        $this->entityManager->set($id, $params);
+        $this->servicesManager->set($id, $params);
     }
 
     /**
@@ -169,7 +169,7 @@ class ServicesController extends AbstractBaseController
             );
         }
 
-        $this->entityManager->set($id, $params);
+        $this->servicesManager->set($id, $params);
     }
 
     /**
@@ -187,7 +187,7 @@ class ServicesController extends AbstractBaseController
             );
         }
 
-        $this->entityManager->update($id, $params);
+        $this->servicesManager->update($id, $params);
     }
 
     /**
@@ -205,7 +205,7 @@ class ServicesController extends AbstractBaseController
             );
         }
 
-        $this->entityManager->delete($id);
+        $this->servicesManager->delete($id);
     }
 
     /**
