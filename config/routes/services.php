@@ -42,6 +42,18 @@ return [
     ],
 
     /*
+     * The route for updating a service.
+     *
+     * @since [*next-version*]
+     */
+    'update_service'   => [
+        'pattern' => '/services/(?P<id>[\d]+)',
+        'methods' => ['PATCH'],
+        'handler' => 'eddbk_rest_api_update_service_handler',
+        'authval' => 'eddbk_rest_api_user_is_admin_auth_validator',
+    ],
+
+    /*
      * The route for deleting a service by ID.
      */
     'delete_service' => [

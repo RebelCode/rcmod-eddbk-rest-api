@@ -26,6 +26,7 @@ use RebelCode\EddBookings\RestApi\Handlers\Bookings\CreateBookingHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Bookings\DeleteBookingHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Bookings\QueryBookingsHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Bookings\UpdateBookingHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Bookings\UpdateServiceHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\ClientInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\CreateClientHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\QueryClientsHandler;
@@ -357,6 +358,15 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_create_service_handler' => function (ContainerInterface $c) {
                     return new CreateServiceHandler($c->get('eddbk_services_controller'), $c->get('eddbk_rest_api'));
+                },
+
+                /*
+                 * Handles the services route for updating services.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_update_service_handler' => function (ContainerInterface $c) {
+                    return new UpdateServiceHandler($c->get('eddbk_services_controller'));
                 },
 
                 /*
