@@ -1,6 +1,6 @@
 <?php
 
-namespace RebelCode\EddBookings\RestApi\Handlers\Bookings;
+namespace RebelCode\EddBookings\RestApi\Handlers\Services;
 
 use RebelCode\EddBookings\RestApi\Controller\ControllerAwareTrait;
 use RebelCode\EddBookings\RestApi\Controller\ControllerInterface;
