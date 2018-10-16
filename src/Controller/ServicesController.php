@@ -116,6 +116,8 @@ class ServicesController extends AbstractBaseController
      */
     public function _get($params = [])
     {
+        unset($params['rest_route']);
+
         // Get number of items per page
         $numPerPage = $this->_containerGetDefault($params, 'numItems', static::DEFAULT_NUM_ITEMS_PER_PAGE);
         $numPerPage = $this->_normalizeInt($numPerPage);
@@ -146,6 +148,8 @@ class ServicesController extends AbstractBaseController
      */
     protected function _post($params = [])
     {
+        unset($params['rest_route']);
+
         $id = $this->servicesManager->add($this->_snakeCaseParams($params));
 
         return $this->_get(['id' => $id]);
@@ -158,6 +162,8 @@ class ServicesController extends AbstractBaseController
      */
     protected function _put($params = [])
     {
+        unset($params['rest_route']);
+
         $params = $this->_snakeCaseParams($params);
 
         try {
@@ -180,6 +186,8 @@ class ServicesController extends AbstractBaseController
      */
     protected function _patch($params = [])
     {
+        unset($params['rest_route']);
+
         $params = $this->_snakeCaseParams($params);
 
         try {
@@ -202,6 +210,8 @@ class ServicesController extends AbstractBaseController
      */
     protected function _delete($params = [])
     {
+        unset($params['rest_route']);
+
         $params = $this->_snakeCaseParams($params);
 
         try {
