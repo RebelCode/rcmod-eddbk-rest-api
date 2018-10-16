@@ -348,6 +348,15 @@ class EddBkRestApiModule extends AbstractBaseModule
                     return new ServiceInfoHandler($c->get('eddbk_services_controller'));
                 },
 
+                /*
+                 * Handles the services route for deleting services.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_delete_service_handler' => function (ContainerInterface $c) {
+                    return new DeleteServiceHandler($c->get('eddbk_services_controller'));
+                },
+
                 /*-------------------------------------------------------------*\
                  * Transformers - for data, not robots in disguise             *
                 \*-------------------------------------------------------------*/
