@@ -23,7 +23,7 @@ return [
      *
      * @since [*next-version*]
      */
-    'get_service' => [
+    'get_service_info' => [
         'pattern' => '/services/(?P<id>[\d]+)',
         'methods' => ['GET'],
         'handler' => 'eddbk_rest_api_get_service_info_handler'
