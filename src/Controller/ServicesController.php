@@ -133,7 +133,13 @@ class ServicesController extends AbstractBaseController
         // Calculate query offset
         $offset = ($pageNum - 1) * $numPerPage;
 
+        // Use the service data in params as query filters
         $query = $this->_paramsToServiceData($params);
+
+        // Check for the `s` search term
+        if ($this->_containerHas($params, 's')) {
+            $query['s'] = $this->_containerGet($params, 's');
+        }
 
         return $this->servicesManager->query($query, $numPerPage, $offset);
     }
