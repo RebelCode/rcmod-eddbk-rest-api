@@ -116,8 +116,6 @@ class ServicesController extends AbstractBaseController
      */
     public function _get($params = [])
     {
-        unset($params['rest_route']);
-
         // Get number of items per page
         $numPerPage = $this->_containerGetDefault($params, 'numItems', static::DEFAULT_NUM_ITEMS_PER_PAGE);
         $numPerPage = $this->_normalizeInt($numPerPage);
@@ -135,8 +133,7 @@ class ServicesController extends AbstractBaseController
         // Calculate query offset
         $offset = ($pageNum - 1) * $numPerPage;
 
-        $query = $params;
-        $query = $this->_snakeCaseParams($query);
+        $query = $this->_paramsToServiceData($params);
 
         return $this->servicesManager->query($query, $numPerPage, $offset);
     }
@@ -148,9 +145,8 @@ class ServicesController extends AbstractBaseController
      */
     protected function _post($params = [])
     {
-        unset($params['rest_route']);
-
-        $id = $this->servicesManager->add($this->_snakeCaseParams($params));
+        $data = $this->_paramsToServiceData($params);
+        $id   = $this->servicesManager->add($data);
 
         return $this->_get(['id' => $id]);
     }
@@ -162,19 +158,17 @@ class ServicesController extends AbstractBaseController
      */
     protected function _put($params = [])
     {
-        unset($params['rest_route']);
-
-        $params = $this->_snakeCaseParams($params);
+        $data = $this->_paramsToServiceData($params);
 
         try {
-            $id = $this->_containerGet($params, 'id');
+            $id = $this->_containerGet($data, 'id');
         } catch (NotFoundExceptionInterface $exception) {
             throw $this->_createControllerException(
                 $this->__('A service ID must be specified'), 400, $exception, $this
             );
         }
 
-        $this->servicesManager->set($id, $params);
+        $this->servicesManager->set($id, $data);
 
         return $this->_get(['id' => $id]);
     }
@@ -186,19 +180,17 @@ class ServicesController extends AbstractBaseController
      */
     protected function _patch($params = [])
     {
-        unset($params['rest_route']);
-
-        $params = $this->_snakeCaseParams($params);
+        $data = $this->_paramsToServiceData($params);
 
         try {
-            $id = $this->_containerGet($params, 'id');
+            $id = $this->_containerGet($data, 'id');
         } catch (NotFoundExceptionInterface $exception) {
             throw $this->_createControllerException(
                 $this->__('A service ID must be specified'), 400, $exception, $this
             );
         }
 
-        $this->servicesManager->update($id, $params);
+        $this->servicesManager->update($id, $data);
 
         return $this->_get(['id' => $id]);
     }
@@ -210,12 +202,10 @@ class ServicesController extends AbstractBaseController
      */
     protected function _delete($params = [])
     {
-        unset($params['rest_route']);
-
-        $params = $this->_snakeCaseParams($params);
+        $data = $this->_paramsToServiceData($params);
 
         try {
-            $id = $this->_containerGet($params, 'id');
+            $id = $this->_containerGet($data, 'id');
         } catch (NotFoundExceptionInterface $exception) {
             throw $this->_createControllerException(
                 $this->__('A service ID must be specified'), 400, $exception, $this
@@ -228,39 +218,104 @@ class ServicesController extends AbstractBaseController
     }
 
     /**
-     * Processes the params to change camelCase param keys to snake_case.
+     * Extracts and creates service data from request params.
      *
      * @since [*next-version*]
      *
-     * @param array $params The params to process.
+     * @param array|stdClass|ArrayAccess|ContainerInterface $params The request parameters.
      *
-     * @return array The processed params.
+     * @return array The resulting service data.
      */
-    protected function _snakeCaseParams($params = [])
+    protected function _paramsToServiceData($params = [])
     {
-        $newParams = [];
+        $mapping = $this->_getServiceDataParamMapping();
+        $data    = [];
 
-        foreach ($params as $_key => $_value) {
-            $_newKey  = $this->_camelCaseToSnakeCase($_key);
+        foreach ($mapping as $_key => $_map) {
+            if (!$this->_containerHas($params, $_key)) {
+                continue;
+            }
 
-            $newParams[$_newKey] = $_value;
+            // Get the param value
+            $_value = $this->_containerGet($params, $_key);
+            // Get the optional transformation callback
+            $_transform = isset($_map['transform']) ? $_map['transform'] : null;
+            // Transform the value
+            if ($_transform !== null) {
+                $_value = call_user_func_array($_transform, [$_value]);
+            }
+            // Get the field name
+            $_field = $_map['field'];
+            // Save in data
+            $data[$_field] = $_value;
         }
 
-        return $newParams;
+        return $data;
     }
 
     /**
-     * Converts a given camelCase string to snake_case.
+     * Retrieves the data param mapping.
      *
      * @since [*next-version*]
      *
-     * @param string $input The input camel case string.
-     *
-     * @return string The output snake case string.
+     * @return array A mapping of param keys to sub-arrays that contain a `field` (the key used by the service manager)
+     *               and an optional `transform` callback for transforming a value for this field.
      */
-    protected function _camelCaseToSnakeCase($input)
+    protected function _getServiceDataParamMapping()
     {
-        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $input));
+        return [
+            'id'              => [
+                'field'     => 'id',
+                'transform' => function ($id) {
+                    return $this->_normalizeInt($id);
+                },
+            ],
+            'name'            => [
+                'field'     => 'name',
+                'transform' => function ($name) {
+                    return $this->_normalizeString($name);
+                },
+            ],
+            'description'     => [
+                'field'     => 'description',
+                'transform' => function ($desc) {
+                    return $this->_normalizeString($desc);
+                },
+            ],
+            'status'          => [
+                'field'     => 'status',
+                'transform' => function ($status) {
+                    return $this->_normalizeString($status);
+                },
+            ],
+            'bookingsEnabled' => [
+                'field'     => 'bookings_enabled',
+                'transform' => function ($bkEn) {
+                    return $this->_normalizeInt($bkEn);
+                },
+            ],
+            'sessionLengths'  => [
+                'field' => 'session_lengths',
+            ],
+            'displayOptions'  => [
+                'field' => 'display_options',
+            ],
+            'timezone'        => [
+                'field'     => 'timezone',
+                'transform' => function ($timezone) {
+                    return $this->_normalizeString($timezone);
+                },
+            ],
+            'availability'    => [
+                'field' => 'availability',
+            ],
+            'imageId'         => [
+                'field'     => 'image_id',
+                'transform' => function ($imageId) {
+                    return $this->_normalizeInt($imageId);
+                },
+            ],
+        ];
     }
 
     /**
