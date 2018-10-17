@@ -48,7 +48,7 @@ return [
      */
     'update_service'   => [
         'pattern' => '/services/(?P<id>[\d]+)',
-        'methods' => ['PATCH'],
+        'methods' => ['PUT', 'PATCH'],
         'handler' => 'eddbk_rest_api_update_service_handler',
         'authval' => 'eddbk_rest_api_user_is_admin_auth_validator',
     ],
