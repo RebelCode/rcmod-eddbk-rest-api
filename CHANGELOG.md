@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [[*next-version*]] - YYYY-MM-DD
 ### Added
+- Hidden services (draft, protected, etc.) are now hidden from unauthorized clients.
 - Routes for service creation, updating and deletion.
 - Service responses now include the service `status`.
 
