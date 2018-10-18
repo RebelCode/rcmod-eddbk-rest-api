@@ -125,7 +125,8 @@ class EddBkRestApiModule extends AbstractBaseModule
                 'eddbk_services_controller' => function (ContainerInterface $c) {
                     return new ServicesController(
                         $c->get('eddbk_services_manager'),
-                        $c->get('eddbk_rest_api_services_iterator_factory')
+                        $c->get('eddbk_rest_api_services_iterator_factory'),
+                        $c->get('eddbk_rest_api_user_is_admin_auth_validator')
                     );
                 },
 

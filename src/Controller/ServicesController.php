@@ -17,6 +17,8 @@ use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Util\Normalization\NormalizeIntCapableTrait;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
 use Dhii\Util\String\StringableInterface as Stringable;
+use Dhii\Validation\Exception\ValidationFailedExceptionInterface;
+use Dhii\Validation\ValidatorInterface;
 use InvalidArgumentException;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -94,18 +96,31 @@ class ServicesController extends AbstractBaseController
     protected $servicesManager;
 
     /**
+     * The validator for validating if a requester has access to hidden services.
+     *
+     * @since [*next-version*]
+     *
+     * @var ValidatorInterface
+     */
+    protected $serviceAuthValidator;
+
+    /**
      * Constructor.
      *
      * @since [*next-version*]
      *
-     * @param EntityManagerInterface $servicesManager The services manager.
-     * @param FactoryInterface       $iteratorFactory The iterator factory to use for the results.
+     * @param EntityManagerInterface $servicesManager      The services manager.
+     * @param FactoryInterface       $iteratorFactory      The iterator factory to use for the results.
+     * @param ValidatorInterface     $serviceAuthValidator The validator for validating if a requester has access to
+     *                                                     hidden services.
      */
     public function __construct(
         EntityManagerInterface $servicesManager,
-        FactoryInterface $iteratorFactory
+        FactoryInterface $iteratorFactory,
+        ValidatorInterface $serviceAuthValidator
     ) {
-        $this->servicesManager = $servicesManager;
+        $this->servicesManager      = $servicesManager;
+        $this->serviceAuthValidator = $serviceAuthValidator;
         $this->_setIteratorFactory($iteratorFactory);
     }
 
@@ -139,6 +154,12 @@ class ServicesController extends AbstractBaseController
         // Check for the `s` search term
         if ($this->_containerHas($params, 's')) {
             $query['s'] = $this->_containerGet($params, 's');
+        }
+
+        try {
+            $this->serviceAuthValidator->validate($params);
+        } catch (ValidationFailedExceptionInterface $exception) {
+            $query['status'] = 'publish';
         }
 
         return $this->servicesManager->query($query, $numPerPage, $offset);
