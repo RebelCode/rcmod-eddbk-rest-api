@@ -37,7 +37,7 @@ class QueryServicesHandler extends AbstractWpRestApiHandler
      */
     protected function _handle(WP_REST_Request $request)
     {
-        $services = $this->_getController()->get($request->get_params());
+        $services = $this->_getController()->get($request);
         $services = $this->_normalizeArray($services);
 
         $response = [

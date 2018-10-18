@@ -37,7 +37,7 @@ class UpdateServiceHandler extends AbstractWpRestApiHandler
      */
     protected function _handle(WP_REST_Request $request)
     {
-        $response = $this->_getController()->patch($request->get_params());
+        $response = $this->_getController()->patch($request);
         $response = $this->_normalizeArray($response);
 
         return new WP_REST_Response($response, 200);

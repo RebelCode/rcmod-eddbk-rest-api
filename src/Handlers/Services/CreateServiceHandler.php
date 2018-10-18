@@ -109,7 +109,7 @@ class CreateServiceHandler extends AbstractWpRestApiHandler
      */
     protected function _handle(WP_REST_Request $request)
     {
-        $response = $this->_getController()->post($request->get_params());
+        $response = $this->_getController()->post($request);
         $services = $this->_normalizeArray($response);
 
         if (empty($services)) {

@@ -37,7 +37,7 @@ class DeleteServiceHandler extends AbstractWpRestApiHandler
      */
     protected function _handle(WP_REST_Request $request)
     {
-        $response = $this->_getController()->delete($request->get_params());
+        $response = $this->_getController()->delete($request);
         $response = $this->_normalizeArray($response);
 
         return new WP_REST_Response($response, 200);
