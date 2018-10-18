@@ -29,8 +29,11 @@ use RebelCode\EddBookings\RestApi\Handlers\Bookings\UpdateBookingHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\ClientInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\CreateClientHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\QueryClientsHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Services\CreateServiceHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Services\DeleteServiceHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Services\QueryServicesHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Services\ServiceInfoHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Services\UpdateServiceHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Sessions\QuerySessionsHandler;
 use RebelCode\Modular\Module\AbstractBaseModule;
 use RebelCode\Transformers\CallbackTransformer;
@@ -121,9 +124,9 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_services_controller' => function (ContainerInterface $c) {
                     return new ServicesController(
-                        $c->get('eddbk_services_select_rm'),
-                        $c->get('sql_expression_builder'),
-                        $c->get('eddbk_rest_api_services_iterator_factory')
+                        $c->get('eddbk_services_manager'),
+                        $c->get('eddbk_rest_api_services_iterator_factory'),
+                        $c->get('eddbk_rest_api_user_is_admin_auth_validator')
                     );
                 },
 
@@ -347,6 +350,33 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_get_service_info_handler' => function (ContainerInterface $c) {
                     return new ServiceInfoHandler($c->get('eddbk_services_controller'));
+                },
+
+                /*
+                 * Handles the services route for creating new services.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_create_service_handler' => function (ContainerInterface $c) {
+                    return new CreateServiceHandler($c->get('eddbk_services_controller'), $c->get('eddbk_rest_api'));
+                },
+
+                /*
+                 * Handles the services route for updating services.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_update_service_handler' => function (ContainerInterface $c) {
+                    return new UpdateServiceHandler($c->get('eddbk_services_controller'));
+                },
+
+                /*
+                 * Handles the services route for deleting services.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_delete_service_handler' => function (ContainerInterface $c) {
+                    return new DeleteServiceHandler($c->get('eddbk_services_controller'));
                 },
 
                 /*-------------------------------------------------------------*\

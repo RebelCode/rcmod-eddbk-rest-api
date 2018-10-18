@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [[*next-version*]] - YYYY-MM-DD
+### Added
+- Hidden services (draft, protected, etc.) are now hidden from unauthorized clients.
+- Routes for service creation, updating and deletion.
+- Service responses now include the service `status`.
+
+### Changed
+- The `availabilities` data key in service responses is now `availability`.
 
 ## [0.1-alpha9] - 2018-09-12
 ### Fixed
