@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Hidden services (draft, protected, etc.) are now hidden from unauthorized clients.
 - Routes for service creation, updating and deletion.
 - Service responses now include the service `status`.
+- Sessions are generated on POST, PUT and PATCH via WordPress Cron.
 
 ### Changed
 - The `availabilities` data key in service responses is now `availability`.
