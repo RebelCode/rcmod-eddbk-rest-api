@@ -26,7 +26,8 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use RebelCode\Entity\EntityManagerInterface;
-use RebelCode\Modular\Events\EventsFunctionalityTrait;
+use RebelCode\Modular\Events\CreateEventCapableTrait;
+use RebelCode\Modular\Events\EventFactoryAwareTrait;
 use stdClass;
 
 /**
@@ -43,7 +44,10 @@ class ServicesController extends AbstractBaseController
     }
 
     /* @since [*next-version*] */
-    use EventsFunctionalityTrait;
+    use CreateEventCapableTrait;
+
+    /* @since [*next-version*] */
+    use EventFactoryAwareTrait;
 
     /* @since [*next-version*] */
     use ContainerGetCapableTrait;
