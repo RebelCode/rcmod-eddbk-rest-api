@@ -157,7 +157,7 @@ class ServicesController extends AbstractBaseController
         }
 
         try {
-            $this->serviceAuthValidator->validate($params);
+            $this->hiddenServicesAuthVal->validate($params);
         } catch (ValidationFailedExceptionInterface $exception) {
             $query['status'] = 'publish';
         }
@@ -173,7 +173,7 @@ class ServicesController extends AbstractBaseController
     protected function _post($params = [])
     {
         $data = $this->_paramsToServiceData($params);
-        $id   = $this->servicesManager->add($data);
+        $id = $this->servicesManager->add($data);
 
         return $this->_get(['id' => $id]);
     }
@@ -256,7 +256,7 @@ class ServicesController extends AbstractBaseController
     protected function _paramsToServiceData($params = [])
     {
         $mapping = $this->_getServiceDataParamMapping();
-        $data    = [];
+        $data = [];
 
         foreach ($mapping as $_key => $_map) {
             if (!$this->_containerHas($params, $_key)) {
@@ -291,53 +291,53 @@ class ServicesController extends AbstractBaseController
     protected function _getServiceDataParamMapping()
     {
         return [
-            'id'              => [
-                'field'     => 'id',
+            'id' => [
+                'field' => 'id',
                 'transform' => function ($id) {
                     return $this->_normalizeInt($id);
                 },
             ],
-            'name'            => [
-                'field'     => 'name',
+            'name' => [
+                'field' => 'name',
                 'transform' => function ($name) {
                     return $this->_normalizeString($name);
                 },
             ],
-            'description'     => [
-                'field'     => 'description',
+            'description' => [
+                'field' => 'description',
                 'transform' => function ($desc) {
                     return $this->_normalizeString($desc);
                 },
             ],
-            'status'          => [
-                'field'     => 'status',
+            'status' => [
+                'field' => 'status',
                 'transform' => function ($status) {
                     return $this->_normalizeString($status);
                 },
             ],
             'bookingsEnabled' => [
-                'field'     => 'bookings_enabled',
+                'field' => 'bookings_enabled',
                 'transform' => function ($bkEn) {
                     return $this->_normalizeInt($bkEn);
                 },
             ],
-            'sessionLengths'  => [
+            'sessionLengths' => [
                 'field' => 'session_lengths',
             ],
-            'displayOptions'  => [
+            'displayOptions' => [
                 'field' => 'display_options',
             ],
-            'timezone'        => [
-                'field'     => 'timezone',
+            'timezone' => [
+                'field' => 'timezone',
                 'transform' => function ($timezone) {
                     return $this->_normalizeString($timezone);
                 },
             ],
-            'availability'    => [
+            'availability' => [
                 'field' => 'availability',
             ],
-            'imageId'         => [
-                'field'     => 'image_id',
+            'imageId' => [
+                'field' => 'image_id',
                 'transform' => function ($imageId) {
                     return $this->_normalizeInt($imageId);
                 },
