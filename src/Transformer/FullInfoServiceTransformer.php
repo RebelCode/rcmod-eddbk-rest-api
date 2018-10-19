@@ -22,18 +22,30 @@ class FullInfoServiceTransformer extends CoreInfoServiceTransformer
     protected $availabilityT9r;
 
     /**
+     * The transformer for transforming values into booleans.
+     *
+     * @since [*next-version*]
+     *
+     * @var TransformerInterface
+     */
+    protected $boolT9r;
+
+    /**
      * Constructor.
      *
      * @since [*next-version*]
      *
      * @param TransformerInterface $sessionLengthListT9r The transformer for session length lists.
      * @param TransformerInterface $availabilityT9r      The transformer for availabilities.
+     * @param TransformerInterface $boolT9r              The transformer for transforming values into booleans.
      */
     public function __construct(
         TransformerInterface $sessionLengthListT9r,
-        TransformerInterface $availabilityT9r
+        TransformerInterface $availabilityT9r,
+        TransformerInterface $boolT9r
     ) {
         $this->availabilityT9r = $availabilityT9r;
+        $this->boolT9r         = $boolT9r;
 
         parent::__construct($sessionLengthListT9r);
     }
@@ -57,12 +69,13 @@ class FullInfoServiceTransformer extends CoreInfoServiceTransformer
             MapTransformer::K_TARGET => 'imageId',
         ];
         $config[] = [
-            MapTransformer::K_SOURCE => 'bookings_enabled',
-            MapTransformer::K_TARGET => 'bookingsEnabled',
+            MapTransformer::K_SOURCE      => 'bookings_enabled',
+            MapTransformer::K_TARGET      => 'bookingsEnabled',
+            MapTransformer::K_TRANSFORMER => $this->boolT9r,
         ];
         $config[] = [
-            MapTransformer::K_SOURCE => 'availability',
-            MapTransformer::K_TARGET => 'availability',
+            MapTransformer::K_SOURCE      => 'availability',
+            MapTransformer::K_TARGET      => 'availability',
             MapTransformer::K_TRANSFORMER => $this->availabilityT9r,
         ];
 
