@@ -207,8 +207,8 @@ class EddBkRestApiModule extends AbstractBaseModule
                         $iterator = $this->_normalizeIterator($items);
                         // Transformer to apply to each
                         $transformer = ($coreOnly)
-                            ? $c->get('eddbk_rest_api_core_service_transformer')
-                            : $c->get('eddbk_rest_api_full_service_transformer');
+                            ? $c->get('eddbk_rest_api_core_info_service_transformer')
+                            : $c->get('eddbk_rest_api_full_info_service_transformer');
 
                         return new TransformerIterator($iterator, $transformer);
                     });
@@ -456,7 +456,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_core_service_transformer' => function (ContainerInterface $c) {
+                'eddbk_rest_api_core_info_service_transformer' => function (ContainerInterface $c) {
                     return new CoreInfoServiceTransformer(
                         $c->get('eddbk_rest_api_service_session_length_list_transformer')
                     );
