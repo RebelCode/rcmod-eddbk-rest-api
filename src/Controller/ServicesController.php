@@ -102,26 +102,59 @@ class ServicesController extends AbstractBaseController
      *
      * @var ValidatorInterface
      */
-    protected $serviceAuthValidator;
+    protected $hiddenServicesAuthVal;
+
+    /**
+     * The validator for validating if a requester has access to sensitive information.
+     *
+     * @since [*next-version*]
+     *
+     * @var ValidatorInterface
+     */
+    protected $sensitiveInfoAuthVal;
 
     /**
      * Constructor.
      *
      * @since [*next-version*]
      *
-     * @param EntityManagerInterface $servicesManager      The services manager.
-     * @param FactoryInterface       $iteratorFactory      The iterator factory to use for the results.
-     * @param ValidatorInterface     $serviceAuthValidator The validator for validating if a requester has access to
-     *                                                     hidden services.
+     * @param EntityManagerInterface $servicesManager       The services manager.
+     * @param FactoryInterface       $iteratorFactory       The iterator factory to use for the results.
+     * @param ValidatorInterface     $hiddenServicesAuthVal The validator for validating if a requester has access to
+     *                                                      hidden services.
+     * @param ValidatorInterface     $sensitiveInfoAuthVal  The validator for validating if a requester has access to
+     *                                                      sensitive information.
      */
     public function __construct(
         EntityManagerInterface $servicesManager,
         FactoryInterface $iteratorFactory,
-        ValidatorInterface $serviceAuthValidator
+        ValidatorInterface $hiddenServicesAuthVal,
+        ValidatorInterface $sensitiveInfoAuthVal
     ) {
-        $this->servicesManager      = $servicesManager;
-        $this->serviceAuthValidator = $serviceAuthValidator;
+        $this->servicesManager = $servicesManager;
+        $this->hiddenServicesAuthVal = $hiddenServicesAuthVal;
+        $this->sensitiveInfoAuthVal = $sensitiveInfoAuthVal;
         $this->_setIteratorFactory($iteratorFactory);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _createResultsIterator($results)
+    {
+        try {
+            $this->sensitiveInfoAuthVal->validate($this->params);
+            $auth = true;
+        } catch (ValidationFailedExceptionInterface $exception) {
+            $auth = false;
+        }
+
+        return $this->_getResultsIteratorFactory($results)->make([
+            'items' => $results,
+            'core_only' => !$auth,
+        ]);
     }
 
     /**
