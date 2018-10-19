@@ -64,12 +64,12 @@ class ServiceAvailabilityRuleTransformer extends MapTransformer
         TransformerInterface $commaListT9r,
         TransformerInterface $excludeDatesT9r
     ) {
-        parent::__construct($this->_getAvailabilityRuleMapConfig());
-
         $this->tsDatetimeT9r = $tsDatetimeT9r;
         $this->boolT9r = $boolT9r;
         $this->commaListArrayT9r = $commaListT9r;
         $this->excludeDatesT9r = $excludeDatesT9r;
+
+        parent::__construct($this->_getAvailabilityRuleMapConfig());
     }
 
     /**

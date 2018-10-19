@@ -30,9 +30,9 @@ class CoreInfoServiceTransformer extends MapTransformer
      */
     public function __construct(TransformerInterface $sessionLengthListT9r)
     {
-        parent::__construct($this->_getServiceMapConfig());
-
         $this->sessionLengthListT9r = $sessionLengthListT9r;
+
+        parent::__construct($this->_getServiceMapConfig());
     }
 
     /**

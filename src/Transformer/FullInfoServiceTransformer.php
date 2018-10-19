@@ -33,8 +33,9 @@ class FullInfoServiceTransformer extends CoreInfoServiceTransformer
         TransformerInterface $sessionLengthListT9r,
         TransformerInterface $availabilityT9r
     ) {
-        parent::__construct($sessionLengthListT9r);
         $this->availabilityT9r = $availabilityT9r;
+
+        parent::__construct($sessionLengthListT9r);
     }
 
     /**
