@@ -187,6 +187,8 @@ class ServicesController extends AbstractBaseController
         $data = $this->_paramsToServiceData($params);
         $id   = $this->servicesManager->add($data);
 
+        $this->_scheduleSessionGeneration($id);
+
         return $this->_get(['id' => $id]);
     }
 
@@ -209,6 +211,8 @@ class ServicesController extends AbstractBaseController
 
         $this->servicesManager->set($id, $data);
 
+        $this->_scheduleSessionGeneration($id);
+
         return $this->_get(['id' => $id]);
     }
 
@@ -230,6 +234,8 @@ class ServicesController extends AbstractBaseController
         }
 
         $this->servicesManager->update($id, $data);
+
+        $this->_scheduleSessionGeneration($id);
 
         return $this->_get(['id' => $id]);
     }
