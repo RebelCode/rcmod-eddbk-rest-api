@@ -470,7 +470,8 @@ class EddBkRestApiModule extends AbstractBaseModule
                 'eddbk_rest_api_full_info_service_transformer' => function (ContainerInterface $c) {
                     return new FullInfoServiceTransformer(
                         $c->get('eddbk_rest_api_service_session_length_list_transformer'),
-                        $c->get('eddbk_rest_api_service_availability_transformer')
+                        $c->get('eddbk_rest_api_service_availability_transformer'),
+                        $c->get('eddbk_boolean_transformer')
                     );
                 },
 
