@@ -351,7 +351,7 @@ class ServicesController extends AbstractBaseController
             'bookingsEnabled' => [
                 'field' => 'bookings_enabled',
                 'transform' => function ($bkEn) {
-                    return $this->_normalizeInt($bkEn);
+                    return (int) (bool) $bkEn;
                 },
             ],
             'sessionLengths' => [
