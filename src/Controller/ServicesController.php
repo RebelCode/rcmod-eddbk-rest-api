@@ -360,6 +360,9 @@ class ServicesController extends AbstractBaseController
             'displayOptions' => [
                 'field' => 'display_options',
             ],
+            'color' => [
+                'field' => 'color',
+            ],
             'timezone' => [
                 'field' => 'timezone',
                 'transform' => function ($timezone) {
