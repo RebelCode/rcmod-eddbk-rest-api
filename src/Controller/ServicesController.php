@@ -292,12 +292,12 @@ class ServicesController extends AbstractBaseController
         $data = [];
 
         foreach ($mapping as $_key => $_map) {
-            if (!$this->_containerHas($params, $_key)) {
+            try {
+                $_value = $this->_containerGet($params, $_key);
+            } catch (NotFoundExceptionInterface $exception) {
                 continue;
             }
 
-            // Get the param value
-            $_value = $this->_containerGet($params, $_key);
             // Get the optional transformation callback
             $_transform = isset($_map['transform']) ? $_map['transform'] : null;
             // Transform the value
