@@ -475,12 +475,22 @@ class EddBkRestApiModule extends AbstractBaseModule
                     );
                 },
 
+                /*
+                 * The transformer that transformers service availabilities into the correct response format.
+                 *
+                 * @since [*next-version*]
+                 */
                 'eddbk_rest_api_service_availability_transformer' => function (ContainerInterface $c) {
                     return new ServiceAvailabilityTransformer(
                         $c->get('eddbk_rest_api_service_availability_rule_transformer')
                     );
                 },
 
+                /*
+                 * The transformer that transformers service availability rules into the correct response format.
+                 *
+                 * @since [*next-version*]
+                 */
                 'eddbk_rest_api_service_availability_rule_transformer' => function (ContainerInterface $c) {
                     return new ServiceAvailabilityRuleTransformer(
                         $c->get('eddbk_timestamp_datetime_transformer'),
