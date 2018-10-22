@@ -69,6 +69,10 @@ class FullInfoServiceTransformer extends CoreInfoServiceTransformer
             MapTransformer::K_TARGET => 'imageId',
         ];
         $config[] = [
+            MapTransformer::K_SOURCE      => 'color',
+            MapTransformer::K_TARGET      => 'color',
+        ];
+        $config[] = [
             MapTransformer::K_SOURCE      => 'bookings_enabled',
             MapTransformer::K_TARGET      => 'bookingsEnabled',
             MapTransformer::K_TRANSFORMER => $this->boolT9r,
