@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Certain sensitive service data is hidden when the received request is from an unauthenticated client.
 - Service responses now include the service `status`.
 - Service responses now include the service `color`.
+- Sessions are generated on POST, PUT and PATCH via WordPress Cron.
 
 ### Changed
 - The `availabilities` data key in service responses is now `availability`.

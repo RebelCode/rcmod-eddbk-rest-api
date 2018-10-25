@@ -8,6 +8,8 @@ use Dhii\Data\Container\ContainerHasCapableTrait;
 use Dhii\Data\Container\CreateContainerExceptionCapableTrait;
 use Dhii\Data\Container\CreateNotFoundExceptionCapableTrait;
 use Dhii\Data\Container\NormalizeKeyCapableTrait;
+use Dhii\Event\EventFactoryInterface;
+use Dhii\Exception\CreateInternalExceptionCapableTrait;
 use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
 use Dhii\Exception\CreateOutOfRangeExceptionCapableTrait;
 use Dhii\Exception\CreateRuntimeExceptionCapableTrait;
@@ -24,6 +26,8 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use RebelCode\Entity\EntityManagerInterface;
+use RebelCode\Modular\Events\CreateEventCapableTrait;
+use RebelCode\Modular\Events\EventFactoryAwareTrait;
 use stdClass;
 
 /**
@@ -38,6 +42,12 @@ class ServicesController extends AbstractBaseController
         _getFactory as _getIteratorFactory;
         _setFactory as _setIteratorFactory;
     }
+
+    /* @since [*next-version*] */
+    use CreateEventCapableTrait;
+
+    /* @since [*next-version*] */
+    use EventFactoryAwareTrait;
 
     /* @since [*next-version*] */
     use ContainerGetCapableTrait;
@@ -68,6 +78,9 @@ class ServicesController extends AbstractBaseController
 
     /* @since [*next-version*] */
     use CreateNotFoundExceptionCapableTrait;
+
+    /* @since [*next-version*] */
+    use CreateInternalExceptionCapableTrait;
 
     /* @since [*next-version*] */
     use StringTranslatingTrait;
@@ -124,17 +137,20 @@ class ServicesController extends AbstractBaseController
      *                                                      hidden services.
      * @param ValidatorInterface     $sensitiveInfoAuthVal  The validator for validating if a requester has access to
      *                                                      sensitive information.
+     * @param EventFactoryInterface  $eventFactory         The event factory for creating event instances.
      */
     public function __construct(
         EntityManagerInterface $servicesManager,
         FactoryInterface $iteratorFactory,
         ValidatorInterface $hiddenServicesAuthVal,
-        ValidatorInterface $sensitiveInfoAuthVal
+        ValidatorInterface $sensitiveInfoAuthVal,
+        EventFactoryInterface $eventFactory
     ) {
         $this->servicesManager = $servicesManager;
         $this->hiddenServicesAuthVal = $hiddenServicesAuthVal;
         $this->sensitiveInfoAuthVal = $sensitiveInfoAuthVal;
         $this->_setIteratorFactory($iteratorFactory);
+        $this->_setEventFactory($eventFactory);
     }
 
     /**
@@ -208,6 +224,8 @@ class ServicesController extends AbstractBaseController
         $data = $this->_paramsToServiceData($params);
         $id = $this->servicesManager->add($data);
 
+        $this->_scheduleSessionGeneration($id);
+
         return $this->_get(['id' => $id]);
     }
 
@@ -230,6 +248,8 @@ class ServicesController extends AbstractBaseController
 
         $this->servicesManager->set($id, $data);
 
+        $this->_scheduleSessionGeneration($id);
+
         return $this->_get(['id' => $id]);
     }
 
@@ -251,6 +271,8 @@ class ServicesController extends AbstractBaseController
         }
 
         $this->servicesManager->update($id, $data);
+
+        $this->_scheduleSessionGeneration($id);
 
         return $this->_get(['id' => $id]);
     }
@@ -379,6 +401,36 @@ class ServicesController extends AbstractBaseController
                 },
             ],
         ];
+    }
+
+    /**
+     * Schedules session generation for a service.
+     *
+     * @since [*next-version*]
+     *
+     * @param int|string|Stringable $serviceId The ID of the service for which to generate.
+     */
+    protected function _scheduleSessionGeneration($serviceId)
+    {
+        $event = $this->_createEvent('eddbk_generate_sessions', [
+            'service_id' => $serviceId,
+        ]);
+
+        $this->_wpScheduleJob(time(), $event->getName(), [$event]);
+    }
+
+    /**
+     * Schedules a WordPress cron job.
+     *
+     * @since [*next-version*]
+     *
+     * @param int    $time  The UTC timestamp for when to run the event.
+     * @param string $event The name of the hook to execute when the event is run.
+     * @param array  $args  Arguments to pass to the hook's callback function.
+     */
+    protected function _wpScheduleJob($time, $event, $args)
+    {
+        \wp_schedule_single_event($time, $event, $args);
     }
 
     /**
