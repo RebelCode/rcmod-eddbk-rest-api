@@ -6,9 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [[*next-version*]] - YYYY-MM-DD
 ### Added
-- Hidden services (draft, protected, etc.) are now hidden from unauthorized clients.
 - Routes for service creation, updating and deletion.
+- Hidden services (draft, protected, etc.) are now hidden from unauthorized clients.
+- Certain sensitive service data is hidden when the received request is from an unauthenticated client.
 - Service responses now include the service `status`.
+- Service responses now include the service `color`.
 - Sessions are generated on POST, PUT and PATCH via WordPress Cron.
 
 ### Changed

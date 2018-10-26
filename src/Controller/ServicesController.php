@@ -115,29 +115,62 @@ class ServicesController extends AbstractBaseController
      *
      * @var ValidatorInterface
      */
-    protected $serviceAuthValidator;
+    protected $hiddenServicesAuthVal;
+
+    /**
+     * The validator for validating if a requester has access to sensitive information.
+     *
+     * @since [*next-version*]
+     *
+     * @var ValidatorInterface
+     */
+    protected $sensitiveInfoAuthVal;
 
     /**
      * Constructor.
      *
      * @since [*next-version*]
      *
-     * @param EntityManagerInterface $servicesManager      The services manager.
-     * @param FactoryInterface       $iteratorFactory      The iterator factory to use for the results.
-     * @param ValidatorInterface     $serviceAuthValidator The validator for validating if a requester has access to
-     *                                                     hidden services.
+     * @param EntityManagerInterface $servicesManager       The services manager.
+     * @param FactoryInterface       $iteratorFactory       The iterator factory to use for the results.
+     * @param ValidatorInterface     $hiddenServicesAuthVal The validator for validating if a requester has access to
+     *                                                      hidden services.
+     * @param ValidatorInterface     $sensitiveInfoAuthVal  The validator for validating if a requester has access to
+     *                                                      sensitive information.
      * @param EventFactoryInterface  $eventFactory         The event factory for creating event instances.
      */
     public function __construct(
         EntityManagerInterface $servicesManager,
         FactoryInterface $iteratorFactory,
-        ValidatorInterface $serviceAuthValidator,
+        ValidatorInterface $hiddenServicesAuthVal,
+        ValidatorInterface $sensitiveInfoAuthVal,
         EventFactoryInterface $eventFactory
     ) {
-        $this->servicesManager      = $servicesManager;
-        $this->serviceAuthValidator = $serviceAuthValidator;
+        $this->servicesManager = $servicesManager;
+        $this->hiddenServicesAuthVal = $hiddenServicesAuthVal;
+        $this->sensitiveInfoAuthVal = $sensitiveInfoAuthVal;
         $this->_setIteratorFactory($iteratorFactory);
         $this->_setEventFactory($eventFactory);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @since [*next-version*]
+     */
+    protected function _createResultsIterator($results)
+    {
+        try {
+            $this->sensitiveInfoAuthVal->validate($this->params);
+            $auth = true;
+        } catch (ValidationFailedExceptionInterface $exception) {
+            $auth = false;
+        }
+
+        return $this->_getResultsIteratorFactory($results)->make([
+            'items' => $results,
+            'core_only' => !$auth,
+        ]);
     }
 
     /**
@@ -173,7 +206,7 @@ class ServicesController extends AbstractBaseController
         }
 
         try {
-            $this->serviceAuthValidator->validate($params);
+            $this->hiddenServicesAuthVal->validate($params);
         } catch (ValidationFailedExceptionInterface $exception) {
             $query['status'] = 'publish';
         }
@@ -189,7 +222,7 @@ class ServicesController extends AbstractBaseController
     protected function _post($params = [])
     {
         $data = $this->_paramsToServiceData($params);
-        $id   = $this->servicesManager->add($data);
+        $id = $this->servicesManager->add($data);
 
         $this->_scheduleSessionGeneration($id);
 
@@ -278,15 +311,15 @@ class ServicesController extends AbstractBaseController
     protected function _paramsToServiceData($params = [])
     {
         $mapping = $this->_getServiceDataParamMapping();
-        $data    = [];
+        $data = [];
 
         foreach ($mapping as $_key => $_map) {
-            if (!$this->_containerHas($params, $_key)) {
+            try {
+                $_value = $this->_containerGet($params, $_key);
+            } catch (NotFoundExceptionInterface $exception) {
                 continue;
             }
 
-            // Get the param value
-            $_value = $this->_containerGet($params, $_key);
             // Get the optional transformation callback
             $_transform = isset($_map['transform']) ? $_map['transform'] : null;
             // Transform the value
@@ -313,53 +346,56 @@ class ServicesController extends AbstractBaseController
     protected function _getServiceDataParamMapping()
     {
         return [
-            'id'              => [
-                'field'     => 'id',
+            'id' => [
+                'field' => 'id',
                 'transform' => function ($id) {
                     return $this->_normalizeInt($id);
                 },
             ],
-            'name'            => [
-                'field'     => 'name',
+            'name' => [
+                'field' => 'name',
                 'transform' => function ($name) {
                     return $this->_normalizeString($name);
                 },
             ],
-            'description'     => [
-                'field'     => 'description',
+            'description' => [
+                'field' => 'description',
                 'transform' => function ($desc) {
                     return $this->_normalizeString($desc);
                 },
             ],
-            'status'          => [
-                'field'     => 'status',
+            'status' => [
+                'field' => 'status',
                 'transform' => function ($status) {
                     return $this->_normalizeString($status);
                 },
             ],
             'bookingsEnabled' => [
-                'field'     => 'bookings_enabled',
+                'field' => 'bookings_enabled',
                 'transform' => function ($bkEn) {
-                    return $this->_normalizeInt($bkEn);
+                    return (int) (bool) $bkEn;
                 },
             ],
-            'sessionLengths'  => [
+            'sessionLengths' => [
                 'field' => 'session_lengths',
             ],
-            'displayOptions'  => [
+            'displayOptions' => [
                 'field' => 'display_options',
             ],
-            'timezone'        => [
-                'field'     => 'timezone',
+            'color' => [
+                'field' => 'color',
+            ],
+            'timezone' => [
+                'field' => 'timezone',
                 'transform' => function ($timezone) {
                     return $this->_normalizeString($timezone);
                 },
             ],
-            'availability'    => [
+            'availability' => [
                 'field' => 'availability',
             ],
-            'imageId'         => [
-                'field'     => 'image_id',
+            'imageId' => [
+                'field' => 'image_id',
                 'transform' => function ($imageId) {
                     return $this->_normalizeInt($imageId);
                 },

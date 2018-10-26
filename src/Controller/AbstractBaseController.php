@@ -27,12 +27,23 @@ abstract class AbstractBaseController implements ControllerInterface
     use CreateControllerExceptionCapableTrait;
 
     /**
+     * The last received request params.
+     *
+     * @since [*next-version*]
+     *
+     * @var array|stdClass|ArrayAccess|ContainerInterface
+     */
+    protected $params;
+
+    /**
      * {@inheritdoc}
      *
      * @since [*next-version*]
      */
     public function get($params = [])
     {
+        $this->params = $params;
+
         return $this->_createResultsIterator($this->_get($params));
     }
 
@@ -43,6 +54,8 @@ abstract class AbstractBaseController implements ControllerInterface
      */
     public function post($params = [])
     {
+        $this->params = $params;
+
         return $this->_createResultsIterator($this->_post($params));
     }
 
@@ -53,6 +66,8 @@ abstract class AbstractBaseController implements ControllerInterface
      */
     public function put($params = [])
     {
+        $this->params = $params;
+
         return $this->_createResultsIterator($this->_put($params));
     }
 
@@ -63,6 +78,8 @@ abstract class AbstractBaseController implements ControllerInterface
      */
     public function patch($params = [])
     {
+        $this->params = $params;
+
         return $this->_createResultsIterator($this->_patch($params));
     }
 
@@ -73,6 +90,8 @@ abstract class AbstractBaseController implements ControllerInterface
      */
     public function delete($params = [])
     {
+        $this->params = $params;
+
         return $this->_createResultsIterator($this->_delete($params));
     }
 

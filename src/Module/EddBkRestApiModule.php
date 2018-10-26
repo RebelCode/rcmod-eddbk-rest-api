@@ -35,6 +35,10 @@ use RebelCode\EddBookings\RestApi\Handlers\Services\QueryServicesHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Services\ServiceInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Services\UpdateServiceHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Sessions\QuerySessionsHandler;
+use RebelCode\EddBookings\RestApi\Transformer\CoreInfoServiceTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\FullInfoServiceTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\ServiceAvailabilityRuleTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\ServiceAvailabilityTransformer;
 use RebelCode\Modular\Module\AbstractBaseModule;
 use RebelCode\Transformers\CallbackTransformer;
 use RebelCode\Transformers\MapTransformer;
@@ -127,6 +131,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                         $c->get('eddbk_services_manager'),
                         $c->get('eddbk_rest_api_services_iterator_factory'),
                         $c->get('eddbk_rest_api_user_is_admin_auth_validator'),
+                        $c->get('eddbk_rest_api_user_is_admin_auth_validator'),
                         $c->get('event_factory')
                     );
                 },
@@ -196,11 +201,15 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_services_iterator_factory' => function (ContainerInterface $c) {
                     return new GenericCallbackFactory(function ($config) use ($c) {
-                        $items = $this->_containerGet($config, 'items');
+                        $items    = $this->_containerGet($config, 'items');
+                        $coreOnly = $this->_containerGet($config, 'core_only');
 
-                        // Iterator of results, and transformer to apply to each
-                        $iterator    = $this->_normalizeIterator($items);
-                        $transformer = $c->get('eddbk_rest_api_services_transformer');
+                        // Iterator of results
+                        $iterator = $this->_normalizeIterator($items);
+                        // Transformer to apply to each
+                        $transformer = ($coreOnly)
+                            ? $c->get('eddbk_rest_api_core_info_service_transformer')
+                            : $c->get('eddbk_rest_api_full_info_service_transformer');
 
                         return new TransformerIterator($iterator, $transformer);
                     });
@@ -444,12 +453,131 @@ class EddBkRestApiModule extends AbstractBaseModule
                 },
 
                 /*
-                 * The transformer that transforms services into the result that is sent in REST API responses.
+                 * The transformer that transforms services into the results that only contain core info.
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_services_transformer' => function (ContainerInterface $c) {
-                    return $c->get('eddbk_admin_edit_services_ui_state_transformer');
+                'eddbk_rest_api_core_info_service_transformer' => function (ContainerInterface $c) {
+                    return new CoreInfoServiceTransformer(
+                        $c->get('eddbk_rest_api_service_session_length_list_transformer')
+                    );
+                },
+
+                /*
+                 * The transformer that transforms services into the results that contain full info.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_full_info_service_transformer' => function (ContainerInterface $c) {
+                    return new FullInfoServiceTransformer(
+                        $c->get('eddbk_rest_api_service_session_length_list_transformer'),
+                        $c->get('eddbk_rest_api_service_availability_transformer'),
+                        $c->get('eddbk_boolean_transformer')
+                    );
+                },
+
+                /*
+                 * The transformer that transformers service availabilities into the correct response format.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_service_availability_transformer' => function (ContainerInterface $c) {
+                    return new ServiceAvailabilityTransformer(
+                        $c->get('eddbk_rest_api_service_availability_rule_transformer')
+                    );
+                },
+
+                /*
+                 * The transformer that transformers service availability rules into the correct response format.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_service_availability_rule_transformer' => function (ContainerInterface $c) {
+                    return new ServiceAvailabilityRuleTransformer(
+                        $c->get('eddbk_timestamp_datetime_transformer'),
+                        $c->get('eddbk_boolean_transformer'),
+                        $c->get('eddbk_comma_list_array_transformer'),
+                        $c->get('eddbk_rest_api_service_exclude_dates_transformer')
+                    );
+                },
+
+                /*
+                 * The transformer for transforming a list of session length configs.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_service_session_length_list_transformer'    => function (ContainerInterface $c) {
+                    return new CallbackTransformer(function ($sessionLengths) use ($c) {
+                        $iterator    = $this->_normalizeIterator($sessionLengths);
+                        $transformer = $c->get('eddbk_rest_api_session_length_transformer');
+                        $result      = new TransformerIterator($iterator, $transformer);
+
+                        return iterator_to_array($result);
+                    });
+                },
+
+                /*
+                 * The transformer for transforming a session length config.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_session_length_transformer'              => function (ContainerInterface $c) {
+                    return new MapTransformer([
+                        [
+                            MapTransformer::K_SOURCE => 'sessionLength',
+                        ],
+                        [
+                            MapTransformer::K_SOURCE      => 'price',
+                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_session_length_price_transformer'),
+                        ],
+                    ]);
+                },
+
+                /*
+                 * The transformer for transforming a session length's price.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_session_length_price_transformer'     => function (ContainerInterface $c) {
+                    return new CallbackTransformer(function ($price) use ($c) {
+                        return [
+                            'amount'    => $price,
+                            'currency'  => \edd_get_currency(),
+                            'formatted' => $c->get('eddbk_rest_api_price_transformer')->transform($price),
+                        ];
+                    });
+                },
+
+                /*
+                 * The transformer for transforming a price amount into its formatted counterpart.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_price_transformer'                          => function (ContainerInterface $c) {
+                    return new CallbackTransformer(function ($price) use ($c) {
+                        return html_entity_decode(\edd_currency_filter(\edd_format_amount($price)));
+                    });
+                },
+
+                /*
+                 * The transformer for transforming the session rule excluded dates for services.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_service_exclude_dates_transformer'       => function (ContainerInterface $c) {
+                    $commaListTransformer = $c->get('eddbk_comma_list_array_transformer');
+                    $datetimeTransformer  = $c->get('eddbk_services_ui_timestamp_datetime_transformer');
+
+                    return new CallbackTransformer(function ($value) use ($commaListTransformer, $datetimeTransformer) {
+                        // Transform comma list to an iterator
+                        $array    = $commaListTransformer->transform($value);
+                        $iterator = $this->_normalizeIterator($array);
+                        // Create the transformer iterator, to transform each timestamp into a datetime string
+                        $transformIterator = new TransformerIterator($iterator, $datetimeTransformer);
+
+                        // Reduce to an array and return
+                        return iterator_to_array($transformIterator);
+                    });
                 },
 
                 /*
@@ -584,6 +712,30 @@ class EddBkRestApiModule extends AbstractBaseModule
                         }
 
                         return $post->to_array();
+                    });
+                },
+
+                /*
+                 * The transformer for transforming values into booleans.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_boolean_transformer'                        => function (ContainerInterface $c) {
+                    return new CallbackTransformer(function ($value) {
+                        return (bool) $value;
+                    });
+                },
+
+                /*
+                 * The transformer for transforming comma separating strings into arrays.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_comma_list_array_transformer'               => function (ContainerInterface $c) {
+                    return new CallbackTransformer(function ($commaList) {
+                        return (strlen($commaList) > 0)
+                            ? explode(',', $commaList)
+                            : [];
                     });
                 },
 
