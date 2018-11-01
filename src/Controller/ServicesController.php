@@ -377,7 +377,7 @@ class ServicesController extends AbstractBaseController
                 },
             ],
             'sessionLengths' => [
-                'field' => 'session_lengths',
+                'field' => 'session_types',
             ],
             'displayOptions' => [
                 'field' => 'display_options',

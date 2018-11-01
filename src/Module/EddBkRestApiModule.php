@@ -459,7 +459,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_core_info_service_transformer' => function (ContainerInterface $c) {
                     return new CoreInfoServiceTransformer(
-                        $c->get('eddbk_rest_api_service_session_length_list_transformer')
+                        $c->get('eddbk_rest_api_service_session_type_list_transformer')
                     );
                 },
 
@@ -470,7 +470,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_full_info_service_transformer' => function (ContainerInterface $c) {
                     return new FullInfoServiceTransformer(
-                        $c->get('eddbk_rest_api_service_session_length_list_transformer'),
+                        $c->get('eddbk_rest_api_service_session_type_list_transformer'),
                         $c->get('eddbk_rest_api_service_availability_transformer'),
                         $c->get('eddbk_boolean_transformer')
                     );
@@ -502,14 +502,14 @@ class EddBkRestApiModule extends AbstractBaseModule
                 },
 
                 /*
-                 * The transformer for transforming a list of session length configs.
+                 * The transformer for transforming a list of session type configs.
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_service_session_length_list_transformer'    => function (ContainerInterface $c) {
+                'eddbk_rest_api_service_session_type_list_transformer'    => function (ContainerInterface $c) {
                     return new CallbackTransformer(function ($sessionLengths) use ($c) {
                         $iterator    = $this->_normalizeIterator($sessionLengths);
-                        $transformer = $c->get('eddbk_rest_api_session_length_transformer');
+                        $transformer = $c->get('eddbk_rest_api_session_type_transformer');
                         $result      = new TransformerIterator($iterator, $transformer);
 
                         return iterator_to_array($result);
@@ -517,11 +517,11 @@ class EddBkRestApiModule extends AbstractBaseModule
                 },
 
                 /*
-                 * The transformer for transforming a session length config.
+                 * The transformer for transforming a session type config.
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_session_length_transformer'              => function (ContainerInterface $c) {
+                'eddbk_rest_api_session_type_transformer'              => function (ContainerInterface $c) {
                     return new MapTransformer([
                         [
                             MapTransformer::K_SOURCE => 'type',
@@ -531,7 +531,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                         ],
                         [
                             MapTransformer::K_SOURCE      => 'price',
-                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_session_length_price_transformer'),
+                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_session_type_price_transformer'),
                         ],
                         [
                             MapTransformer::K_SOURCE => 'data',
@@ -540,11 +540,11 @@ class EddBkRestApiModule extends AbstractBaseModule
                 },
 
                 /*
-                 * The transformer for transforming a session length's price.
+                 * The transformer for transforming a session type's price.
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_session_length_price_transformer'     => function (ContainerInterface $c) {
+                'eddbk_rest_api_session_type_price_transformer'     => function (ContainerInterface $c) {
                     return new CallbackTransformer(function ($price) use ($c) {
                         return [
                             'amount'    => $price,

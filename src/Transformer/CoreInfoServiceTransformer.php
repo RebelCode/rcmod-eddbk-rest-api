@@ -13,24 +13,24 @@ use RebelCode\Transformers\MapTransformer;
 class CoreInfoServiceTransformer extends MapTransformer
 {
     /**
-     * The transformer for session length lists.
+     * The transformer for session type lists.
      *
      * @since [*next-version*]
      *
      * @var TransformerInterface
      */
-    protected $sessionLengthListT9r;
+    protected $sessionTypeListT9r;
 
     /**
      * Constructor.
      *
      * @since [*next-version*]
      *
-     * @param TransformerInterface $sessionLengthListT9r The transformer for session length lists.
+     * @param TransformerInterface $sessionTypeListT9r The transformer for session type lists.
      */
-    public function __construct(TransformerInterface $sessionLengthListT9r)
+    public function __construct(TransformerInterface $sessionTypeListT9r)
     {
-        $this->sessionLengthListT9r = $sessionLengthListT9r;
+        $this->sessionTypeListT9r = $sessionTypeListT9r;
 
         parent::__construct($this->_getServiceMapConfig());
     }
@@ -62,9 +62,9 @@ class CoreInfoServiceTransformer extends MapTransformer
                 MapTransformer::K_TARGET => 'imageSrc',
             ],
             [
-                MapTransformer::K_SOURCE => 'session_lengths',
-                MapTransformer::K_TARGET => 'sessionLengths',
-                MapTransformer::K_TRANSFORMER => $this->sessionLengthListT9r,
+                MapTransformer::K_SOURCE => 'session_types',
+                MapTransformer::K_TARGET => 'sessionsTypes',
+                MapTransformer::K_TRANSFORMER => $this->sessionTypeListT9r,
             ],
             [
                 MapTransformer::K_SOURCE => 'timezone',
