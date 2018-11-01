@@ -524,11 +524,17 @@ class EddBkRestApiModule extends AbstractBaseModule
                 'eddbk_rest_api_session_length_transformer'              => function (ContainerInterface $c) {
                     return new MapTransformer([
                         [
-                            MapTransformer::K_SOURCE => 'sessionLength',
+                            MapTransformer::K_SOURCE => 'type',
+                        ],
+                        [
+                            MapTransformer::K_SOURCE => 'label',
                         ],
                         [
                             MapTransformer::K_SOURCE      => 'price',
                             MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_session_length_price_transformer'),
+                        ],
+                        [
+                            MapTransformer::K_SOURCE => 'data',
                         ],
                     ]);
                 },
