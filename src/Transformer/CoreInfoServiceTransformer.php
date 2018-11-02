@@ -63,7 +63,7 @@ class CoreInfoServiceTransformer extends MapTransformer
             ],
             [
                 MapTransformer::K_SOURCE => 'session_types',
-                MapTransformer::K_TARGET => 'sessionsTypes',
+                MapTransformer::K_TARGET => 'sessionTypes',
                 MapTransformer::K_TRANSFORMER => $this->sessionTypeListT9r,
             ],
             [
