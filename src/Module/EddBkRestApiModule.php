@@ -524,6 +524,9 @@ class EddBkRestApiModule extends AbstractBaseModule
                 'eddbk_rest_api_session_type_transformer'              => function (ContainerInterface $c) {
                     return new MapTransformer([
                         [
+                            MapTransformer::K_SOURCE => 'id',
+                        ],
+                        [
                             MapTransformer::K_SOURCE => 'type',
                         ],
                         [
