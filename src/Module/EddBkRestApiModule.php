@@ -575,7 +575,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_service_exclude_dates_transformer'       => function (ContainerInterface $c) {
                     $commaListTransformer = $c->get('eddbk_comma_list_array_transformer');
-                    $datetimeTransformer  = $c->get('eddbk_services_ui_timestamp_datetime_transformer');
+                    $datetimeTransformer  = $c->get('eddbk_timestamp_datetime_transformer');
 
                     return new CallbackTransformer(function ($value) use ($commaListTransformer, $datetimeTransformer) {
                         // Transform comma list to an iterator
