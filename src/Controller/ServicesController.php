@@ -376,8 +376,8 @@ class ServicesController extends AbstractBaseController
                     return (int) (bool) $bkEn;
                 },
             ],
-            'sessionLengths' => [
-                'field' => 'session_lengths',
+            'sessionTypes' => [
+                'field' => 'session_types',
             ],
             'displayOptions' => [
                 'field' => 'display_options',
