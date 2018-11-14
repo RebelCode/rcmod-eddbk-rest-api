@@ -19,6 +19,7 @@ use RebelCode\EddBookings\RestApi\Auth\TolerantCompositeValidator;
 use RebelCode\EddBookings\RestApi\Auth\UserIsAdminAuthValidator;
 use RebelCode\EddBookings\RestApi\Controller\BookingsController;
 use RebelCode\EddBookings\RestApi\Controller\ClientsController;
+use RebelCode\EddBookings\RestApi\Controller\ResourcesController;
 use RebelCode\EddBookings\RestApi\Controller\ServicesController;
 use RebelCode\EddBookings\RestApi\Controller\SessionsController;
 use RebelCode\EddBookings\RestApi\Handlers\Bookings\BookingInfoHandler;
@@ -29,6 +30,11 @@ use RebelCode\EddBookings\RestApi\Handlers\Bookings\UpdateBookingHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\ClientInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\CreateClientHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\QueryClientsHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Resources\CreateResourceHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Resources\DeleteResourceHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Resources\QueryResourcesHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Resources\ResourceInfoHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Resources\UpdateResourceHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Services\CreateServiceHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Services\DeleteServiceHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Services\QueryServicesHandler;
@@ -122,6 +128,22 @@ class EddBkRestApiModule extends AbstractBaseModule
                 },
 
                 /*
+                 * The resources REST API controller.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_resources_controller' => function (ContainerInterface $c) {
+                    return new ResourcesController(
+                        $c->get('eddbk_rest_api_resources_iterator_factory'),
+                        $c->get('resources_select_rm'),
+                        $c->get('resources_insert_rm'),
+                        $c->get('resources_update_rm'),
+                        $c->get('resources_delete_rm'),
+                        $c->get('sql_expression_builder')
+                    );
+                },
+
+                /*
                  * The services REST API resource controller.
                  *
                  * @since [*next-version*]
@@ -191,6 +213,20 @@ class EddBkRestApiModule extends AbstractBaseModule
                         $iterator = $this->_normalizeIterator($items);
 
                         return new TransformerIterator($iterator, $c->get('eddbk_rest_api_bookings_transformer'));
+                    });
+                },
+
+                /*
+                 * The iterator factory for the resources controller.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_resources_iterator_factory' => function (ContainerInterface $c) {
+                    return new GenericCallbackFactory(function ($config) use ($c) {
+                        $items    = $this->_containerGet($config, 'items');
+                        $iterator = $this->_normalizeIterator($items);
+
+                        return new TransformerIterator($iterator, $c->get('eddbk_rest_api_resources_transformer'));
                     });
                 },
 
@@ -294,6 +330,55 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_delete_booking_handler' => function (ContainerInterface $c) {
                     return new DeleteBookingHandler($c->get('eddbk_bookings_controller'));
+                },
+
+                /*-------------------------------------------------------------*\
+                 * REST API route handlers - Resources                         *
+                \*-------------------------------------------------------------*/
+
+                /*
+                 * Handles the resources route that receives generic resource queries.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_query_resources_handler' => function (ContainerInterface $c) {
+                    return new QueryResourcesHandler($c->get('eddbk_resources_controller'));
+                },
+
+                /*
+                 * Handles the resources route that provides information about a single resource.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_get_resource_info_handler' => function (ContainerInterface $c) {
+                    return new ResourceInfoHandler($c->get('eddbk_resources_controller'));
+                },
+
+                /*
+                 * Handles the resources route for creating new resources.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_create_resource_handler' => function (ContainerInterface $c) {
+                    return new CreateResourceHandler($c->get('eddbk_resources_controller'), $c->get('eddbk_rest_api'));
+                },
+
+                /*
+                 * Handles the resources route for updating resources.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_update_resource_handler' => function (ContainerInterface $c) {
+                    return new UpdateResourceHandler($c->get('eddbk_resources_controller'));
+                },
+
+                /*
+                 * Handles the resources route for deleting resources.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_delete_resource_handler' => function (ContainerInterface $c) {
+                    return new DeleteResourceHandler($c->get('eddbk_resources_controller'));
                 },
 
                 /*-------------------------------------------------------------*\
@@ -448,6 +533,29 @@ class EddBkRestApiModule extends AbstractBaseModule
                         [
                             MapTransformer::K_SOURCE => 'admin_notes',
                             MapTransformer::K_TARGET => 'notes',
+                        ],
+                    ]);
+                },
+
+                /*
+                 * The transformer that transforms resources into the result that is sent in REST API responses.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_resources_transformer' => function (ContainerInterface $c) {
+                    return new MapTransformer([
+                        [
+                            MapTransformer::K_SOURCE => 'id',
+                        ],
+                        [
+                            MapTransformer::K_SOURCE => 'name',
+                        ],
+                        [
+                            MapTransformer::K_SOURCE => 'type',
+                        ],
+                        [
+                            MapTransformer::K_SOURCE      => 'data',
+                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_unserialize_transformer'),
                         ],
                     ]);
                 },
@@ -745,6 +853,17 @@ class EddBkRestApiModule extends AbstractBaseModule
                         return (strlen($commaList) > 0)
                             ? explode(',', $commaList)
                             : [];
+                    });
+                },
+
+                /*
+                 * The transformer for transforming un-serializing strings.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_unserialize_transformer' => function (ContainerInterface $c) {
+                    return new CallbackTransformer(function ($string) {
+                        return unserialize($string);
                     });
                 },
 
