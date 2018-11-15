@@ -42,8 +42,9 @@ use RebelCode\EddBookings\RestApi\Handlers\Services\ServiceInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Services\UpdateServiceHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Sessions\QuerySessionsHandler;
 use RebelCode\EddBookings\RestApi\Transformer\CoreInfoServiceTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\AvailabilityTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\FullInfoServiceTransformer;
-use RebelCode\EddBookings\RestApi\Transformer\ServiceAvailabilityRuleTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\AvailabilityRuleTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\ServiceAvailabilityTransformer;
 use RebelCode\Modular\Module\AbstractBaseModule;
 use RebelCode\Transformers\CallbackTransformer;
@@ -561,6 +562,17 @@ class EddBkRestApiModule extends AbstractBaseModule
                 },
 
                 /*
+                 * The availability transformer for transforming availabilities.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_availability_transformer' => function (ContainerInterface $c) {
+                    return new AvailabilityTransformer(
+                        $c->get('eddbk_rest_api_availability_rule_transformer')
+                    );
+                },
+
+                /*
                  * The transformer that transforms services into the results that only contain core info.
                  *
                  * @since [*next-version*]
@@ -591,7 +603,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_service_availability_transformer' => function (ContainerInterface $c) {
                     return new ServiceAvailabilityTransformer(
-                        $c->get('eddbk_rest_api_service_availability_rule_transformer')
+                        $c->get('eddbk_rest_api_availability_rule_transformer')
                     );
                 },
 
@@ -600,8 +612,8 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_service_availability_rule_transformer' => function (ContainerInterface $c) {
-                    return new ServiceAvailabilityRuleTransformer(
+                'eddbk_rest_api_availability_rule_transformer' => function (ContainerInterface $c) {
+                    return new AvailabilityRuleTransformer(
                         $c->get('eddbk_timestamp_datetime_transformer'),
                         $c->get('eddbk_boolean_transformer'),
                         $c->get('eddbk_comma_list_array_transformer'),

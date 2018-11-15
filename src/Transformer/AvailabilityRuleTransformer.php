@@ -6,11 +6,11 @@ use Dhii\Transformer\TransformerInterface;
 use RebelCode\Transformers\MapTransformer;
 
 /**
- * A transformer for transforming a service's availability rule.
+ * A transformer for transforming an availability rule.
  *
  * @since [*next-version*]
  */
-class ServiceAvailabilityRuleTransformer extends MapTransformer
+class AvailabilityRuleTransformer extends MapTransformer
 {
     /**
      * The transformer for transforming timestamps to datetime strings.
@@ -64,10 +64,10 @@ class ServiceAvailabilityRuleTransformer extends MapTransformer
         TransformerInterface $commaListT9r,
         TransformerInterface $excludeDatesT9r
     ) {
-        $this->tsDatetimeT9r = $tsDatetimeT9r;
-        $this->boolT9r = $boolT9r;
+        $this->tsDatetimeT9r     = $tsDatetimeT9r;
+        $this->boolT9r           = $boolT9r;
         $this->commaListArrayT9r = $commaListT9r;
-        $this->excludeDatesT9r = $excludeDatesT9r;
+        $this->excludeDatesT9r   = $excludeDatesT9r;
 
         parent::__construct($this->_getAvailabilityRuleMapConfig());
     }
@@ -86,20 +86,20 @@ class ServiceAvailabilityRuleTransformer extends MapTransformer
                 MapTransformer::K_SOURCE => 'id',
             ],
             [
-                MapTransformer::K_SOURCE => 'start',
+                MapTransformer::K_SOURCE      => 'start',
                 MapTransformer::K_TRANSFORMER => $this->tsDatetimeT9r,
             ],
             [
-                MapTransformer::K_SOURCE => 'end',
+                MapTransformer::K_SOURCE      => 'end',
                 MapTransformer::K_TRANSFORMER => $this->tsDatetimeT9r,
             ],
             [
-                MapTransformer::K_SOURCE => 'all_day',
-                MapTransformer::K_TARGET => 'isAllDay',
+                MapTransformer::K_SOURCE      => 'all_day',
+                MapTransformer::K_TARGET      => 'isAllDay',
                 MapTransformer::K_TRANSFORMER => $this->boolT9r,
             ],
             [
-                MapTransformer::K_SOURCE => 'repeat',
+                MapTransformer::K_SOURCE      => 'repeat',
                 MapTransformer::K_TRANSFORMER => $this->boolT9r,
             ],
             [
@@ -119,23 +119,23 @@ class ServiceAvailabilityRuleTransformer extends MapTransformer
                 MapTransformer::K_TARGET => 'repeatUntilPeriod',
             ],
             [
-                MapTransformer::K_SOURCE => 'repeat_until_date',
-                MapTransformer::K_TARGET => 'repeatUntilDate',
+                MapTransformer::K_SOURCE      => 'repeat_until_date',
+                MapTransformer::K_TARGET      => 'repeatUntilDate',
                 MapTransformer::K_TRANSFORMER => $this->tsDatetimeT9r,
             ],
             [
-                MapTransformer::K_SOURCE => 'repeat_weekly_on',
-                MapTransformer::K_TARGET => 'repeatWeeklyOn',
+                MapTransformer::K_SOURCE      => 'repeat_weekly_on',
+                MapTransformer::K_TARGET      => 'repeatWeeklyOn',
                 MapTransformer::K_TRANSFORMER => $this->commaListArrayT9r,
             ],
             [
-                MapTransformer::K_SOURCE => 'repeat_monthly_on',
-                MapTransformer::K_TARGET => 'repeatMonthlyOn',
+                MapTransformer::K_SOURCE      => 'repeat_monthly_on',
+                MapTransformer::K_TARGET      => 'repeatMonthlyOn',
                 MapTransformer::K_TRANSFORMER => $this->commaListArrayT9r,
             ],
             [
-                MapTransformer::K_SOURCE => 'exclude_dates',
-                MapTransformer::K_TARGET => 'excludeDates',
+                MapTransformer::K_SOURCE      => 'exclude_dates',
+                MapTransformer::K_TARGET      => 'excludeDates',
                 MapTransformer::K_TRANSFORMER => $this->excludeDatesT9r,
             ],
         ];
