@@ -13,7 +13,7 @@ return [
      * @since [*next-version*]
      */
     'get_resources'     => [
-        'pattern' => '/resources',
+        'pattern' => '/resources(?:/(?P<type>[a-zA-Z_]+))?',
         'methods' => ['GET'],
         'handler' => 'eddbk_rest_api_query_resources_handler',
         'authval' => 'eddbk_rest_api_wp_client_app_auth_validator',
@@ -25,7 +25,7 @@ return [
      * @since [*next-version*]
      */
     'get_resource_info' => [
-        'pattern' => '/resources/(?P<id>[\d]+)',
+        'pattern' => '/resources(?:/(?P<type>[a-zA-Z_]+))?/(?P<id>[\d]+)',
         'methods' => ['GET'],
         'handler' => 'eddbk_rest_api_get_resource_info_handler',
         'authval' => 'eddbk_rest_api_wp_client_app_auth_validator',
@@ -37,7 +37,7 @@ return [
      * @since [*next-version*]
      */
     'create_resource'   => [
-        'pattern' => '/resources',
+        'pattern' => '/resources(?:/(?P<type>[a-zA-Z_]+))?',
         'methods' => ['POST'],
         'handler' => 'eddbk_rest_api_create_resource_handler',
         'authval' => 'eddbk_rest_api_user_is_admin_auth_validator',
@@ -49,7 +49,7 @@ return [
      * @since [*next-version*]
      */
     'update_resource'   => [
-        'pattern' => '/resources/(?P<id>[\d]+)',
+        'pattern' => '/resources(?:/(?P<type>[a-zA-Z_]+))?/(?P<id>[\d]+)',
         'methods' => ['PATCH'],
         'handler' => 'eddbk_rest_api_update_resource_handler',
         'authval' => 'eddbk_rest_api_user_is_admin_auth_validator',
@@ -61,7 +61,7 @@ return [
      * @since [*next-version*]
      */
     'delete_resource'   => [
-        'pattern' => '/resources/(?P<id>[\d]+)',
+        'pattern' => '/resources(?:/(?P<type>[a-zA-Z_]+))?/(?P<id>[\d]+)',
         'methods' => ['DELETE'],
         'handler' => 'eddbk_rest_api_delete_resource_handler',
         'authval' => 'eddbk_rest_api_user_is_admin_auth_validator',
