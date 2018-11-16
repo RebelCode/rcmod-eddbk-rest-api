@@ -552,7 +552,6 @@ class EddBkRestApiModule extends AbstractBaseModule
                         ],
                         [
                             MapTransformer::K_SOURCE      => 'data',
-                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_unserialize_transformer'),
                         ],
                         [
                             MapTransformer::K_SOURCE      => 'availability',
