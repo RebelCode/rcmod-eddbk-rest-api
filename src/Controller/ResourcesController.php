@@ -132,7 +132,10 @@ class ResourcesController extends AbstractBaseController
         // Calculate query offset
         $offset = ($pageNum - 1) * $numPerPage;
 
-        return $this->entityManager->query($params, $numPerPage, $offset);
+        // Prepare query from params
+        $query = $this->_paramsToResourceData($params);
+
+        return $this->entityManager->query($query, $numPerPage, $offset);
     }
 
     /**
