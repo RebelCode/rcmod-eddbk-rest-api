@@ -269,11 +269,8 @@ class ResourcesController extends AbstractBaseController
                 },
             ],
             'data'         => [
-                'required'  => false,
-                'field'     => 'data',
-                'transform' => function ($value) {
-                    return serialize($value);
-                },
+                'required' => false,
+                'field'    => 'data',
             ],
             'availability' => [
                 'field' => 'availability',
