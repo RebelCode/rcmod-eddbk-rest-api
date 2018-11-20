@@ -225,7 +225,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                         $items    = $this->_containerGet($config, 'items');
                         $iterator = $this->_normalizeIterator($items);
 
-                        return new TransformerIterator($iterator, $c->get('eddbk_rest_api_resources_transformer'));
+                        return new TransformerIterator($iterator, $c->get('eddbk_rest_api_resource_transformer'));
                     });
                 },
 
@@ -541,7 +541,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_resources_transformer' => function (ContainerInterface $c) {
+                'eddbk_rest_api_resource_transformer' => function (ContainerInterface $c) {
                     return new MapTransformer([
                         [
                             MapTransformer::K_SOURCE => 'id',
