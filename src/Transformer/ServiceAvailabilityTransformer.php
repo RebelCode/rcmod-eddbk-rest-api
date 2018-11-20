@@ -3,12 +3,19 @@
 namespace RebelCode\EddBookings\RestApi\Transformer;
 
 use ArrayIterator;
+use Dhii\Data\Container\ContainerGetCapableTrait;
+use Dhii\Data\Container\CreateContainerExceptionCapableTrait;
+use Dhii\Data\Container\CreateNotFoundExceptionCapableTrait;
+use Dhii\Data\Container\NormalizeKeyCapableTrait;
 use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
+use Dhii\Exception\CreateOutOfRangeExceptionCapableTrait;
 use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Transformer\TransformerInterface;
 use Dhii\Util\Normalization\NormalizeIterableCapableTrait;
+use Dhii\Util\Normalization\NormalizeStringCapableTrait;
 use InvalidArgumentException;
 use IteratorIterator;
+use Psr\Container\NotFoundExceptionInterface;
 use stdClass;
 use Traversable;
 
@@ -20,7 +27,25 @@ use Traversable;
 class ServiceAvailabilityTransformer implements TransformerInterface
 {
     /* @since [*next-version*] */
+    use ContainerGetCapableTrait;
+
+    /* @since [*next-version*] */
+    use NormalizeKeyCapableTrait;
+
+    /* @since [*next-version*] */
+    use NormalizeStringCapableTrait;
+
+    /* @since [*next-version*] */
     use NormalizeIterableCapableTrait;
+
+    /* @since [*next-version*] */
+    use CreateContainerExceptionCapableTrait;
+
+    /* @since [*next-version*] */
+    use CreateNotFoundExceptionCapableTrait;
+
+    /* @since [*next-version*] */
+    use CreateOutOfRangeExceptionCapableTrait;
 
     /* @since [*next-version*] */
     use CreateInvalidArgumentExceptionCapableTrait;
@@ -57,14 +82,24 @@ class ServiceAvailabilityTransformer implements TransformerInterface
     public function transform($source)
     {
         try {
-            $iterator = $this->_normalizeIterable($source);
-            $rules = $this->_transformRules($iterator, $this->ruleTransformer);
+            $rules = $this->_containerGet($source, 'rules');
+            $rules = $this->_normalizeIterable($rules);
+            $rules = $this->_transformRules($rules, $this->ruleTransformer);
+        } catch (NotFoundExceptionInterface $exception) {
+            $rules = [];
         } catch (InvalidArgumentException $exception) {
             $rules = [];
         }
 
+        try {
+            $timezone = $this->_containerGet($source, 'timezone');
+        } catch (NotFoundExceptionInterface $exception) {
+            $timezone = 'UTC';
+        }
+
         return [
-            'rules' => $rules,
+            'rules'    => $rules,
+            'timezone' => $timezone,
         ];
     }
 
