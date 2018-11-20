@@ -41,11 +41,13 @@ use RebelCode\EddBookings\RestApi\Handlers\Services\QueryServicesHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Services\ServiceInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Services\UpdateServiceHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Sessions\QuerySessionsHandler;
-use RebelCode\EddBookings\RestApi\Transformer\CoreInfoServiceTransformer;
-use RebelCode\EddBookings\RestApi\Transformer\AvailabilityTransformer;
-use RebelCode\EddBookings\RestApi\Transformer\FullInfoServiceTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\AvailabilityRuleTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\AvailabilityTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\CoreInfoServiceTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\FullInfoServiceTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\ResourceIdTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\ServiceAvailabilityTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\SessionTypeDataTransformer;
 use RebelCode\Modular\Module\AbstractBaseModule;
 use RebelCode\Transformers\CallbackTransformer;
 use RebelCode\Transformers\MapTransformer;
@@ -656,9 +658,33 @@ class EddBkRestApiModule extends AbstractBaseModule
                             MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_session_type_price_transformer'),
                         ],
                         [
-                            MapTransformer::K_SOURCE => 'data',
+                            MapTransformer::K_SOURCE      => 'data',
+                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_session_type_data_transformer')
                         ],
                     ]);
+                },
+
+                /*
+                 * The transformer that transforms session type data.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_session_type_data_transformer' => function (ContainerInterface $c) {
+                    return new SessionTypeDataTransformer(
+                        $c->get('eddbk_rest_api_resource_id_transformer')
+                    );
+                },
+
+                /*
+                 * The transformer that transforms resource IDs into full resource data.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_resource_id_transformer' => function (ContainerInterface $c) {
+                    return new ResourceIdTransformer(
+                        $c->get('eddbk_rest_api_resource_transformer'),
+                        $c->get('resources_entity_manager')
+                    );
                 },
 
                 /*
