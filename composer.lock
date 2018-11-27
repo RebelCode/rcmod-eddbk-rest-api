@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "8dbf4acd80326d3b381ec8e1eec14264",
+    "content-hash": "ba2e4c019271ee79bc490cd27f57aa3d",
     "packages": [
         {
             "name": "dhii/args-list-validation",
@@ -740,155 +740,6 @@
             ],
             "description": "An interface for objects that can have a path retrieved.",
             "time": "2017-07-25T12:20:22+00:00"
-        },
-        {
-            "name": "dhii/data-state-abstract",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Dhii/data-state-abstract.git",
-                "reference": "c335c37a939861659e657b995cfc657bb3bb2733"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Dhii/data-state-abstract/zipball/c335c37a939861659e657b995cfc657bb3bb2733",
-                "reference": "c335c37a939861659e657b995cfc657bb3bb2733",
-                "shasum": ""
-            },
-            "require": {
-                "dhii/data-state-interface": "^0.1-alpha2",
-                "dhii/machine-state-machine-interface": "^0.1-alpha1",
-                "php": "^5.4 | ^7.0"
-            },
-            "require-dev": {
-                "codeclimate/php-test-reporter": "<=0.3.2",
-                "dhii/collections-interface": "^0.2-alpha1",
-                "dhii/php-cs-fixer-config": "^0.1",
-                "dhii/stringable-interface": "^0.1",
-                "phpunit/phpunit": "^4.8",
-                "ptrofimov/xpmock": "^1.1"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "0.1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Dhii\\Data\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Dhii Team",
-                    "email": "development@dhii.co"
-                }
-            ],
-            "description": "Abstract functionality for handling objects with state.",
-            "time": "2018-07-23T14:07:23+00:00"
-        },
-        {
-            "name": "dhii/data-state-base",
-            "version": "v0.1-alpha1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Dhii/data-state-base.git",
-                "reference": "762866374fc8c7cc482fd8a5d37520b14873be06"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Dhii/data-state-base/zipball/762866374fc8c7cc482fd8a5d37520b14873be06",
-                "reference": "762866374fc8c7cc482fd8a5d37520b14873be06",
-                "shasum": ""
-            },
-            "require": {
-                "dhii/data-state-abstract": "^0.1-alpha1",
-                "dhii/data-state-interface": "^0.1-alpha2",
-                "dhii/exception": "^0.1-alpha4",
-                "dhii/factory-base": "^0.1-alpha3",
-                "dhii/state-machine-abstract": "^0.1-alpha1",
-                "php": "^5.4 | ^7.0"
-            },
-            "require-dev": {
-                "codeclimate/php-test-reporter": "<=0.3.2",
-                "dhii/collections-interface": "^0.2-alpha1",
-                "dhii/machine-state-machine-interface": "^0.1-alpha1",
-                "dhii/php-cs-fixer-config": "^0.1",
-                "phpunit/phpunit": "^4.8",
-                "ptrofimov/xpmock": "^1.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Dhii\\Data\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Dhii Team",
-                    "email": "development@dhii.co"
-                }
-            ],
-            "description": "Base functionality for handling objects with state.",
-            "time": "2018-07-20T08:43:38+00:00"
-        },
-        {
-            "name": "dhii/data-state-interface",
-            "version": "v0.1-alpha5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Dhii/data-state-interface.git",
-                "reference": "8ecc632f17ca781d0065a3f6effa83e6d7968103"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Dhii/data-state-interface/zipball/8ecc632f17ca781d0065a3f6effa83e6d7968103",
-                "reference": "8ecc632f17ca781d0065a3f6effa83e6d7968103",
-                "shasum": ""
-            },
-            "require": {
-                "dhii/factory-interface": "^0.1-alpha3",
-                "php": "^5.3 | ^7.0"
-            },
-            "require-dev": {
-                "codeclimate/php-test-reporter": "<=0.3.2",
-                "dhii/collections-interface": "^0.2-alpha1",
-                "dhii/php-cs-fixer-config": "dev-php-5.3",
-                "phpunit/phpunit": "^4.8",
-                "ptrofimov/xpmock": "^1.1"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "0.1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Dhii\\Data\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Dhii Team",
-                    "email": "development@dhii.co"
-                }
-            ],
-            "description": "Interfaces for dealing with stateful data objects.",
-            "time": "2018-07-19T11:21:08+00:00"
         },
         {
             "name": "dhii/evaluable-interface",
@@ -1740,57 +1591,6 @@
             "time": "2018-04-24T19:28:27+00:00"
         },
         {
-            "name": "dhii/machine-state-machine-interface",
-            "version": "v0.1-alpha1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Dhii/machine-state-machine-interface.git",
-                "reference": "55adc44cb930d1c57d0996d61725884e9c8008b8"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Dhii/machine-state-machine-interface/zipball/55adc44cb930d1c57d0996d61725884e9c8008b8",
-                "reference": "55adc44cb930d1c57d0996d61725884e9c8008b8",
-                "shasum": ""
-            },
-            "require": {
-                "dhii/data-key-value-aware-interface": "^0.1",
-                "dhii/exception-interface": "^0.1|^0.2",
-                "dhii/factory-interface": "^0.1-alpha1",
-                "dhii/stringable-interface": "^0.1",
-                "php": "^5.3 | ^7.0"
-            },
-            "require-dev": {
-                "codeclimate/php-test-reporter": "<=0.3.2",
-                "dhii/php-cs-fixer-config": "dev-php-5.3",
-                "phpunit/phpunit": "^4.8",
-                "ptrofimov/xpmock": "^1.1"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "0.1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Dhii\\State\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Dhii Team",
-                    "email": "development@dhii.co"
-                }
-            ],
-            "description": "Interfaces for state machines.",
-            "time": "2018-05-15T08:27:56+00:00"
-        },
-        {
             "name": "dhii/module-interface",
             "version": "v0.1-alpha1",
             "source": {
@@ -2029,55 +1829,6 @@
             "time": "2018-07-31T12:24:35+00:00"
         },
         {
-            "name": "dhii/state-machine-abstract",
-            "version": "v0.1-alpha1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Dhii/state-machine-abstract.git",
-                "reference": "cb5f706edd74d1c747f09f505b859255b13a5b27"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Dhii/state-machine-abstract/zipball/cb5f706edd74d1c747f09f505b859255b13a5b27",
-                "reference": "cb5f706edd74d1c747f09f505b859255b13a5b27",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.4 | ^7.0"
-            },
-            "require-dev": {
-                "codeclimate/php-test-reporter": "<=0.3.2",
-                "dhii/machine-state-machine-interface": "^0.1-alpha1",
-                "dhii/php-cs-fixer-config": "^0.1",
-                "dhii/stringable-interface": "^0.1",
-                "phpunit/phpunit": "^4.8",
-                "ptrofimov/xpmock": "^1.1"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "0.1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Dhii\\State\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Dhii Team",
-                    "email": "development@dhii.co"
-                }
-            ],
-            "description": "Abstract functionality for state machines.",
-            "time": "2018-05-15T09:04:58+00:00"
-        },
-        {
             "name": "dhii/stringable-interface",
             "version": "v0.1",
             "source": {
@@ -2118,48 +1869,6 @@
             ],
             "description": "Interoperability interface for objects that can be cast to string",
             "time": "2017-01-23T15:08:20+00:00"
-        },
-        {
-            "name": "dhii/time-interface",
-            "version": "v0.1-alpha1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Dhii/time-interface.git",
-                "reference": "1ec468076d1a3124ac55942c0542f19a06d16def"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Dhii/time-interface/zipball/1ec468076d1a3124ac55942c0542f19a06d16def",
-                "reference": "1ec468076d1a3124ac55942c0542f19a06d16def",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.3 | ^7.0"
-            },
-            "require-dev": {
-                "codeclimate/php-test-reporter": "<=0.3.2",
-                "dhii/php-cs-fixer-config": "dev-php-5.3",
-                "phpunit/phpunit": "^4.8",
-                "ptrofimov/xpmock": "^1.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Dhii\\Time\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "Dhii Team",
-                    "email": "development@dhii.co"
-                }
-            ],
-            "description": "Interfaces for dealing with time.",
-            "time": "2018-05-14T13:42:07+00:00"
         },
         {
             "name": "dhii/transformer-interface",
@@ -2519,113 +2228,6 @@
                 "psr"
             ],
             "time": "2017-02-14T16:28:37+00:00"
-        },
-        {
-            "name": "rebelcode/booking-interface",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/RebelCode/booking-interface.git",
-                "reference": "e1b42417f104d4d3cddabba7c497b4ae02b5f9ad"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/RebelCode/booking-interface/zipball/e1b42417f104d4d3cddabba7c497b4ae02b5f9ad",
-                "reference": "e1b42417f104d4d3cddabba7c497b4ae02b5f9ad",
-                "shasum": ""
-            },
-            "require": {
-                "dhii/data-identifiable-interface": "^0.1",
-                "dhii/factory-interface": "^0.1-alpha3",
-                "dhii/time-interface": "^0.1-alpha1",
-                "php": "^5.3 | ^7.0"
-            },
-            "require-dev": {
-                "codeclimate/php-test-reporter": "<=0.3.2",
-                "dhii/php-cs-fixer-config": "dev-php-5.3",
-                "dhii/stringable-interface": "^0.1",
-                "phpunit/phpunit": "^4.8",
-                "ptrofimov/xpmock": "^1.1"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "0.2.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "RebelCode\\Bookings\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "RebelCode",
-                    "email": "dev@rebelcode.com"
-                }
-            ],
-            "description": "Interfaces for bookings.",
-            "time": "2018-07-19T14:53:48+00:00"
-        },
-        {
-            "name": "rebelcode/booking-transitioner",
-            "version": "v0.2-alpha2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/RebelCode/booking-transitioner.git",
-                "reference": "5432f0d2b01cf6e431162fc0d1cbabd2a3f552f7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/RebelCode/booking-transitioner/zipball/5432f0d2b01cf6e431162fc0d1cbabd2a3f552f7",
-                "reference": "5432f0d2b01cf6e431162fc0d1cbabd2a3f552f7",
-                "shasum": ""
-            },
-            "require": {
-                "dhii/data-state-abstract": "^0.1-alpha3",
-                "dhii/data-state-base": "^0.1-alpha1",
-                "dhii/data-state-interface": "^0.1-alpha5",
-                "dhii/state-machine-abstract": "^0.1-alpha1",
-                "php": "^5.4 | ^7.0",
-                "rebelcode/booking-interface": "^0.2-alpha1"
-            },
-            "require-dev": {
-                "codeclimate/php-test-reporter": "<=0.3.2",
-                "dhii/collections-interface": "^0.2-alpha1",
-                "dhii/cqrs-resource-model-interface": "0.1-alpha2",
-                "dhii/machine-state-machine-interface": "^0.1-alpha1",
-                "dhii/php-cs-fixer-config": "^0.1",
-                "dhii/stringable-interface": "^0.1",
-                "phpunit/phpunit": "^4.8",
-                "ptrofimov/xpmock": "^1.1"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-develop": "0.2.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "RebelCode\\Bookings\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "RebelCode",
-                    "email": "dev@rebelcode.com"
-                }
-            ],
-            "description": "Booking transitioner implementations.",
-            "time": "2018-07-31T11:36:30+00:00"
         },
         {
             "name": "rebelcode/entity-manager-interface",
@@ -3782,16 +3384,16 @@
         },
         {
             "name": "psr/log",
-            "version": "1.0.2",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/log.git",
-                "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d"
+                "reference": "6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/log/zipball/4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
-                "reference": "4ebe3a8bf773a19edfe0a84b6585ba3d401b724d",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd",
+                "reference": "6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd",
                 "shasum": ""
             },
             "require": {
@@ -3825,7 +3427,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2016-10-10T12:19:37+00:00"
+            "time": "2018-11-20T15:27:04+00:00"
         },
         {
             "name": "ptrofimov/xpmock",
@@ -4509,16 +4111,16 @@
         },
         {
             "name": "symfony/config",
-            "version": "v2.8.46",
+            "version": "v2.8.48",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/config.git",
-                "reference": "fb3469266daaa67a1e6d42fc78fa6cdc254689f6"
+                "reference": "7dd5f5040dc04c118d057fb5886563963eb70011"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/config/zipball/fb3469266daaa67a1e6d42fc78fa6cdc254689f6",
-                "reference": "fb3469266daaa67a1e6d42fc78fa6cdc254689f6",
+                "url": "https://api.github.com/repos/symfony/config/zipball/7dd5f5040dc04c118d057fb5886563963eb70011",
+                "reference": "7dd5f5040dc04c118d057fb5886563963eb70011",
                 "shasum": ""
             },
             "require": {
@@ -4562,20 +4164,20 @@
             ],
             "description": "Symfony Config Component",
             "homepage": "https://symfony.com",
-            "time": "2018-09-08T12:44:02+00:00"
+            "time": "2018-11-26T09:38:12+00:00"
         },
         {
             "name": "symfony/console",
-            "version": "v2.8.46",
+            "version": "v2.8.48",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "aca0dcc0c75496e17e2aa0303bb9c8e6d79ed789"
+                "reference": "cbcf4b5e233af15cd2bbd50dee1ccc9b7927dc12"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/aca0dcc0c75496e17e2aa0303bb9c8e6d79ed789",
-                "reference": "aca0dcc0c75496e17e2aa0303bb9c8e6d79ed789",
+                "url": "https://api.github.com/repos/symfony/console/zipball/cbcf4b5e233af15cd2bbd50dee1ccc9b7927dc12",
+                "reference": "cbcf4b5e233af15cd2bbd50dee1ccc9b7927dc12",
                 "shasum": ""
             },
             "require": {
@@ -4623,20 +4225,20 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2018-09-30T03:33:07+00:00"
+            "time": "2018-11-20T15:55:20+00:00"
         },
         {
             "name": "symfony/debug",
-            "version": "v2.8.46",
+            "version": "v2.8.48",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/debug.git",
-                "reference": "4fd77efcd4a499bf76d4ff46d092c67f3fe9e347"
+                "reference": "74251c8d50dd3be7c4ce0c7b862497cdc641a5d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/debug/zipball/4fd77efcd4a499bf76d4ff46d092c67f3fe9e347",
-                "reference": "4fd77efcd4a499bf76d4ff46d092c67f3fe9e347",
+                "url": "https://api.github.com/repos/symfony/debug/zipball/74251c8d50dd3be7c4ce0c7b862497cdc641a5d0",
+                "reference": "74251c8d50dd3be7c4ce0c7b862497cdc641a5d0",
                 "shasum": ""
             },
             "require": {
@@ -4680,20 +4282,20 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2018-09-21T12:46:38+00:00"
+            "time": "2018-11-11T11:18:13+00:00"
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.8.46",
+            "version": "v2.8.48",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher.git",
-                "reference": "84ae343f39947aa084426ed1138bb96bf94d1f12"
+                "reference": "a77e974a5fecb4398833b0709210e3d5e334ffb0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/84ae343f39947aa084426ed1138bb96bf94d1f12",
-                "reference": "84ae343f39947aa084426ed1138bb96bf94d1f12",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher/zipball/a77e974a5fecb4398833b0709210e3d5e334ffb0",
+                "reference": "a77e974a5fecb4398833b0709210e3d5e334ffb0",
                 "shasum": ""
             },
             "require": {
@@ -4740,20 +4342,20 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2018-07-26T09:03:18+00:00"
+            "time": "2018-11-21T14:20:20+00:00"
         },
         {
             "name": "symfony/filesystem",
-            "version": "v2.8.46",
+            "version": "v2.8.48",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "91f194c5ec8d2ad5ce417a218ce3c46909e92f4d"
+                "reference": "7ae46872dad09dffb7fe1e93a0937097339d0080"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/91f194c5ec8d2ad5ce417a218ce3c46909e92f4d",
-                "reference": "91f194c5ec8d2ad5ce417a218ce3c46909e92f4d",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/7ae46872dad09dffb7fe1e93a0937097339d0080",
+                "reference": "7ae46872dad09dffb7fe1e93a0937097339d0080",
                 "shasum": ""
             },
             "require": {
@@ -4790,20 +4392,20 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2018-09-24T08:04:37+00:00"
+            "time": "2018-11-11T11:18:13+00:00"
         },
         {
             "name": "symfony/finder",
-            "version": "v2.8.46",
+            "version": "v2.8.48",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "5ebb438d1aabe9dba93099dd06e0500f97817a6e"
+                "reference": "1444eac52273e345d9b95129bf914639305a9ba4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/5ebb438d1aabe9dba93099dd06e0500f97817a6e",
-                "reference": "5ebb438d1aabe9dba93099dd06e0500f97817a6e",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/1444eac52273e345d9b95129bf914639305a9ba4",
+                "reference": "1444eac52273e345d9b95129bf914639305a9ba4",
                 "shasum": ""
             },
             "require": {
@@ -4839,11 +4441,11 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2018-09-21T12:46:38+00:00"
+            "time": "2018-11-11T11:18:13+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
-            "version": "v1.9.0",
+            "version": "v1.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-ctype.git",
@@ -4901,16 +4503,16 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.9.0",
+            "version": "v1.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "d0cd638f4634c16d8df4508e847f14e9e43168b8"
+                "reference": "c79c051f5b3a46be09205c73b80b346e4153e494"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/d0cd638f4634c16d8df4508e847f14e9e43168b8",
-                "reference": "d0cd638f4634c16d8df4508e847f14e9e43168b8",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/c79c051f5b3a46be09205c73b80b346e4153e494",
+                "reference": "c79c051f5b3a46be09205c73b80b346e4153e494",
                 "shasum": ""
             },
             "require": {
@@ -4956,20 +4558,20 @@
                 "portable",
                 "shim"
             ],
-            "time": "2018-08-06T14:22:27+00:00"
+            "time": "2018-09-21T13:07:52+00:00"
         },
         {
             "name": "symfony/process",
-            "version": "v2.8.46",
+            "version": "v2.8.48",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "f09e21b7c5aba06c47bbfad9cbcf13ac7f0db0a6"
+                "reference": "c3591a09c78639822b0b290d44edb69bf9f05dc8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/f09e21b7c5aba06c47bbfad9cbcf13ac7f0db0a6",
-                "reference": "f09e21b7c5aba06c47bbfad9cbcf13ac7f0db0a6",
+                "url": "https://api.github.com/repos/symfony/process/zipball/c3591a09c78639822b0b290d44edb69bf9f05dc8",
+                "reference": "c3591a09c78639822b0b290d44edb69bf9f05dc8",
                 "shasum": ""
             },
             "require": {
@@ -5005,20 +4607,20 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2018-09-06T17:11:15+00:00"
+            "time": "2018-11-11T11:18:13+00:00"
         },
         {
             "name": "symfony/stopwatch",
-            "version": "v2.8.46",
+            "version": "v2.8.48",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/stopwatch.git",
-                "reference": "12a4b0c2a1788adf16a5548ab18ab9e8801d71d8"
+                "reference": "752586c80af8a85aeb74d1ae8202411c68836663"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/stopwatch/zipball/12a4b0c2a1788adf16a5548ab18ab9e8801d71d8",
-                "reference": "12a4b0c2a1788adf16a5548ab18ab9e8801d71d8",
+                "url": "https://api.github.com/repos/symfony/stopwatch/zipball/752586c80af8a85aeb74d1ae8202411c68836663",
+                "reference": "752586c80af8a85aeb74d1ae8202411c68836663",
                 "shasum": ""
             },
             "require": {
@@ -5054,20 +4656,20 @@
             ],
             "description": "Symfony Stopwatch Component",
             "homepage": "https://symfony.com",
-            "time": "2018-07-24T10:05:38+00:00"
+            "time": "2018-11-11T11:18:13+00:00"
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.46",
+            "version": "v2.8.48",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "5baf0f821b14eee8ca415e6a0361a9fa140c002c"
+                "reference": "02c1859112aa779d9ab394ae4f3381911d84052b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/5baf0f821b14eee8ca415e6a0361a9fa140c002c",
-                "reference": "5baf0f821b14eee8ca415e6a0361a9fa140c002c",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/02c1859112aa779d9ab394ae4f3381911d84052b",
+                "reference": "02c1859112aa779d9ab394ae4f3381911d84052b",
                 "shasum": ""
             },
             "require": {
@@ -5104,7 +4706,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2018-08-29T13:11:53+00:00"
+            "time": "2018-11-11T11:18:13+00:00"
         }
     ],
     "aliases": [],
