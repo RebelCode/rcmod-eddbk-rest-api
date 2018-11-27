@@ -55,7 +55,10 @@ class SessionTypeDataTransformer implements TransformerInterface
 
         if (isset($result['resources'])) {
             foreach ($result['resources'] as $_key => $resourceId) {
-                $result['resources'][$_key] = $this->resourcesT9r->transform($resourceId);
+                $_transformed = $this->resourcesT9r->transform($resourceId);
+                if ($_transformed !== null) {
+                    $result['resources'][$_key] = $_transformed;
+                }
             }
         }
 
