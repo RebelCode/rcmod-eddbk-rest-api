@@ -180,7 +180,7 @@ class ResourcesController extends AbstractBaseController
 
         $this->entityManager->update($id, $changeSet);
 
-        return [];
+        return $this->_get(['id' => $id]);
     }
 
     /**
