@@ -47,6 +47,7 @@ use RebelCode\EddBookings\RestApi\Transformer\CoreInfoServiceTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\FullInfoServiceTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\ResourceIdTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\ServiceAvailabilityTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\SessionTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\SessionTypeDataTransformer;
 use RebelCode\Modular\Module\AbstractBaseModule;
 use RebelCode\Transformers\CallbackTransformer;
@@ -760,27 +761,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  * @since [*next-version*]
                  */
                 'eddbk_rest_api_sessions_transformer' => function (ContainerInterface $c) {
-                    return new MapTransformer([
-                        [
-                            MapTransformer::K_SOURCE => 'id',
-                        ],
-                        [
-                            MapTransformer::K_SOURCE      => 'start',
-                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_timestamp_datetime_transformer'),
-                        ],
-                        [
-                            MapTransformer::K_SOURCE      => 'end',
-                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_timestamp_datetime_transformer'),
-                        ],
-                        [
-                            MapTransformer::K_SOURCE      => 'service_id',
-                            MapTransformer::K_TARGET      => 'service',
-                        ],
-                        [
-                            MapTransformer::K_SOURCE => 'resource_id',
-                            MapTransformer::K_TARGET => 'resource',
-                        ],
-                    ]);
+                    return new SessionTransformer($c->get('eddbk_timestamp_datetime_transformer'));
                 },
 
                 /*
