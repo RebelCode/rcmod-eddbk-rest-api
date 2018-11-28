@@ -175,7 +175,7 @@ class BookingsController extends AbstractBaseCqrsController
     protected function _post($params = [])
     {
         // Create state-aware booking from params
-        $booking = $this->_getStateAwareFactory()->make([
+        $booking = $this->stateAwareFactory->make([
             StateAwareFactoryInterface::K_DATA => $this->_buildInsertRecord($params),
         ]);
 
@@ -192,7 +192,7 @@ class BookingsController extends AbstractBaseCqrsController
             // Read the "transition" from the request params
             $transition = $this->_containerGet($params, 'transition');
             // Create state-aware booking from data retrieved from DB
-            $booking = $this->_getStateAwareFactory()->make([
+            $booking = $this->stateAwareFactory->make([
                 StateAwareFactoryInterface::K_DATA => $bookingData,
             ]);
             // Attempt transition
@@ -251,7 +251,7 @@ class BookingsController extends AbstractBaseCqrsController
         // Prepare change set
         $changeSet = $this->_buildUpdateChangeSet($params);
         // Create state-aware booking with the booking data patched against the change set in the request
-        $booking = $this->_getStateAwareFactory()->make([
+        $booking = $this->stateAwareFactory->make([
             StateAwareFactoryInterface::K_DATA => $this->_patchBookingData($bookingData, $changeSet),
         ]);
 
@@ -407,7 +407,7 @@ class BookingsController extends AbstractBaseCqrsController
      */
     protected function _addClientsSearchCondition($condition, $search)
     {
-        $clients   = $this->_getClientsController()->get(['search' => $search]);
+        $clients   = $this->clientsController->get(['search' => $search]);
         $clientIds = [];
 
         foreach ($clients as $_client) {
