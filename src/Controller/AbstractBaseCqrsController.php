@@ -359,7 +359,7 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
                 : null;
             $hasParam = $this->_containerHas($params, $_param);
             $value    = $hasParam ? $this->_containerGet($params, $_param) : null;
-            $hasParam = $hasParam && $value !== null && strlen($value) > 0;
+            $hasParam = $hasParam && $value !== null && !empty($value);
 
             if (!$hasParam && $required) {
                 throw $this->_createControllerException(
