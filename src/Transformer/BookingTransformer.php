@@ -3,6 +3,7 @@
 namespace RebelCode\EddBookings\RestApi\Transformer;
 
 use Dhii\Transformer\TransformerInterface;
+use InvalidArgumentException;
 use RebelCode\Transformers\MapTransformer;
 use stdClass;
 use Traversable;
@@ -100,7 +101,9 @@ class BookingTransformer extends MapTransformer
             [
                 MapTransformer::K_SOURCE      => 'resources',
                 MapTransformer::K_TARGET      => 'resources',
-                MapTransformer::K_TRANSFORMER => [$this, '_transformResourceIds'],
+                MapTransformer::K_TRANSFORMER => function ($source) {
+                    return $this->_transformResourceIds($source);
+                },
             ],
             [
                 MapTransformer::K_SOURCE      => 'client_id',
@@ -133,15 +136,21 @@ class BookingTransformer extends MapTransformer
      */
     protected function _transformResourceIds($source)
     {
-        $resources = $this->_normalizeArray($source);
+        try {
+            $resources = $this->_normalizeIterable($source);
+        } catch (InvalidArgumentException $exception) {
+            return [];
+        }
+
+        $result = [];
 
         foreach ($resources as $_key => $resourceId) {
             $_transformed = $this->resourceIdT9r->transform($resourceId);
             if ($_transformed !== null) {
-                $resources[$_key] = $_transformed;
+                $result[$_key] = $_transformed;
             }
         }
 
-        return $resources;
+        return $result;
     }
 }
