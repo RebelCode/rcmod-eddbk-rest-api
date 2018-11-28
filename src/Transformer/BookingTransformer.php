@@ -99,7 +99,7 @@ class BookingTransformer extends MapTransformer
                 MapTransformer::K_TRANSFORMER => $this->serviceIdT9r,
             ],
             [
-                MapTransformer::K_SOURCE      => 'resources',
+                MapTransformer::K_SOURCE      => 'resource_ids',
                 MapTransformer::K_TARGET      => 'resources',
                 MapTransformer::K_TRANSFORMER => function ($source) {
                     return $this->_transformResourceIds($source);
