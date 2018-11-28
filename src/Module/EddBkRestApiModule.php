@@ -43,6 +43,7 @@ use RebelCode\EddBookings\RestApi\Handlers\Services\UpdateServiceHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Sessions\QuerySessionsHandler;
 use RebelCode\EddBookings\RestApi\Transformer\AvailabilityRuleTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\AvailabilityTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\BookingTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\CoreInfoServiceTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\FullInfoServiceTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\ResourceIdTransformer;
@@ -491,48 +492,12 @@ class EddBkRestApiModule extends AbstractBaseModule
                  * @since [*next-version*]
                  */
                 'eddbk_rest_api_bookings_transformer' => function (ContainerInterface $c) {
-                    return new MapTransformer([
-                        [
-                            MapTransformer::K_SOURCE => 'id',
-                        ],
-                        [
-                            MapTransformer::K_SOURCE      => 'start',
-                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_timestamp_datetime_transformer'),
-                        ],
-                        [
-                            MapTransformer::K_SOURCE      => 'end',
-                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_timestamp_datetime_transformer'),
-                        ],
-                        [
-                            MapTransformer::K_SOURCE => 'status',
-                        ],
-                        [
-                            MapTransformer::K_SOURCE      => 'service_id',
-                            MapTransformer::K_TARGET      => 'service',
-                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_service_id_transformer'),
-                        ],
-                        [
-                            MapTransformer::K_SOURCE => 'resource_id',
-                            MapTransformer::K_TARGET => 'resource',
-                        ],
-                        [
-                            MapTransformer::K_SOURCE      => 'client_id',
-                            MapTransformer::K_TARGET      => 'client',
-                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_client_id_transformer'),
-                        ],
-                        [
-                            MapTransformer::K_SOURCE => 'client_tz',
-                            MapTransformer::K_TARGET => 'clientTzName',
-                        ],
-                        [
-                            MapTransformer::K_SOURCE => 'payment_id',
-                            MapTransformer::K_TARGET => 'payment',
-                        ],
-                        [
-                            MapTransformer::K_SOURCE => 'admin_notes',
-                            MapTransformer::K_TARGET => 'notes',
-                        ],
-                    ]);
+                    return new BookingTransformer(
+                        $c->get('eddbk_timestamp_datetime_transformer'),
+                        $c->get('eddbk_rest_api_service_id_transformer'),
+                        $c->get('eddbk_rest_api_client_id_transformer'),
+                        $c->get('eddbk_rest_api_resource_id_transformer')
+                    );
                 },
 
                 /*
