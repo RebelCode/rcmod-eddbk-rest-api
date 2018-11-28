@@ -275,7 +275,7 @@ class BookingsController extends AbstractBaseCqrsController
             }
         }
 
-        return [];
+        return $this->_get(['id' => $id]);
     }
 
     /**
