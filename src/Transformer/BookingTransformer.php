@@ -32,15 +32,6 @@ class BookingTransformer extends MapTransformer
     protected $serviceIdT9r;
 
     /**
-     * The transformer for transforming client IDs into client data.
-     *
-     * @since [*next-version*]
-     *
-     * @var TransformerInterface
-     */
-    protected $clientIdT9r;
-
-    /**
      * The transformer for transforming resource IDs into resource data.
      *
      * @since [*next-version*]
@@ -50,21 +41,30 @@ class BookingTransformer extends MapTransformer
     protected $resourceIdT9r;
 
     /**
+     * The transformer for transforming client IDs into client data.
+     *
+     * @since [*next-version*]
+     *
+     * @var TransformerInterface
+     */
+    protected $clientIdT9r;
+
+    /**
      * Constructor.
      *
      * @since [*next-version*]
      *
      * @param TransformerInterface $tsDatetimeT9r The transformer for transforming timestamps to datetime strings.
      * @param TransformerInterface $serviceIdT9r  The transformer for transforming service IDs into service data.
-     * @param TransformerInterface $clientIdT9r   The transformer for transforming client IDs into client data.
      * @param TransformerInterface $resourceIdT9r The transformer for transforming resource IDs into resource data.
+     * @param TransformerInterface $clientIdT9r   The transformer for transforming client IDs into client data.
      */
-    public function __construct($tsDatetimeT9r, $serviceIdT9r, $clientIdT9r, $resourceIdT9r)
+    public function __construct($tsDatetimeT9r, $serviceIdT9r, $resourceIdT9r, $clientIdT9r)
     {
         $this->tsDatetimeT9r = $tsDatetimeT9r;
         $this->serviceIdT9r  = $serviceIdT9r;
-        $this->clientIdT9r   = $clientIdT9r;
         $this->resourceIdT9r = $resourceIdT9r;
+        $this->clientIdT9r   = $clientIdT9r;
 
         parent::__construct($this->_getBookingMapConfig());
     }

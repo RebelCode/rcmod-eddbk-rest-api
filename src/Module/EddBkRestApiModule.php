@@ -496,8 +496,8 @@ class EddBkRestApiModule extends AbstractBaseModule
                     return new BookingTransformer(
                         $c->get('eddbk_timestamp_datetime_transformer'),
                         $c->get('eddbk_rest_api_service_id_transformer'),
-                        $c->get('eddbk_rest_api_client_id_transformer'),
-                        $c->get('eddbk_rest_api_bookings_resource_id_transformer')
+                        $c->get('eddbk_rest_api_bookings_resource_id_transformer'),
+                        $c->get('eddbk_rest_api_client_id_transformer')
                     );
                 },
 
