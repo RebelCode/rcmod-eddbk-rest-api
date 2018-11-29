@@ -47,6 +47,7 @@ use RebelCode\EddBookings\RestApi\Transformer\BookingTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\CoreInfoServiceTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\FullInfoServiceTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\ResourceIdTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\ResourceTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\ServiceAvailabilityTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\SessionTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\SessionTypeDataTransformer;
@@ -496,7 +497,19 @@ class EddBkRestApiModule extends AbstractBaseModule
                         $c->get('eddbk_timestamp_datetime_transformer'),
                         $c->get('eddbk_rest_api_service_id_transformer'),
                         $c->get('eddbk_rest_api_client_id_transformer'),
-                        $c->get('eddbk_rest_api_resource_id_transformer')
+                        $c->get('eddbk_rest_api_bookings_resource_id_transformer')
+                    );
+                },
+
+                /*
+                 * The transformer used by the bookings transformer to change resource IDs into resource data.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_bookings_resource_id_transformer' => function (ContainerInterface $c) {
+                    return new ResourceIdTransformer(
+                        $c->get('eddbk_rest_api_simple_resource_transformer'),
+                        $c->get('resources_entity_manager')
                     );
                 },
 
@@ -506,24 +519,17 @@ class EddBkRestApiModule extends AbstractBaseModule
                  * @since [*next-version*]
                  */
                 'eddbk_rest_api_resource_transformer' => function (ContainerInterface $c) {
-                    return new MapTransformer([
-                        [
-                            MapTransformer::K_SOURCE => 'id',
-                        ],
-                        [
-                            MapTransformer::K_SOURCE => 'name',
-                        ],
-                        [
-                            MapTransformer::K_SOURCE => 'type',
-                        ],
-                        [
-                            MapTransformer::K_SOURCE      => 'data',
-                        ],
-                        [
-                            MapTransformer::K_SOURCE      => 'availability',
-                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_availability_transformer'),
-                        ],
-                    ]);
+                    return new ResourceTransformer($c->get('eddbk_rest_api_availability_transformer'));
+                },
+
+                /*
+                 * The transformer that partially transforms resources into the result that is sent in REST API
+                 * responses. This excludes resource availability from the result.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_simple_resource_transformer' => function (ContainerInterface $c) {
+                    return new ResourceTransformer();
                 },
 
                 /*
