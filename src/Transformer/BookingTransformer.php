@@ -62,11 +62,11 @@ class BookingTransformer extends MapTransformer
     public function __construct($tsDatetimeT9r, $serviceIdT9r, $clientIdT9r, $resourceIdT9r)
     {
         $this->tsDatetimeT9r = $tsDatetimeT9r;
-
-        parent::__construct($this->_getBookingMapConfig());
         $this->serviceIdT9r  = $serviceIdT9r;
         $this->clientIdT9r   = $clientIdT9r;
         $this->resourceIdT9r = $resourceIdT9r;
+
+        parent::__construct($this->_getBookingMapConfig());
     }
 
     /**
