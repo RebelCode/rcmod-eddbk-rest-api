@@ -8,16 +8,23 @@ use Dhii\Data\Container\ContainerHasCapableTrait;
 use Dhii\Data\Container\CreateContainerExceptionCapableTrait;
 use Dhii\Data\Container\CreateNotFoundExceptionCapableTrait;
 use Dhii\Data\Container\NormalizeKeyCapableTrait;
+use Dhii\Event\EventFactoryInterface;
 use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
 use Dhii\Exception\CreateOutOfRangeExceptionCapableTrait;
+use Dhii\Exception\CreateRuntimeExceptionCapableTrait;
 use Dhii\Factory\FactoryAwareTrait;
 use Dhii\Factory\FactoryInterface;
 use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Util\Normalization\NormalizeIntCapableTrait;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
+use Dhii\Util\String\StringableInterface as Stringable;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Psr\EventManager\EventManagerInterface;
 use RebelCode\Entity\EntityManagerInterface;
+use RebelCode\Modular\Events\CreateEventCapableTrait;
+use RebelCode\Modular\Events\EventFactoryAwareTrait;
+use RebelCode\Modular\Events\EventManagerAwareTrait;
 use stdClass;
 
 /**
@@ -32,6 +39,15 @@ class ResourcesController extends AbstractBaseController
         _getFactory as _getIteratorFactory;
         _setFactory as _setIteratorFactory;
     }
+
+    /* @since [*next-version*] */
+    use CreateEventCapableTrait;
+
+    /* @since [*next-version*] */
+    use EventManagerAwareTrait;
+
+    /* @since [*next-version*] */
+    use EventFactoryAwareTrait;
 
     /* @since [*next-version*] */
     use ContainerGetCapableTrait;
@@ -59,6 +75,9 @@ class ResourcesController extends AbstractBaseController
 
     /* @since [*next-version*] */
     use CreateOutOfRangeExceptionCapableTrait;
+
+    /* @since [*next-version*] */
+    use CreateRuntimeExceptionCapableTrait;
 
     /* @since [*next-version*] */
     use StringTranslatingTrait;
@@ -93,12 +112,19 @@ class ResourcesController extends AbstractBaseController
      *
      * @param FactoryInterface       $iteratorFactory The iterator factory to use for the results.
      * @param EntityManagerInterface $entityManager   The resources entity manager.
+     * @param EventManagerInterface  $eventManager    The event manager.
+     * @param EventFactoryInterface  $eventFactory    The even factory.
      */
     public function __construct(
         FactoryInterface $iteratorFactory,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        EventManagerInterface $eventManager,
+        EventFactoryInterface $eventFactory
     ) {
         $this->_setIteratorFactory($iteratorFactory);
+        $this->_setEventManager($eventManager);
+        $this->_setEventFactory($eventFactory);
+
         $this->entityManager = $entityManager;
     }
 
@@ -148,6 +174,8 @@ class ResourcesController extends AbstractBaseController
         $resource   = $this->_paramsToResourceData($params);
         $resourceId = $this->entityManager->add($resource);
 
+        $this->_scheduleSessionGeneration($resourceId);
+
         return $this->_get(['id' => $resourceId]);
     }
 
@@ -179,6 +207,7 @@ class ResourcesController extends AbstractBaseController
         $changeSet = $this->_paramsToResourceData($params);
 
         $this->entityManager->update($id, $changeSet);
+        $this->_scheduleSessionGeneration($id);
 
         return $this->_get(['id' => $id]);
     }
@@ -276,5 +305,35 @@ class ResourcesController extends AbstractBaseController
                 'field' => 'availability',
             ],
         ];
+    }
+
+    /**
+     * Schedules session generation for a resource.
+     *
+     * @since [*next-version*]
+     *
+     * @param int|string|Stringable $resourceId The ID of the resource for which to generate.
+     */
+    protected function _scheduleSessionGeneration($resourceId)
+    {
+        $event = $this->_createEvent('eddbk_generate_sessions', [
+            'resource_id' => $resourceId,
+        ]);
+
+        $this->_wpScheduleJob(time(), $event->getName(), [$event]);
+    }
+
+    /**
+     * Schedules a WordPress cron job.
+     *
+     * @since [*next-version*]
+     *
+     * @param int    $time  The UTC timestamp for when to run the event.
+     * @param string $event The name of the hook to execute when the event is run.
+     * @param array  $args  Arguments to pass to the hook's callback function.
+     */
+    protected function _wpScheduleJob($time, $event, $args)
+    {
+        \wp_schedule_single_event($time, $event, $args);
     }
 }
