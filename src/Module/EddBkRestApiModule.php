@@ -139,7 +139,9 @@ class EddBkRestApiModule extends AbstractBaseModule
                 'eddbk_resources_controller' => function (ContainerInterface $c) {
                     return new ResourcesController(
                         $c->get('eddbk_rest_api_resources_iterator_factory'),
-                        $c->get('resources_entity_manager')
+                        $c->get('resources_entity_manager'),
+                        $c->get('event_manager'),
+                        $c->get('event_factory')
                     );
                 },
 
