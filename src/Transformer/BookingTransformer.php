@@ -147,7 +147,7 @@ class BookingTransformer extends MapTransformer
         foreach ($resources as $_key => $resourceId) {
             $_transformed = $this->resourceIdT9r->transform($resourceId);
             if ($_transformed !== null) {
-                $result[$_key] = $_transformed;
+                $result[] = $_transformed;
             }
         }
 
