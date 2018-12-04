@@ -522,7 +522,7 @@ class BookingsController extends AbstractBaseCqrsController
                 'required' => true,
             ],
             'resources' => [
-                'field'    => 'resources',
+                'field'    => 'resource_ids',
                 'required' => true,
             ],
             'client'   => [
