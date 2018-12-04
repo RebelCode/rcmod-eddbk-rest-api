@@ -589,12 +589,12 @@ class BookingsController extends AbstractBaseCqrsController
                     return $value;
                 },
             ],
-            'resource' => [
-                'field'     => 'resource_id',
+            'resources' => [
+                'field'     => 'resource_ids',
                 'transform' => function ($value) {
                     if (empty($value)) {
                         throw $this->_createInvalidArgumentException(
-                            $this->__('Resource ID cannot be an empty value'), null, null, $value
+                            $this->__('Resources list cannot be an empty value'), null, null, $value
                         );
                     }
 
