@@ -458,9 +458,9 @@ class BookingsController extends AbstractBaseCqrsController
                 'field'   => 'service_id',
             ],
             'resource' => [
-                'compare' => 'eq',
+                'compare' => 'in',
                 'entity'  => 'booking',
-                'field'   => 'resource_id',
+                'field'   => 'resource_ids',
             ],
             'client'   => [
                 'compare' => 'eq',
