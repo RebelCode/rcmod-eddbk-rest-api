@@ -304,6 +304,12 @@ class ResourcesController extends AbstractBaseController
             'availability' => [
                 'field' => 'availability',
             ],
+            's' => [
+                'field'     => 'search',
+                'transform' => function ($desc) {
+                    return $this->_normalizeString($desc);
+                },
+            ],
         ];
     }
 
