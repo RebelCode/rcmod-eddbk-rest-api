@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [[*next-version*]] - YYYY-MM-DD
 ### Added
 - Routes, handlers and controllers for resources.
+- Bookings now include some information about their resources.
 
 ### Changed
 - The service transformer now transforms session types instead of session lengths.
+- Services now include the timezone in their `availability`.
+- Created dedicated transformer classes for most transformers.
 
 ## [0.1-alpha10] - 2018-10-30
 ### Added
