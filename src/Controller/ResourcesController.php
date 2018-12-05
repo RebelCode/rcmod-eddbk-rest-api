@@ -304,6 +304,9 @@ class ResourcesController extends AbstractBaseController
             'availability' => [
                 'field' => 'availability',
             ],
+            's' => [
+                'field' => 'search'
+            ],
         ];
     }
 
