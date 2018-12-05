@@ -43,6 +43,7 @@ return [
          */
         'routes' => array_merge(
             require(__DIR__ . '/routes/bookings.php'),
+            require(__DIR__ . '/routes/resources.php'),
             require(__DIR__ . '/routes/sessions.php'),
             require(__DIR__ . '/routes/services.php'),
             require(__DIR__ . '/routes/clients.php')

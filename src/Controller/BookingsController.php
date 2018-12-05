@@ -10,10 +10,7 @@ use Dhii\Data\TransitionerInterface;
 use Dhii\Expression\LogicalExpressionInterface;
 use Dhii\Factory\FactoryAwareTrait;
 use Dhii\Factory\FactoryInterface;
-use Dhii\Storage\Resource\DeleteCapableInterface;
-use Dhii\Storage\Resource\InsertCapableInterface;
 use Dhii\Storage\Resource\SelectCapableInterface;
-use Dhii\Storage\Resource\UpdateCapableInterface;
 use Dhii\Util\Normalization\NormalizeArrayCapableTrait;
 use Dhii\Util\Normalization\NormalizeIntCapableTrait;
 use Dhii\Util\Normalization\NormalizeIterableCapableTrait;
@@ -21,6 +18,7 @@ use Dhii\Util\String\StringableInterface;
 use Dhii\Util\String\StringableInterface as Stringable;
 use Dhii\Validation\Exception\ValidationFailedExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use RebelCode\Entity\EntityManagerInterface;
 use stdClass;
 use Traversable;
 
@@ -70,6 +68,15 @@ class BookingsController extends AbstractBaseCqrsController
     const DEFAULT_PAGE_NUMBER = 1;
 
     /**
+     * The bookings entity manager.
+     *
+     * @since [*next-version*]
+     *
+     * @var EntityManagerInterface
+     */
+    protected $entityManager;
+
+    /**
      * The clients controller.
      *
      * @since [*next-version*]
@@ -96,9 +103,7 @@ class BookingsController extends AbstractBaseCqrsController
      * @param StateAwareFactoryInterface $bookingFactory      The booking factory.
      * @param TransitionerInterface      $bookingTransitioner The booking transitioner.
      * @param SelectCapableInterface     $selectRm            The SELECT bookings resource model.
-     * @param InsertCapableInterface     $insertRm            The INSERT bookings resource model.
-     * @param UpdateCapableInterface     $updateRm            The UPDATE bookings resource model.
-     * @param DeleteCapableInterface     $deleteRm            The DELETE bookings resource model.
+     * @param EntityManagerInterface     $entityManager       The bookings entity manager.
      * @param object                     $exprBuilder         The expression builder.
      * @param ControllerInterface        $clientsController   The clients controller.
      */
@@ -107,75 +112,18 @@ class BookingsController extends AbstractBaseCqrsController
         StateAwareFactoryInterface $bookingFactory,
         TransitionerInterface $bookingTransitioner,
         SelectCapableInterface $selectRm,
-        InsertCapableInterface $insertRm,
-        UpdateCapableInterface $updateRm,
-        DeleteCapableInterface $deleteRm,
+        EntityManagerInterface $entityManager,
         $exprBuilder,
         ControllerInterface $clientsController = null
     ) {
         $this->_setIteratorFactory($iteratorFactory);
-        $this->_setStateAwareFactory($bookingFactory);
         $this->_setTransitioner($bookingTransitioner);
         $this->_setSelectRm($selectRm);
-        $this->_setInsertRm($insertRm);
-        $this->_setUpdateRm($updateRm);
-        $this->_setDeleteRm($deleteRm);
         $this->_setExprBuilder($exprBuilder);
-        $this->_setClientsController($clientsController);
-    }
 
-    /**
-     * Retrieves the clients controller.
-     *
-     * @since [*next-version*]
-     *
-     * @return ControllerInterface|null The clients controller instance, if any.
-     */
-    protected function _getClientsController()
-    {
-        return $this->clientsController;
-    }
-
-    /**
-     * Sets the clients controller.
-     *
-     * @since [*next-version*]
-     *
-     * @param ControllerInterface|null $clientsController The controller instance, if any.
-     */
-    protected function _setClientsController($clientsController)
-    {
-        if ($clientsController !== null && !($clientsController instanceof ControllerInterface)) {
-            throw $this->_createInvalidArgumentException(
-                $this->__('Argument is not a controller instance'), null, null, $clientsController
-            );
-        }
-
+        $this->stateAwareFactory = $bookingFactory;
         $this->clientsController = $clientsController;
-    }
-
-    /**
-     * Retrieves the state-aware factory.
-     *
-     * @since [*next-version*]
-     *
-     * @return StateAwareFactoryInterface The state-aware factory instance.
-     */
-    protected function _getStateAwareFactory()
-    {
-        return $this->stateAwareFactory;
-    }
-
-    /**
-     * Sets the state-aware factory.
-     *
-     * @since [*next-version*]
-     *
-     * @param StateAwareFactoryInterface $stateAwareFactory The state-aware factory instance.
-     */
-    protected function _setStateAwareFactory(StateAwareFactoryInterface $stateAwareFactory)
-    {
-        $this->stateAwareFactory = $stateAwareFactory;
+        $this->entityManager     = $entityManager;
     }
 
     /**
@@ -226,65 +174,38 @@ class BookingsController extends AbstractBaseCqrsController
      */
     protected function _post($params = [])
     {
-        $selectRm = $this->_getSelectRm();
-        if ($selectRm === null) {
-            throw $this->_createRuntimeException($this->__('The SELECT resource model is null'));
-        }
-
-        $insertRm = $this->_getInsertRm();
-        if ($insertRm === null) {
-            throw $this->_createRuntimeException($this->__('The INSERT resource model is null'));
-        }
-
-        $updateRm = $this->_getUpdateRm();
-        if ($updateRm === null) {
-            throw $this->_createRuntimeException($this->__('The UPDATE resource model is null'));
-        }
-
-        $deleteRm = $this->_getDeleteRm();
-        if ($deleteRm === null) {
-            throw $this->_createRuntimeException($this->__('The DELETE resource model is null'));
-        }
-
         // Create state-aware booking from params
-        $booking = $this->_getStateAwareFactory()->make([
-            StateAwareFactoryInterface::K_DATA => $this->_buildInsertRecord($params)
+        $booking = $this->stateAwareFactory->make([
+            StateAwareFactoryInterface::K_DATA => $this->_buildInsertRecord($params),
         ]);
+
         if (empty($booking)) {
-            throw $this->_createControllerException($this->__('Cannot transition empty booking'), 400, null, $this);
+            throw $this->_createControllerException($this->__('Booking data cannot be empty'), 400, null, $this);
         }
 
         // Insert into database
-        $ids = $insertRm->insert([$booking->getState()]);
-        $id  = reset($ids);
-
-        // Fetch from database - record should now have an ID
-        $b = $this->exprBuilder;
-        $idCondition = $b->eq(
-            $b->var('id'),
-            $b->lit($id)
-        );
-        $bookings    = $selectRm->select($idCondition);
-        $bookingData = reset($bookings);
+        $id = $this->entityManager->add($booking->getState());
+        // Re-fetch from database
+        $bookingData = $this->entityManager->get($id);
 
         try {
             // Read the "transition" from the request params
             $transition = $this->_containerGet($params, 'transition');
             // Create state-aware booking from data retrieved from DB
-            $booking = $this->_getStateAwareFactory()->make([
-                StateAwareFactoryInterface::K_DATA => $bookingData
+            $booking = $this->stateAwareFactory->make([
+                StateAwareFactoryInterface::K_DATA => $bookingData,
             ]);
             // Attempt transition
             $booking = $this->_getTransitioner()->transition($booking, $transition);
 
             // Update the booking in storage after transitioning
-            $updateRm->update($booking->getState(), $idCondition);
+            $this->entityManager->update($id, $booking->getState());
 
             // Respond with the booking info
             return $this->_get(['id' => $id]);
         } catch (CouldNotTransitionExceptionInterface $transitionEx) {
             // If transition failed, delete the booking
-            $deleteRm->delete($idCondition);
+            $this->entityManager->delete($id);
             // Get the transition failure messages from the exception
             $errors = $this->_getTransitionFailureMessages($transitionEx);
             // and throw a controller exception
@@ -317,29 +238,21 @@ class BookingsController extends AbstractBaseCqrsController
      */
     protected function _patch($params = [])
     {
-        $updateRm = $this->_getUpdateRm();
-
-        if ($updateRm === null) {
-            throw $this->_createRuntimeException($this->__('The UPDATE resource model is null'));
+        try {
+            $id = $this->_containerGet($params, 'id');
+        } catch (NotFoundExceptionInterface $exception) {
+            throw $this->_createControllerException($this->__('Missing booking `id` in request'), 400, $exception,
+                $this);
         }
 
-        $selectRm = $this->_getSelectRm();
-
-        if ($selectRm === null) {
-            throw $this->_createRuntimeException($this->__('The SELECT resource model is null'));
-        }
-
-        $condition   = $this->_buildUpdateCondition($params);
-        $bookings    = $selectRm->select($condition);
-        $bookings    = $this->_normalizeArray($bookings);
-        $bookingData = reset($bookings);
+        $bookingData = $this->entityManager->get($id);
         $bookingData = $this->_normalizeIterable($bookingData);
 
         // Prepare change set
         $changeSet = $this->_buildUpdateChangeSet($params);
         // Create state-aware booking with the booking data patched against the change set in the request
-        $booking = $this->_getStateAwareFactory()->make([
-            StateAwareFactoryInterface::K_DATA => $this->_patchBookingData($bookingData, $changeSet)
+        $booking = $this->stateAwareFactory->make([
+            StateAwareFactoryInterface::K_DATA => $this->_patchBookingData($bookingData, $changeSet),
         ]);
 
         // If the transition was given in the request
@@ -350,19 +263,19 @@ class BookingsController extends AbstractBaseCqrsController
                 // Attempt transition on booking
                 $booking = $this->_getTransitioner()->transition($booking, $transition);
                 // Update the booking
-                $updateRm->update($booking->getState(), $condition);
+                $this->entityManager->update($id, $booking->getState());
             } catch (CouldNotTransitionExceptionInterface $exception) {
                 $errors = $this->_getTransitionFailureMessages($exception);
 
                 throw $this->_createControllerException(
                     $this->__('Failed to transition the booking'), 500, $exception, $this, [
-                        'errors' => $this->_normalizeArray($errors)
+                        'errors' => $this->_normalizeArray($errors),
                     ]
                 );
             }
         }
 
-        return [];
+        return $this->_get(['id' => $id]);
     }
 
     /**
@@ -372,13 +285,14 @@ class BookingsController extends AbstractBaseCqrsController
      */
     protected function _delete($params = [])
     {
-        $deleteRm = $this->_getDeleteRm();
-
-        if ($deleteRm === null) {
-            throw $this->_createRuntimeException($this->__('The DELETE resource model is null'));
+        try {
+            $id = $this->_containerGet($params, 'id');
+        } catch (NotFoundExceptionInterface $exception) {
+            throw $this->_createControllerException($this->__('Missing booking `id` in request'), 400, $exception,
+                $this);
         }
 
-        $deleteRm->delete($this->_buildDeleteCondition($params));
+        $this->entityManager->delete($id);
 
         return [];
     }
@@ -493,7 +407,7 @@ class BookingsController extends AbstractBaseCqrsController
      */
     protected function _addClientsSearchCondition($condition, $search)
     {
-        $clients   = $this->_getClientsController()->get(['search' => $search]);
+        $clients   = $this->clientsController->get(['search' => $search]);
         $clientIds = [];
 
         foreach ($clients as $_client) {
@@ -511,24 +425,24 @@ class BookingsController extends AbstractBaseCqrsController
     protected function _getSelectConditionParamMapping()
     {
         return [
-            'id' => [
+            'id'       => [
                 'compare' => 'eq',
                 'entity'  => 'booking',
                 'field'   => 'id',
             ],
-            'start' => [
+            'start'    => [
                 'compare'   => 'gte',
                 'entity'    => 'booking',
                 'field'     => 'start',
                 'transform' => [$this, '_parseIso8601'],
             ],
-            'end' => [
+            'end'      => [
                 'compare'   => 'lte',
                 'entity'    => 'booking',
                 'field'     => 'end',
                 'transform' => [$this, '_parseIso8601'],
             ],
-            'status' => [
+            'status'   => [
                 'compare'   => 'in',
                 'entity'    => 'booking',
                 'field'     => 'status',
@@ -538,22 +452,22 @@ class BookingsController extends AbstractBaseCqrsController
                         : null;
                 },
             ],
-            'service' => [
+            'service'  => [
                 'compare' => 'eq',
                 'entity'  => 'booking',
                 'field'   => 'service_id',
             ],
             'resource' => [
-                'compare' => 'eq',
+                'compare' => 'in',
                 'entity'  => 'booking',
-                'field'   => 'resource_id',
+                'field'   => 'resource_ids',
             ],
-            'client' => [
+            'client'   => [
                 'compare' => 'eq',
                 'entity'  => 'booking',
                 'field'   => 'client_id',
             ],
-            'payment' => [
+            'payment'  => [
                 'compare' => 'eq',
                 'entity'  => 'booking',
                 'field'   => 'payment_id',
@@ -564,31 +478,25 @@ class BookingsController extends AbstractBaseCqrsController
     /**
      * {@inheritdoc}
      *
+     * Unused, since an entity manager is used to update bookings.
+     *
      * @since [*next-version*]
      */
     protected function _getUpdateConditionParamMapping()
     {
-        return [
-            'id' => [
-                'compare' => 'eq',
-                'field'   => 'id',
-            ],
-        ];
+        return [];
     }
 
     /**
      * {@inheritdoc}
      *
+     * Unused, since an entity manager is used to delete bookings.
+     *
      * @since [*next-version*]
      */
     protected function _getDeleteConditionParamMapping()
     {
-        return [
-            'id' => [
-                'compare' => 'eq',
-                'field'   => 'id',
-            ],
-        ];
+        return [];
     }
 
     /**
@@ -599,25 +507,25 @@ class BookingsController extends AbstractBaseCqrsController
     protected function _getInsertParamFieldMapping()
     {
         return [
-            'start' => [
+            'start'    => [
                 'field'     => 'start',
                 'required'  => true,
                 'transform' => [$this, '_parseIso8601'],
             ],
-            'end' => [
+            'end'      => [
                 'field'     => 'end',
                 'required'  => true,
                 'transform' => [$this, '_parseIso8601'],
             ],
-            'service' => [
+            'service'  => [
                 'field'    => 'service_id',
                 'required' => true,
             ],
-            'resource' => [
-                'field'    => 'resource_id',
+            'resources' => [
+                'field'    => 'resource_ids',
                 'required' => true,
             ],
-            'client' => [
+            'client'   => [
                 'field'    => 'client_id',
                 'required' => false,
             ],
@@ -625,11 +533,11 @@ class BookingsController extends AbstractBaseCqrsController
                 'field'    => 'client_tz',
                 'required' => false,
             ],
-            'payment' => [
+            'payment'  => [
                 'field'    => 'payment_id',
                 'required' => false,
             ],
-            'notes' => [
+            'notes'    => [
                 'field'    => 'admin_notes',
                 'required' => false,
                 'default'  => '',
@@ -645,7 +553,7 @@ class BookingsController extends AbstractBaseCqrsController
     protected function _getUpdateParamFieldMapping()
     {
         return [
-            'start' => [
+            'start'    => [
                 'field'     => 'start',
                 'transform' => function ($value) {
                     if (empty($value)) {
@@ -657,7 +565,7 @@ class BookingsController extends AbstractBaseCqrsController
                     return $this->_parseIso8601($value);
                 },
             ],
-            'end' => [
+            'end'      => [
                 'field'     => 'end',
                 'transform' => function ($value) {
                     if (empty($value)) {
@@ -669,7 +577,7 @@ class BookingsController extends AbstractBaseCqrsController
                     return $this->_parseIso8601($value);
                 },
             ],
-            'service' => [
+            'service'  => [
                 'field'     => 'service_id',
                 'transform' => function ($value) {
                     if (empty($value)) {
@@ -681,20 +589,20 @@ class BookingsController extends AbstractBaseCqrsController
                     return $value;
                 },
             ],
-            'resource' => [
-                'field'    => 'resource_id',
+            'resources' => [
+                'field'     => 'resource_ids',
                 'transform' => function ($value) {
                     if (empty($value)) {
                         throw $this->_createInvalidArgumentException(
-                            $this->__('Resource ID cannot be an empty value'), null, null, $value
+                            $this->__('Resources list cannot be an empty value'), null, null, $value
                         );
                     }
 
                     return $value;
                 },
             ],
-            'client' => [
-                'field'    => 'client_id',
+            'client'   => [
+                'field'     => 'client_id',
                 'transform' => function ($value) {
                     if (empty($value)) {
                         throw $this->_createInvalidArgumentException(
@@ -707,13 +615,13 @@ class BookingsController extends AbstractBaseCqrsController
             ],
             'clientTz' => [
                 'field'   => 'client_tz',
-                'default' => 'UTC'
+                'default' => 'UTC',
             ],
-            'payment' => [
+            'payment'  => [
                 'field'   => 'payment_id',
-                'default' => ''
+                'default' => '',
             ],
-            'notes' => [
+            'notes'    => [
                 'field'   => 'admin_notes',
                 'default' => '',
             ],

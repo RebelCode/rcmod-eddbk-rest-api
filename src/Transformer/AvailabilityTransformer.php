@@ -6,6 +6,7 @@ use ArrayIterator;
 use Dhii\Data\Container\ContainerGetCapableTrait;
 use Dhii\Data\Container\CreateContainerExceptionCapableTrait;
 use Dhii\Data\Container\CreateNotFoundExceptionCapableTrait;
+use Dhii\Data\Container\NormalizeContainerCapableTrait;
 use Dhii\Data\Container\NormalizeKeyCapableTrait;
 use Dhii\Exception\CreateInvalidArgumentExceptionCapableTrait;
 use Dhii\Exception\CreateOutOfRangeExceptionCapableTrait;
@@ -13,18 +14,20 @@ use Dhii\I18n\StringTranslatingTrait;
 use Dhii\Transformer\TransformerInterface;
 use Dhii\Util\Normalization\NormalizeIterableCapableTrait;
 use Dhii\Util\Normalization\NormalizeStringCapableTrait;
-use InvalidArgumentException;
 use IteratorIterator;
 use Psr\Container\NotFoundExceptionInterface;
 use stdClass;
 use Traversable;
 
 /**
- * A transformer that transforms a service's availability.
+ * An implementation of a full availability transformer.
+ *
+ * This differs from {@link ServiceAvailabilityTransformer} in that it transforms a full availability, rather than a
+ * cut-down service-specific version of an availability.
  *
  * @since [*next-version*]
  */
-class ServiceAvailabilityTransformer implements TransformerInterface
+class AvailabilityTransformer implements TransformerInterface
 {
     /* @since [*next-version*] */
     use ContainerGetCapableTrait;
@@ -39,16 +42,19 @@ class ServiceAvailabilityTransformer implements TransformerInterface
     use NormalizeIterableCapableTrait;
 
     /* @since [*next-version*] */
+    use NormalizeContainerCapableTrait;
+
+    /* @since [*next-version*] */
     use CreateContainerExceptionCapableTrait;
 
     /* @since [*next-version*] */
     use CreateNotFoundExceptionCapableTrait;
 
     /* @since [*next-version*] */
-    use CreateOutOfRangeExceptionCapableTrait;
+    use CreateInvalidArgumentExceptionCapableTrait;
 
     /* @since [*next-version*] */
-    use CreateInvalidArgumentExceptionCapableTrait;
+    use CreateOutOfRangeExceptionCapableTrait;
 
     /* @since [*next-version*] */
     use StringTranslatingTrait;
@@ -81,24 +87,22 @@ class ServiceAvailabilityTransformer implements TransformerInterface
      */
     public function transform($source)
     {
+        $container = $this->_normalizeContainer($source);
+
         try {
-            $rules = $this->_containerGet($source, 'rules');
-            $rules = $this->_normalizeIterable($rules);
-            $rules = $this->_transformRules($rules, $this->ruleTransformer);
+            $rules    = $this->_containerGet($container, 'rules');
         } catch (NotFoundExceptionInterface $exception) {
-            $rules = [];
-        } catch (InvalidArgumentException $exception) {
             $rules = [];
         }
 
         try {
-            $timezone = $this->_containerGet($source, 'timezone');
+            $timezone = $this->_containerGet($container, 'timezone');
         } catch (NotFoundExceptionInterface $exception) {
             $timezone = 'UTC';
         }
 
         return [
-            'rules'    => $rules,
+            'rules'    => $this->_transformRules($rules, $this->ruleTransformer),
             'timezone' => $timezone,
         ];
     }
@@ -122,25 +126,5 @@ class ServiceAvailabilityTransformer implements TransformerInterface
         }
 
         return $result;
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @since [*next-version*]
-     */
-    protected function _createArrayIterator(array $array)
-    {
-        return new ArrayIterator($array);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @since [*next-version*]
-     */
-    protected function _createTraversableIterator(Traversable $traversable)
-    {
-        return new IteratorIterator($traversable);
     }
 }

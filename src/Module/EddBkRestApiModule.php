@@ -19,6 +19,7 @@ use RebelCode\EddBookings\RestApi\Auth\TolerantCompositeValidator;
 use RebelCode\EddBookings\RestApi\Auth\UserIsAdminAuthValidator;
 use RebelCode\EddBookings\RestApi\Controller\BookingsController;
 use RebelCode\EddBookings\RestApi\Controller\ClientsController;
+use RebelCode\EddBookings\RestApi\Controller\ResourcesController;
 use RebelCode\EddBookings\RestApi\Controller\ServicesController;
 use RebelCode\EddBookings\RestApi\Controller\SessionsController;
 use RebelCode\EddBookings\RestApi\Handlers\Bookings\BookingInfoHandler;
@@ -29,16 +30,27 @@ use RebelCode\EddBookings\RestApi\Handlers\Bookings\UpdateBookingHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\ClientInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\CreateClientHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Clients\QueryClientsHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Resources\CreateResourceHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Resources\DeleteResourceHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Resources\QueryResourcesHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Resources\ResourceInfoHandler;
+use RebelCode\EddBookings\RestApi\Handlers\Resources\UpdateResourceHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Services\CreateServiceHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Services\DeleteServiceHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Services\QueryServicesHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Services\ServiceInfoHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Services\UpdateServiceHandler;
 use RebelCode\EddBookings\RestApi\Handlers\Sessions\QuerySessionsHandler;
+use RebelCode\EddBookings\RestApi\Transformer\AvailabilityRuleTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\AvailabilityTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\BookingTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\CoreInfoServiceTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\FullInfoServiceTransformer;
-use RebelCode\EddBookings\RestApi\Transformer\ServiceAvailabilityRuleTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\ResourceIdTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\ResourceTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\ServiceAvailabilityTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\SessionTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\SessionTypeDataTransformer;
 use RebelCode\Modular\Module\AbstractBaseModule;
 use RebelCode\Transformers\CallbackTransformer;
 use RebelCode\Transformers\MapTransformer;
@@ -113,11 +125,23 @@ class EddBkRestApiModule extends AbstractBaseModule
                         $c->get('booking_factory'),
                         $c->get('booking_transitioner'),
                         $c->get('bookings_select_rm'),
-                        $c->get('bookings_insert_rm'),
-                        $c->get('bookings_update_rm'),
-                        $c->get('bookings_delete_rm'),
+                        $c->get('bookings_entity_manager'),
                         $c->get('sql_expression_builder'),
                         $c->get('eddbk_clients_controller')
+                    );
+                },
+
+                /*
+                 * The resources REST API controller.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_resources_controller' => function (ContainerInterface $c) {
+                    return new ResourcesController(
+                        $c->get('eddbk_rest_api_resources_iterator_factory'),
+                        $c->get('resources_entity_manager'),
+                        $c->get('event_manager'),
+                        $c->get('event_factory')
                     );
                 },
 
@@ -191,6 +215,20 @@ class EddBkRestApiModule extends AbstractBaseModule
                         $iterator = $this->_normalizeIterator($items);
 
                         return new TransformerIterator($iterator, $c->get('eddbk_rest_api_bookings_transformer'));
+                    });
+                },
+
+                /*
+                 * The iterator factory for the resources controller.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_resources_iterator_factory' => function (ContainerInterface $c) {
+                    return new GenericCallbackFactory(function ($config) use ($c) {
+                        $items    = $this->_containerGet($config, 'items');
+                        $iterator = $this->_normalizeIterator($items);
+
+                        return new TransformerIterator($iterator, $c->get('eddbk_rest_api_resource_transformer'));
                     });
                 },
 
@@ -294,6 +332,55 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_delete_booking_handler' => function (ContainerInterface $c) {
                     return new DeleteBookingHandler($c->get('eddbk_bookings_controller'));
+                },
+
+                /*-------------------------------------------------------------*\
+                 * REST API route handlers - Resources                         *
+                \*-------------------------------------------------------------*/
+
+                /*
+                 * Handles the resources route that receives generic resource queries.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_query_resources_handler' => function (ContainerInterface $c) {
+                    return new QueryResourcesHandler($c->get('eddbk_resources_controller'));
+                },
+
+                /*
+                 * Handles the resources route that provides information about a single resource.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_get_resource_info_handler' => function (ContainerInterface $c) {
+                    return new ResourceInfoHandler($c->get('eddbk_resources_controller'));
+                },
+
+                /*
+                 * Handles the resources route for creating new resources.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_create_resource_handler' => function (ContainerInterface $c) {
+                    return new CreateResourceHandler($c->get('eddbk_resources_controller'), $c->get('eddbk_rest_api'));
+                },
+
+                /*
+                 * Handles the resources route for updating resources.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_update_resource_handler' => function (ContainerInterface $c) {
+                    return new UpdateResourceHandler($c->get('eddbk_resources_controller'));
+                },
+
+                /*
+                 * Handles the resources route for deleting resources.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_delete_resource_handler' => function (ContainerInterface $c) {
+                    return new DeleteResourceHandler($c->get('eddbk_resources_controller'));
                 },
 
                 /*-------------------------------------------------------------*\
@@ -408,48 +495,54 @@ class EddBkRestApiModule extends AbstractBaseModule
                  * @since [*next-version*]
                  */
                 'eddbk_rest_api_bookings_transformer' => function (ContainerInterface $c) {
-                    return new MapTransformer([
-                        [
-                            MapTransformer::K_SOURCE => 'id',
-                        ],
-                        [
-                            MapTransformer::K_SOURCE      => 'start',
-                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_timestamp_datetime_transformer'),
-                        ],
-                        [
-                            MapTransformer::K_SOURCE      => 'end',
-                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_timestamp_datetime_transformer'),
-                        ],
-                        [
-                            MapTransformer::K_SOURCE => 'status',
-                        ],
-                        [
-                            MapTransformer::K_SOURCE      => 'service_id',
-                            MapTransformer::K_TARGET      => 'service',
-                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_service_id_transformer'),
-                        ],
-                        [
-                            MapTransformer::K_SOURCE => 'resource_id',
-                            MapTransformer::K_TARGET => 'resource',
-                        ],
-                        [
-                            MapTransformer::K_SOURCE      => 'client_id',
-                            MapTransformer::K_TARGET      => 'client',
-                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_client_id_transformer'),
-                        ],
-                        [
-                            MapTransformer::K_SOURCE => 'client_tz',
-                            MapTransformer::K_TARGET => 'clientTzName',
-                        ],
-                        [
-                            MapTransformer::K_SOURCE => 'payment_id',
-                            MapTransformer::K_TARGET => 'payment',
-                        ],
-                        [
-                            MapTransformer::K_SOURCE => 'admin_notes',
-                            MapTransformer::K_TARGET => 'notes',
-                        ],
-                    ]);
+                    return new BookingTransformer(
+                        $c->get('eddbk_timestamp_datetime_transformer'),
+                        $c->get('eddbk_rest_api_service_id_transformer'),
+                        $c->get('eddbk_rest_api_bookings_resource_id_transformer'),
+                        $c->get('eddbk_rest_api_client_id_transformer')
+                    );
+                },
+
+                /*
+                 * The transformer used by the bookings transformer to change resource IDs into resource data.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_bookings_resource_id_transformer' => function (ContainerInterface $c) {
+                    return new ResourceIdTransformer(
+                        $c->get('eddbk_rest_api_simple_resource_transformer'),
+                        $c->get('resources_entity_manager')
+                    );
+                },
+
+                /*
+                 * The transformer that transforms resources into the result that is sent in REST API responses.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_resource_transformer' => function (ContainerInterface $c) {
+                    return new ResourceTransformer($c->get('eddbk_rest_api_availability_transformer'));
+                },
+
+                /*
+                 * The transformer that partially transforms resources into the result that is sent in REST API
+                 * responses. This excludes resource availability from the result.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_simple_resource_transformer' => function (ContainerInterface $c) {
+                    return new ResourceTransformer();
+                },
+
+                /*
+                 * The availability transformer for transforming availabilities.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_availability_transformer' => function (ContainerInterface $c) {
+                    return new AvailabilityTransformer(
+                        $c->get('eddbk_rest_api_availability_rule_transformer')
+                    );
                 },
 
                 /*
@@ -483,7 +576,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_service_availability_transformer' => function (ContainerInterface $c) {
                     return new ServiceAvailabilityTransformer(
-                        $c->get('eddbk_rest_api_service_availability_rule_transformer')
+                        $c->get('eddbk_rest_api_availability_rule_transformer')
                     );
                 },
 
@@ -492,8 +585,8 @@ class EddBkRestApiModule extends AbstractBaseModule
                  *
                  * @since [*next-version*]
                  */
-                'eddbk_rest_api_service_availability_rule_transformer' => function (ContainerInterface $c) {
-                    return new ServiceAvailabilityRuleTransformer(
+                'eddbk_rest_api_availability_rule_transformer' => function (ContainerInterface $c) {
+                    return new AvailabilityRuleTransformer(
                         $c->get('eddbk_timestamp_datetime_transformer'),
                         $c->get('eddbk_boolean_transformer'),
                         $c->get('eddbk_comma_list_array_transformer'),
@@ -537,9 +630,33 @@ class EddBkRestApiModule extends AbstractBaseModule
                             MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_session_type_price_transformer'),
                         ],
                         [
-                            MapTransformer::K_SOURCE => 'data',
+                            MapTransformer::K_SOURCE      => 'data',
+                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_rest_api_session_type_data_transformer')
                         ],
                     ]);
+                },
+
+                /*
+                 * The transformer that transforms session type data.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_session_type_data_transformer' => function (ContainerInterface $c) {
+                    return new SessionTypeDataTransformer(
+                        $c->get('eddbk_rest_api_resource_id_transformer')
+                    );
+                },
+
+                /*
+                 * The transformer that transforms resource IDs into full resource data.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_resource_id_transformer' => function (ContainerInterface $c) {
+                    return new ResourceIdTransformer(
+                        $c->get('eddbk_rest_api_resource_transformer'),
+                        $c->get('resources_entity_manager')
+                    );
                 },
 
                 /*
@@ -615,27 +732,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  * @since [*next-version*]
                  */
                 'eddbk_rest_api_sessions_transformer' => function (ContainerInterface $c) {
-                    return new MapTransformer([
-                        [
-                            MapTransformer::K_SOURCE => 'id',
-                        ],
-                        [
-                            MapTransformer::K_SOURCE      => 'start',
-                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_timestamp_datetime_transformer'),
-                        ],
-                        [
-                            MapTransformer::K_SOURCE      => 'end',
-                            MapTransformer::K_TRANSFORMER => $c->get('eddbk_timestamp_datetime_transformer'),
-                        ],
-                        [
-                            MapTransformer::K_SOURCE      => 'service_id',
-                            MapTransformer::K_TARGET      => 'service',
-                        ],
-                        [
-                            MapTransformer::K_SOURCE => 'resource_id',
-                            MapTransformer::K_TARGET => 'resource',
-                        ],
-                    ]);
+                    return new SessionTransformer($c->get('eddbk_timestamp_datetime_transformer'));
                 },
 
                 /*
@@ -745,6 +842,17 @@ class EddBkRestApiModule extends AbstractBaseModule
                         return (strlen($commaList) > 0)
                             ? explode(',', $commaList)
                             : [];
+                    });
+                },
+
+                /*
+                 * The transformer for transforming un-serializing strings.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_rest_api_unserialize_transformer' => function (ContainerInterface $c) {
+                    return new CallbackTransformer(function ($string) {
+                        return unserialize($string);
                     });
                 },
 
