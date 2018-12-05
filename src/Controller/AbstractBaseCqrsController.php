@@ -412,7 +412,7 @@ abstract class AbstractBaseCqrsController extends AbstractBaseController impleme
             // Get the value
             $value = $this->_containerHas($params, $_param) ? $this->_containerGet($params, $_param) : null;
             // Ensure it is not empty
-            $value = ($value !== null && strlen($value) > 0) ? $value : null;
+            $value = !empty($value)? $value : null;
             // Transform it if a transformation callback is present in the mapping config
             $value = ($transform !== null) ? call_user_func_array($transform, [$value]) : $value;
             // Use default value if null
