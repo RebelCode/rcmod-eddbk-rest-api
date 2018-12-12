@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [[*next-version*]] - YYYY-MM-DD
+### Fixed
+- Session types will always have a `data.resources` array even when they don't have any resources in the database.
 
 ## [0.1-alpha12] - 2018-12-06
 ### Added
