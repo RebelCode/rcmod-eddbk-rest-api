@@ -51,6 +51,7 @@ use RebelCode\EddBookings\RestApi\Transformer\ResourceTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\ServiceAvailabilityTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\SessionTransformer;
 use RebelCode\EddBookings\RestApi\Transformer\SessionTypeDataTransformer;
+use RebelCode\EddBookings\RestApi\Transformer\TimestampTimezoneTransformer;
 use RebelCode\Modular\Module\AbstractBaseModule;
 use RebelCode\Transformers\CallbackTransformer;
 use RebelCode\Transformers\MapTransformer;
@@ -798,6 +799,15 @@ class EddBkRestApiModule extends AbstractBaseModule
                         // Return formatted
                         return $dateTime->format($c->get('eddbk_rest_api/datetime_format'));
                     });
+                },
+
+                /*
+                 * Transformer that transforms timestamps into formatted datetime strings with specific timezones.
+                 *
+                 * @since [*next-version*]
+                 */
+                'eddbk_timestamp_timezone_transformer' => function (ContainerInterface $c) {
+                    return new TimestampTimezoneTransformer($c->get('eddbk_rest_api/datetime_format'));
                 },
 
                 /*
