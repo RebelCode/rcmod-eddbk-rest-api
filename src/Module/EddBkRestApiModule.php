@@ -588,7 +588,7 @@ class EddBkRestApiModule extends AbstractBaseModule
                  */
                 'eddbk_rest_api_availability_rule_transformer' => function (ContainerInterface $c) {
                     return new AvailabilityRuleTransformer(
-                        $c->get('eddbk_timestamp_datetime_transformer'),
+                        $c->get('eddbk_timestamp_timezone_transformer'),
                         $c->get('eddbk_boolean_transformer'),
                         $c->get('eddbk_comma_list_array_transformer'),
                         $c->get('eddbk_rest_api_service_exclude_dates_transformer')
