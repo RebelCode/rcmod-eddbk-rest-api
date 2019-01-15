@@ -17,6 +17,7 @@
         "rebelcode/booking-transitioner": "^0.2-alpha2",
         "rebelcode/entity-manager-interface": "^0.1-alpha2",
         "rebelcode/transformers": "^0.1-alpha1",
+        "rebelcode/time-abstract": "^0.1",
         "rebelcode/wp-nonce": "^0.1",
         "dhii/data-object-abstract": "^0.1-alpha1",
         "dhii/cqrs-resource-model-interface": "^0.2-alpha1",
